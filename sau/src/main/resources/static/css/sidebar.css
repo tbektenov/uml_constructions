@@ -1,0 +1,93 @@
+.sidebar {
+    position: fixed;
+    z-index: 0;
+}
+
+.sidebar_inner {
+    width: 350px;
+    height: 100vh;
+    background-color: #5E93FF;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    border-bottom: 1px solid white;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+img {
+    width: 260px;
+}
+
+.sections {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.section {
+    position: relative;
+    height: auto;
+}
+
+.navlink {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    padding-left: 20px;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+
+#two {
+    background-color: #4782FA;
+}
+
+#two:hover {
+    background-color: #3f97da;
+}
+
+.navlink:hover {
+    background-color: #3f97da;
+}
+
+.submenu {
+    display: flex;
+    flex-direction: column;
+    background-color: #5E93FF;
+}
+
+.subsection .navlink {
+    padding-left: 100px;
+    height: 50px;
+}
+
+.activity {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 300px;
+}
+
+.rotated {
+    transform: rotate(90deg);
+    transition: transform 0.3s;
+}
+
+.navlink_exit {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+
+.navlink_exit i {
+    font-size: 30px;
+}

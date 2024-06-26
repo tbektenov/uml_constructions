@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Doctors</title>
+    <link rel="stylesheet" href="./css/core.css">
+    <link rel="stylesheet" href="./css/listDoc.css">
+</head>
+<body>
+    <div class="list">
+        <div class="list_inner">
+            <div class="logo">
+                <img src="./img/logo.png" alt="logo">
+            </div>
+            <div class="table_text">
+                <div class="date">
+                    <h2>Doctors</h2>
+                    <p>dd.mm.yyyy</p>
+                </div>
+                <div class="tableContainer">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>Specialization</th>
+                                <th>Hospital</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctorTableBody">
+                            <!-- Doctor rows will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="pagination">
+                    <!-- Pagination buttons will be dynamically inserted here -->
+                </div>
+            </div>
+            <div class="btn">
+                <div class="subsection">
+                    <a href="home.html" class="navlink">Cancel</a>
+                </div>
+                <div class="subsection">
+                    <a href="home.html" class="navlink">Finish</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./js/listDoc.js"></script>
+</html>

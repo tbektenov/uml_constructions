@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make an Appointment</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="make">
+        <div class="make_inner">
+            <div class="make_app" id="openModalButton">
+                <img src="./img/pencil.png" alt="button_to_make_app">
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Make an appointment</h2>
+            <div class="section">
+                <label for="doctor">Doctor</label>
+                <select id="doctor" name="doctor" required>
+                    <option value="doctor">Specialist</option>
+                    <option value="1">Student</option>
+                    <option value="2">Professor</option>
+                    <option value="3">Scientist</option>
+                    <option value="4">Teacher</option>
+                </select>
+            </div>
+            <div class="section">
+                <label for="hospital">Hospital</label>
+                <select id="hospital" name="hospital" required>
+                    <option value="hospital">Hospital</option>
+                    <option value="1">Children</option>
+                    <option value="2">Family</option>
+                    <option value="3">Health</option>
+                    <option value="4">Heart</option>
+                </select>
+            </div>
+            <div class="section">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            <div class="btn">
+                <button id="searchButton">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

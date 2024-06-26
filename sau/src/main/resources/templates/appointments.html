@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/core.css">
+    <link rel="stylesheet" href="./css/sidebar.css">
+    <link rel="stylesheet" href="./css/appointments.css">
+    <link rel="stylesheet" href="./css/makeApp.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="SHA-512-новая_контрольная_сумма" crossorigin="anonymous">
+    <title>Hospital</title>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar_inner">
+            <nav class="logo">
+                <a href="home.html"><img src="./img/logo.png" alt="logo"></a>
+            </nav>
+            <nav class="sections">
+                <div class="section" id="home">
+                    <a class="navlink" href="home.html">Home</a>
+                </div>
+                <div class="section">
+                    <a class="navlink" href="hospitals.html">Hospitals</a>
+                </div>
+                <div class="section">
+                    <div onclick="toggleSubmenu()" class="navlink" id="medical-activities">
+                        <div class="activity">
+                            <p>Medical activities</p>
+                            <i class="fa fa-chevron-right" id="chevron"></i>
+                        </div>
+                    </div>
+                    <div class="submenu" id="submenu">
+                        <div class="subsection">
+                            <a class="navlink" href="appointments.html">Appointments</a>
+                        </div>
+                        <div class="subsection">
+                            <a class="navlink" href="hospitalizations.html">Hospitalizations</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <a class="navlink" href="">Contacts</a>
+                </div>
+                <div class="section">
+                    <a class="navlink" href="">About</a>
+                </div>
+                <div class="section_exit">
+                    <a class="navlink_exit"><i class="fa fa-arrow-right"></i></a>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="appointment">
+        <div class="appointment_inner">
+            <div class="user">
+                <img src="./img/user.png" alt="user">
+            </div>
+            <div class="table_text">
+                <h2>Appointments</h2>
+                <div class="tableContainer">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>Location</th>
+                                <th class="sortable" id="dateHeader">Date <i class="fa fa-chevron-right"></i></th>
+                                <th class="sortable" id="statusHeader">Status <i class="fa fa-chevron-right"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsTableBody">
+                            <!-- Table rows will be dynamically populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="pagination">
+                    <!-- Pagination buttons will be dynamically populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="make">
+        <div class="make_inner">
+            <div class="make_app" id="openModalButton">
+                <img src="./img/pencil.png" alt="button_to_make_app">
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Make an appointment</h2>
+            <div class="section">
+                <label for="doctor">Doctor</label>
+                <select id="doctor" name="doctor" required>
+                    <option value="doctor">Specialist</option>
+                    <option value="1">Student</option>
+                    <option value="2">Professor</option>
+                    <option value="3">Scientist</option>
+                    <option value="4">Teacher</option>
+                </select>
+            </div>
+            <div class="section">
+                <label for="hospital">Hospital</label>
+                <select id="hospital" name="hospital" required>
+                    <option value="hospital">Hospital</option>
+                    <option value="1">Children</option>
+                    <option value="2">Family</option>
+                    <option value="3">Health</option>
+                    <option value="4">Heart</option>
+                </select>
+            </div>
+            <div class="section">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            <div class="btn">
+                <a class="subsection" id="searchButton" href="listDoc.html">Search</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+    function toggleSubmenu() {
+        const submenu = document.getElementById('submenu');
+        const chevron = document.getElementById('chevron');
+        submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+        chevron.classList.toggle('rotated');
+    }
+</script>
+<script src="./js/appointments.js"></script>
+<script src="./js/makeApp.js"></script>
+</html>
