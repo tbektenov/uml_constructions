@@ -253,19 +253,15 @@ public class DoctorServiceImpl
     private DoctorDTO mapToDto(Doctor doctor) {
         DoctorDTO doctorDTO = new DoctorDTO();
         doctorDTO.setId(doctor.getId());
+        doctorDTO.setName(doctor.getName());
+        doctorDTO.setSurname(doctor.getSurname());
         doctorDTO.setSpecialization(doctor.getSpecialization());
-
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(doctor.getUser().getId());
-        userDTO.setName(doctor.getUser().getName());
-        userDTO.setSurname(doctor.getUser().getSurname());
+        doctorDTO.setSpecialization(doctor.getSpecialization());
 
         HospitalDoctorCompDTO hospitalDTO = new HospitalDoctorCompDTO();
         hospitalDTO.setId(doctor.getHospital().getId());
         hospitalDTO.setName(doctor.getHospital().getName());
         hospitalDTO.setAddress(doctor.getHospital().getAddress());
-
-        doctorDTO.setUser(userDTO);
         doctorDTO.setHospital(hospitalDTO);
         return doctorDTO;
     }

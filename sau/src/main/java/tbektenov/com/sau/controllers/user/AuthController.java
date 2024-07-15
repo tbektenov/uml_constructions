@@ -9,10 +9,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import tbektenov.com.sau.dtos.user.LoginDTO;
 import tbektenov.com.sau.dtos.user.RegisterDTO;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
@@ -34,7 +32,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/auth/")
 public class AuthController {
     private UserRepo userRepo;
     private PatientRepo patientRepo;
@@ -114,6 +111,10 @@ public class AuthController {
             if (registerDTO.getBloodGroup() != null) patient.setBloodGroup(registerDTO.getBloodGroup());
             if (registerDTO.getRhFactor() != null) patient.setRhFactor(registerDTO.getRhFactor());
 
+            patient.setName(user.getName());
+            patient.setSurname(user.getSurname());
+            patient.setSsn(registerDTO.getSsn());
+
             userRoles.add(UserRole.PATIENT);
 
             patient.setUser(user);
@@ -129,6 +130,9 @@ public class AuthController {
             doctor.setSpecialization(registerDTO.getSpecialization());
             doctor.setHospital(hospital);
 
+            doctor.setName(user.getName());
+            doctor.setSurname(user.getSurname());
+
             userRoles.add(UserRole.DOCTOR);
 
             doctor.setUser(user);
@@ -139,6 +143,9 @@ public class AuthController {
             Nurse nurse = new Nurse();
 
             userRoles.add(UserRole.NURSE);
+
+            nurse.setName(user.getName());
+            nurse.setSurname(user.getSurname());
 
             nurse.setUser(user);
             user.setNurse(nurse);
