@@ -28,14 +28,6 @@ public class Nurse{
     @EqualsAndHashCode.Exclude
     private UserEntity user;
 
-    @NotBlank(message = "Name cannot be blank")
-    @Column(name = "name", nullable = false, updatable = false)
-    private String name;
-
-    @NotBlank(message = "Surname cannot be blank")
-    @Column(name = "surname", nullable = false, updatable = false)
-    private String surname;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "nurse_hospitalization",

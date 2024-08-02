@@ -1,6 +1,5 @@
 package tbektenov.com.sau.controllers.user;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,47 +8,34 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import tbektenov.com.sau.dtos.user.LoginDTO;
 import tbektenov.com.sau.dtos.user.RegisterDTO;
-import tbektenov.com.sau.exceptions.InvalidArgumentsException;
-import tbektenov.com.sau.exceptions.ObjectNotFoundException;
-import tbektenov.com.sau.models.hospital.Hospital;
-import tbektenov.com.sau.models.user.UserRole;
-import tbektenov.com.sau.models.user.userRoles.Doctor;
-import tbektenov.com.sau.models.user.userRoles.Nurse;
-import tbektenov.com.sau.models.user.userRoles.Patient;
 import tbektenov.com.sau.models.user.UserEntity;
-import tbektenov.com.sau.repositories.HospitalRepo;
-import tbektenov.com.sau.repositories.PatientRepo;
 import tbektenov.com.sau.repositories.UserRepo;
+import tbektenov.com.sau.services.IUserService;
+import tbektenov.com.sau.services.implementation.UserServiceImpl;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 public class AuthController {
     private UserRepo userRepo;
-    private PatientRepo patientRepo;
-    private HospitalRepo hospitalRepo;
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
+    private IUserService userService;
 
     @Autowired
     public AuthController(UserRepo userRepo,
-                          PatientRepo patientRepo,
-                          HospitalRepo hospitalRepo,
                           AuthenticationManager authenticationManager,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          IUserService userService) {
         this.userRepo = userRepo;
-        this.patientRepo = patientRepo;
-        this.hospitalRepo = hospitalRepo;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
     }
 
     /**
@@ -60,28 +46,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {
-        Optional<UserEntity> userOptional = userRepo.findByUsername(loginDTO.getUsername());
-
-        if (userOptional.isEmpty()) {
-            return new ResponseEntity<>("Username does not exist", HttpStatus.BAD_REQUEST);
-        }
-
-        UserEntity user = userOptional.get();
-
-        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            return new ResponseEntity<>("Invalid password", HttpStatus.BAD_REQUEST);
-        }
-
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return new ResponseEntity<>("User signed in.", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Authentication failed", HttpStatus.UNAUTHORIZED);
-        }
+        return userService.login(loginDTO);
     }
 
     /**
@@ -92,69 +57,7 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterDTO registerDTO) {
-        UserEntity user = new UserEntity();
-        Set<UserRole> userRoles = new HashSet<>();
-
-        user.setName(registerDTO.getName());
-        user.setSurname(registerDTO.getSurname());
-        user.setUsername(registerDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-        user.setEmail(registerDTO.getEmail());
-        user.setPhoneNumber(registerDTO.getPhoneNumber());
-        user.setBirthdate(registerDTO.getBirthdate());
-        user.setPesel(registerDTO.getPesel());
-        user.setSex(registerDTO.getSex());
-
-        if (registerDTO.getSsn() != null) {
-            Patient patient = new Patient();
-
-            if (registerDTO.getBloodGroup() != null) patient.setBloodGroup(registerDTO.getBloodGroup());
-            if (registerDTO.getRhFactor() != null) patient.setRhFactor(registerDTO.getRhFactor());
-
-            patient.setName(user.getName());
-            patient.setSurname(user.getSurname());
-            patient.setSsn(registerDTO.getSsn());
-
-            userRoles.add(UserRole.PATIENT);
-
-            patient.setUser(user);
-            user.setPatient(patient);
-        }
-
-        if (registerDTO.getSpecialization() != null && registerDTO.getHospitalId() != null) {
-            Hospital hospital = hospitalRepo.findById(registerDTO.getHospitalId()).orElseThrow(
-                    () -> new ObjectNotFoundException("No such hospital.")
-            );
-
-            Doctor doctor = new Doctor();
-            doctor.setSpecialization(registerDTO.getSpecialization());
-            doctor.setHospital(hospital);
-
-            doctor.setName(user.getName());
-            doctor.setSurname(user.getSurname());
-
-            userRoles.add(UserRole.DOCTOR);
-
-            doctor.setUser(user);
-            user.setDoctor(doctor);
-        }
-
-        if (registerDTO.getIsNurse() != null && registerDTO.getIsNurse()) {
-            Nurse nurse = new Nurse();
-
-            userRoles.add(UserRole.NURSE);
-
-            nurse.setName(user.getName());
-            nurse.setSurname(user.getSurname());
-
-            nurse.setUser(user);
-            user.setNurse(nurse);
-        }
-
-        user.setRoles(userRoles);
-
-        userRepo.save(user);
-
+        userService.registerUser(registerDTO);
         return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
     }
 }

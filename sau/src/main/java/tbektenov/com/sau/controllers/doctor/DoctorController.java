@@ -73,4 +73,13 @@ public class DoctorController {
     ) {
         return new ResponseEntity<>(doctorService.assignDoctorToAnotherHospital(doctor_id, hospital_id), HttpStatus.OK);
     }
+
+    @DeleteMapping("/doctor/{doctor_id}")
+    public ResponseEntity<String> deleteDoctor(
+            @PathVariable Long doctor_id
+    ) {
+        doctorService.deleteDoctor(doctor_id);
+        return new ResponseEntity<>(String.format("Doctor: %d was deleted", doctor_id), HttpStatus.OK);
+    }
+
 }

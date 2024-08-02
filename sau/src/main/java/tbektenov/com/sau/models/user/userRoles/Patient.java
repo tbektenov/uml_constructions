@@ -33,16 +33,8 @@ public class Patient{
     @EqualsAndHashCode.Exclude
     private UserEntity user;
 
-    @NotBlank(message = "Name cannot be blank")
-    @Column(name = "name", nullable = false, updatable = false)
-    private String name;
-
-    @NotBlank(message = "Surname cannot be blank")
-    @Column(name = "surname", nullable = false, updatable = false)
-    private String surname;
-
     @NotBlank(message = "SSN cannot be null or empty.")
-    @Pattern(regexp = "^\\d{9}$\n")
+    @Pattern(regexp = "^\\d{9}$")
     @Column(name = "ssn", nullable = false, updatable = false, unique = true)
     private String ssn;
 

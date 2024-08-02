@@ -1,5 +1,6 @@
 package tbektenov.com.sau.services.implementation;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -149,6 +150,7 @@ public class DoctorServiceImpl
      * @param id The unique identifier of the doctor to be deleted.
      */
     @Override
+    @Transactional
     public void deleteDoctor(Long id) {
         Doctor doctor = doctorRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(
@@ -253,8 +255,6 @@ public class DoctorServiceImpl
     private DoctorDTO mapToDto(Doctor doctor) {
         DoctorDTO doctorDTO = new DoctorDTO();
         doctorDTO.setId(doctor.getId());
-        doctorDTO.setName(doctor.getName());
-        doctorDTO.setSurname(doctor.getSurname());
         doctorDTO.setSpecialization(doctor.getSpecialization());
         doctorDTO.setSpecialization(doctor.getSpecialization());
 

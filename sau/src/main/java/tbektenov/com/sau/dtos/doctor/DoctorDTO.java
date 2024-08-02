@@ -14,8 +14,6 @@ import tbektenov.com.sau.models.user.userRoles.Specialization;
 @Data
 public class DoctorDTO {
     private Long id;
-    private String name;
-    private String surname;
     private Specialization specialization;
     private HospitalDoctorCompDTO hospital;
 }

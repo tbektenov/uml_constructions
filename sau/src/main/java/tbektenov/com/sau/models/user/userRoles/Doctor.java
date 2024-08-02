@@ -43,14 +43,6 @@ public class Doctor{
     @EqualsAndHashCode.Exclude
     private UserEntity user;
 
-    @NotBlank(message = "Name cannot be blank")
-    @Column(name = "name", nullable = false, updatable = false)
-    private String name;
-
-    @NotBlank(message = "Surname cannot be blank")
-    @Column(name = "surname", nullable = false, updatable = false)
-    private String surname;
-
     @NotNull(message = "Doctor must have specialization.")
     @Column(name = "specialization")
     @Enumerated(EnumType.STRING)
@@ -68,7 +60,7 @@ public class Doctor{
     @EqualsAndHashCode.Exclude
     private Laboratory laboratory;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Set<Appointment> appointments = new HashSet<>();
