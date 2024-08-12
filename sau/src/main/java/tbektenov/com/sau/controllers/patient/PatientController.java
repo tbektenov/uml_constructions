@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tbektenov.com.sau.dtos.patient.CreatePatientDTO;
 import tbektenov.com.sau.dtos.patient.PatientDTO;
+import tbektenov.com.sau.dtos.staying_patient.ChangeToStayingPatientDTO;
 import tbektenov.com.sau.services.IPatientService;
 
 import java.util.List;
@@ -53,14 +54,13 @@ public class PatientController {
      * Endpoint to change a patient to StayingPatient.
      *
      * @param patientId The ID of the patient to change.
-     * @param wardNum   The ward number where the patient will stay.
      * @return A response message indicating the result of the operation.
      */
     @PostMapping("changeToStayingPatient/{patientId}")
     public ResponseEntity<String> changeToStayingPatient(
-            @PathVariable Long patientId,
-            @RequestParam String wardNum) {
-        String result = patientService.changeToStayingPatient(patientId, wardNum);
+            @PathVariable("patientId") Long patientId,
+            @RequestBody ChangeToStayingPatientDTO changeToStayingPatientDTO) {
+        String result = patientService.changeToStayingPatient(patientId, changeToStayingPatientDTO);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -73,8 +73,8 @@ public class PatientController {
      */
     @PostMapping("changeToLeftPatient/{patientId}")
     public ResponseEntity<String> changeToLeftPatient(
-            @PathVariable Long patientId,
-            @RequestParam String conclusion) {
+            @PathVariable("patientId") Long patientId,
+            @RequestBody String conclusion) {
         String result = patientService.changeToLeftPatient(patientId, conclusion);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

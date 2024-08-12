@@ -1,5 +1,7 @@
 package tbektenov.com.sau.services.implementation;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.hospitalWard.CreateUpdateHospitalWardDTO;
@@ -26,11 +28,15 @@ public class HospitalWardServiceImpl
 
     private HospitalWardRepo hospitalWardRepo;
     private HospitalRepo hospitalRepo;
+    private EntityManager entityManager;
 
     @Autowired
-    public HospitalWardServiceImpl(HospitalWardRepo hospitalWardRepo, HospitalRepo hospitalRepo) {
+    public HospitalWardServiceImpl(HospitalWardRepo hospitalWardRepo,
+                                   HospitalRepo hospitalRepo,
+                                   EntityManager entityManager) {
         this.hospitalWardRepo = hospitalWardRepo;
         this.hospitalRepo = hospitalRepo;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -42,21 +48,38 @@ public class HospitalWardServiceImpl
      */
     @Override
     public HospitalWardDTO createHospitalWard(Long hospitalId, CreateUpdateHospitalWardDTO createUpdateHospitalWardDTO) {
-        HospitalWard hospitalWard = mapToEntity(createUpdateHospitalWardDTO);
-
         if (createUpdateHospitalWardDTO.getCapacity() < 1) {
             throw new InvalidArgumentsException("Capacity cannot be less than 1.");
         }
 
-        Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(
-                () -> new ObjectNotFoundException("Hospital was not found.")
-        );
+        try {
+            Long count = (Long) entityManager.createNativeQuery(
+                        "select count(*) " +
+                            "from hospital_ward hw " +
+                            "where hw.hospital_id = :hospitalId and hw.ward_num = :wardNum"
+                    )
+                    .setParameter("hospitalId", hospitalId)
+                    .setParameter("wardNum", createUpdateHospitalWardDTO.getWardNum())
+                    .getSingleResult();
 
-        hospitalWard.setHospital(hospital);
+            if (count > 0) {
+                throw new InvalidArgumentsException("Hospital already has a ward with ward number: " + createUpdateHospitalWardDTO.getWardNum());
+            }
 
-        HospitalWard newHospitalWard = hospitalWardRepo.save(hospitalWard);
+            Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(
+                    () -> new ObjectNotFoundException("Hospital was not found.")
+            );
 
-        return mapToDto(newHospitalWard);
+            HospitalWard hospitalWard = mapToEntity(createUpdateHospitalWardDTO);
+            hospitalWard.setHospital(hospital);
+
+            return mapToDto(hospitalWardRepo.save(hospitalWard));
+
+        } catch (NoResultException e) {
+            throw new ObjectNotFoundException("Hospital or Ward number was not found.");
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while creating the hospital ward.", e);
+        }
     }
 
     /**

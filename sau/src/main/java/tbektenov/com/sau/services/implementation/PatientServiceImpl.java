@@ -10,6 +10,7 @@ import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
 import tbektenov.com.sau.dtos.patient.CreatePatientDTO;
 import tbektenov.com.sau.dtos.patient.PatientDTO;
 import tbektenov.com.sau.dtos.patient.UpdatePatientDTO;
+import tbektenov.com.sau.dtos.staying_patient.ChangeToStayingPatientDTO;
 import tbektenov.com.sau.dtos.user.UserDTO;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
@@ -160,28 +161,30 @@ public class PatientServiceImpl
 
     @Override
     @Transactional
-    public String changeToStayingPatient(Long patientId, String wardNum) {
+    public String changeToStayingPatient(Long patientId, ChangeToStayingPatientDTO changeToStayingPatientDTO) {
         try {
             Object[] result = (Object[]) entityManager.createNativeQuery(
-                        "select p.patient_id, hw.hospital_ward_id" +
-                            "from Patient p, Hospital_ward hw" +
-                            "where p.patient_id = :patientId and hw.wardNum = :wardNum"
+                            "select p.patient_id, hw.hospital_ward_id " +
+                                    "from Patient p, Hospital_ward hw " +
+                                    "where p.patient_id = :patientId " +
+                                    "and hw.ward_num = :wardNum " +
+                                    "and hw.hospital_id = :hospitalId"
                     )
-                    .setParameter("patient_id", patientId)
-                    .setParameter("wardNum", wardNum)
+                    .setParameter("patientId", patientId)
+                    .setParameter("wardNum", changeToStayingPatientDTO.getWardNum())
+                    .setParameter("hospitalId", changeToStayingPatientDTO.getHospitalId())
                     .getSingleResult();
 
             leftPatientRepo.deleteById(patientId);
 
             StayingPatient stayingPatient = new StayingPatient();
-            stayingPatient.setId(patientId);
             stayingPatient.setPatient(entityManager.getReference(Patient.class, patientId));
 
             stayingPatientRepo.save(stayingPatient);
 
             return "Patient is now staying";
         } catch (NoResultException e) {
-            throw new ObjectNotFoundException("No patient or ward was found.");
+            throw new ObjectNotFoundException("No patient, ward, or hospital was found.");
         }
     }
 
@@ -198,9 +201,9 @@ public class PatientServiceImpl
         stayingPatientRepo.deleteById(patientId);
 
         LeftPatient leftPatient = new LeftPatient();
-        leftPatient.setId(patient.getId());
         leftPatient.setPatient(patient);
         leftPatient.setDateOfLeave(LocalDate.now());
+        leftPatient.setConclusion(conclusion);
 
         leftPatientRepo.save(leftPatient);
 

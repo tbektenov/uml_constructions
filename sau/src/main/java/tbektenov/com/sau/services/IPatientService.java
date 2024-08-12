@@ -4,6 +4,7 @@ import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
 import tbektenov.com.sau.dtos.patient.CreatePatientDTO;
 import tbektenov.com.sau.dtos.patient.PatientDTO;
 import tbektenov.com.sau.dtos.patient.UpdatePatientDTO;
+import tbektenov.com.sau.dtos.staying_patient.ChangeToStayingPatientDTO;
 
 import java.util.List;
 
@@ -71,6 +72,6 @@ public interface IPatientService {
      */
     PatientDTO cancelAppointment(Long id);
 
-    String changeToStayingPatient(Long id, String wardNum);
+    String changeToStayingPatient(Long id, ChangeToStayingPatientDTO changeToStayingPatientDTO);
     String changeToLeftPatient(Long id, String conclusion);
 }

@@ -20,7 +20,7 @@ public class HospitalWard {
     private Long id;
 
     @NotBlank(message = "Ward number cannot be null or empty")
-    @Column(name = "wardNum", nullable = false)
+    @Column(name = "ward_num", nullable = false)
     private String wardNum;
 
     @NotNull

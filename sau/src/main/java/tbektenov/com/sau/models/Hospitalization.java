@@ -50,7 +50,6 @@ public class Hospitalization {
             joinColumns = @JoinColumn(name = "hospitalization_id"),
             inverseJoinColumns = @JoinColumn(name = "nurse_id")
     )
-    @NotEmpty
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Nurse> nurses = new HashSet<>();
