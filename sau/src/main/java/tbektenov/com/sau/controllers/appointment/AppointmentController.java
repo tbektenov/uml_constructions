@@ -56,5 +56,14 @@ public class AppointmentController {
         ));
     }
 
+    @GetMapping("patient/getUpcoming/{patientId}")
+    public ResponseEntity<List<AppointmentDTO>> getUpcomingUserAppointmentsByPatientId(
+        @PathVariable Long patientId
+    ) {
+        return ResponseEntity.ok(appointmentService.getUpcomingAppointmentsByPatientId(
+                patientId
+        ));
+    }
+
 
 }

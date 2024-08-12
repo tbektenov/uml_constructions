@@ -247,7 +247,7 @@ public class HospitalServiceImpl
                     privatePharmacyDTO.setPharmaCompany(pharmacy.getPharmaCompany());
                     privatePharmacyDTO.setCompoundPharmacy(pharmacy.isCompoundPharmacy());
                     return privatePharmacyDTO;
-                }).collect(Collectors.toList()));
+                }).collect(Collectors.toSet()));
 
         return hospitalDTO;
     }

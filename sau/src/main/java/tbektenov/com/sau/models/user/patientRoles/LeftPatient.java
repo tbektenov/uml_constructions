@@ -2,14 +2,12 @@ package tbektenov.com.sau.models.user.patientRoles;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 import org.springframework.format.annotation.DateTimeFormat;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
@@ -36,5 +34,6 @@ public class LeftPatient {
     private LocalDate dateOfLeave = LocalDate.now();
 
     @NotBlank(message = "Conclusion should contain something.")
+    @Column(name = "conclusion", nullable = false, updatable = false)
     private String conclusion;
 }

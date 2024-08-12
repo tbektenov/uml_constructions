@@ -1,5 +1,8 @@
 package tbektenov.com.sau.services.implementation;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class AppointmentServiceImpl
     implements IAppointmentService {
+    private EntityManager entityManager;
     private DoctorRepo doctorRepo;
     private PatientRepo patientRepo;
     private AppointmentRepo appointmentRepo;
@@ -37,10 +41,14 @@ public class AppointmentServiceImpl
      * @param appointmentRepo Repository for Appointment entities.
      */
     @Autowired
-    public AppointmentServiceImpl(DoctorRepo doctorRepo, PatientRepo patientRepo, AppointmentRepo appointmentRepo) {
+    public AppointmentServiceImpl(DoctorRepo doctorRepo,
+                                  PatientRepo patientRepo,
+                                  AppointmentRepo appointmentRepo,
+                                  EntityManager entityManager) {
         this.doctorRepo = doctorRepo;
         this.patientRepo = patientRepo;
         this.appointmentRepo = appointmentRepo;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -50,11 +58,30 @@ public class AppointmentServiceImpl
      * @return The created AppointmentDTO with the appointment's details.
      */
     @Override
+    @Transactional
     public AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO) {
-        Appointment appointment = mapToEntity(createAppointmentDTO);
+        try {
+            Object[] result = (Object[]) entityManager.createNativeQuery(
+                            "select p.patient_id, d.doctor_id " +
+                                    "from Patient p, Doctor d " +
+                                    "WHERE p.patient_id = :patientId AND d.doctor_id = :doctorId"
+                    )
+                    .setParameter("patientId", createAppointmentDTO.getPatient_id())
+                    .setParameter("doctorId", createAppointmentDTO.getDoctor_id())
+                    .getSingleResult();
 
-        Appointment newAppointment = appointmentRepo.save(appointment);
-        return mapToDto(newAppointment);
+            Appointment appointment = new Appointment();
+            appointment.setDate(createAppointmentDTO.getDate());
+            appointment.setAppointmentStatus(createAppointmentDTO.getAppointmentStatus());
+            appointment.setPatient(entityManager.getReference(Patient.class, createAppointmentDTO.getPatient_id()));
+            appointment.setDoctor(entityManager.getReference(Doctor.class, createAppointmentDTO.getDoctor_id()));
+
+            Appointment newAppointment = appointmentRepo.save(appointment);
+
+            return mapToDto(newAppointment);
+        } catch (NoResultException e) {
+            throw new ObjectNotFoundException("Patient or Doctor not found");
+        }
     }
 
     /**
@@ -102,12 +129,6 @@ public class AppointmentServiceImpl
      */
     private Appointment mapToEntity(CreateAppointmentDTO createAppointmentDTO) {
         Appointment appointment = new Appointment();
-        Patient patient = patientRepo.findById(createAppointmentDTO.getPatient_id()).orElseThrow(() -> new ObjectNotFoundException("No such patient."));
-        appointment.setPatient(patient);
-
-        Doctor doctor = doctorRepo.findById(createAppointmentDTO.getDoctor_id()).orElseThrow(() -> new ObjectNotFoundException("No such doctor."));
-        appointment.setDoctor(doctor);
-
         appointment.setDate(createAppointmentDTO.getDate());
         appointment.setAppointmentStatus(createAppointmentDTO.getAppointmentStatus());
         return appointment;

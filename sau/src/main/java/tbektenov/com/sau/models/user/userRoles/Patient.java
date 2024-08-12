@@ -12,15 +12,26 @@ import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 import tbektenov.com.sau.models.user.patientRoles.validator.OnePatientCheck;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
+@Table(name = "PATIENT")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Inheritance(strategy = InheritanceType.JOINED)
 @OnePatientCheck
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "Patient.details",
+                attributeNodes = {
+                        @NamedAttributeNode("appointments"),
+                        @NamedAttributeNode("leftPatient"),
+                        @NamedAttributeNode("stayingPatient")
+                })
+)
 public class Patient{
     @Id
     private Long id;
@@ -49,7 +60,7 @@ public class Patient{
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    List<Appointment> appointments = new ArrayList<>();
+    Set<Appointment> appointments = new HashSet<>();
 
     @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @LazyToOne(LazyToOneOption.NO_PROXY)
@@ -62,4 +73,8 @@ public class Patient{
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private LeftPatient leftPatient;
+
+    public void addAppointment(Appointment appointment) {
+        this.appointments.add(appointment);
+    }
 }

@@ -1,11 +1,9 @@
 package tbektenov.com.sau.dtos.hospital;
 
 import lombok.Data;
-import lombok.NonNull;
 import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyDTO;
-import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Data Transfer Object for representing a hospital.
@@ -37,5 +35,5 @@ public class HospitalDTO {
     private Long id;
     private String name;
     private String address;
-    private List<PrivatePharmacyDTO> partnerPharmacies;
+    private Set<PrivatePharmacyDTO> partnerPharmacies;
 }

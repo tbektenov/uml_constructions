@@ -69,5 +69,8 @@ public interface IPatientService {
      * @param id The unique identifier of the appointment to be deleted.
      * @return The updated PatientDTO after the appointment is deleted.
      */
-    PatientDTO deleteAppointment(Long id);
+    PatientDTO cancelAppointment(Long id);
+
+    String changeToStayingPatient(Long id, String wardNum);
+    String changeToLeftPatient(Long id, String conclusion);
 }

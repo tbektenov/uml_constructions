@@ -31,6 +31,11 @@ public class PatientController {
         return new ResponseEntity<>(patientService.getAllPatients(), HttpStatus.OK);
     }
 
+    @GetMapping("{patientId}")
+    public ResponseEntity<PatientDTO> getPatient(@PathVariable Long patientId) {
+        return new ResponseEntity<>(patientService.getPatientById(patientId), HttpStatus.OK);
+    }
+
     /**
      * Assigns a patient role to a user and creates a new patient record.
      *
@@ -42,5 +47,35 @@ public class PatientController {
             @RequestBody CreatePatientDTO createPatientDTO
     ) {
         return new ResponseEntity<>(patientService.createPatient(createPatientDTO), HttpStatus.CREATED);
+    }
+
+    /**
+     * Endpoint to change a patient to StayingPatient.
+     *
+     * @param patientId The ID of the patient to change.
+     * @param wardNum   The ward number where the patient will stay.
+     * @return A response message indicating the result of the operation.
+     */
+    @PostMapping("changeToStayingPatient/{patientId}")
+    public ResponseEntity<String> changeToStayingPatient(
+            @PathVariable Long patientId,
+            @RequestParam String wardNum) {
+        String result = patientService.changeToStayingPatient(patientId, wardNum);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * Endpoint to change a patient to LeftPatient.
+     *
+     * @param patientId  The ID of the patient to change.
+     * @param conclusion The conclusion or reason for leaving.
+     * @return A response message indicating the result of the operation.
+     */
+    @PostMapping("changeToLeftPatient/{patientId}")
+    public ResponseEntity<String> changeToLeftPatient(
+            @PathVariable Long patientId,
+            @RequestParam String conclusion) {
+        String result = patientService.changeToLeftPatient(patientId, conclusion);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

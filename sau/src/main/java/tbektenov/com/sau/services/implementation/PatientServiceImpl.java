@@ -1,7 +1,11 @@
 package tbektenov.com.sau.services.implementation;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
 import tbektenov.com.sau.dtos.patient.CreatePatientDTO;
 import tbektenov.com.sau.dtos.patient.PatientDTO;
@@ -9,12 +13,17 @@ import tbektenov.com.sau.dtos.patient.UpdatePatientDTO;
 import tbektenov.com.sau.dtos.user.UserDTO;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
+import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
+import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 import tbektenov.com.sau.models.user.UserEntity;
+import tbektenov.com.sau.repositories.LeftPatientRepo;
 import tbektenov.com.sau.repositories.PatientRepo;
+import tbektenov.com.sau.repositories.StayingPatientRepo;
 import tbektenov.com.sau.repositories.UserRepo;
 import tbektenov.com.sau.services.IPatientService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,15 +32,24 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PatientServiceImpl
-    implements IPatientService
-{
+        implements IPatientService {
     private PatientRepo patientRepo;
     private UserRepo userRepo;
+    private LeftPatientRepo leftPatientRepo;
+    private StayingPatientRepo stayingPatientRepo;
+    private EntityManager entityManager;
 
     @Autowired
-    public PatientServiceImpl(PatientRepo patientRepo, UserRepo userRepo) {
+    public PatientServiceImpl(PatientRepo patientRepo,
+                              UserRepo userRepo,
+                              LeftPatientRepo leftPatientRepo,
+                              StayingPatientRepo stayingPatientRepo,
+                              EntityManager entityManager) {
         this.patientRepo = patientRepo;
         this.userRepo = userRepo;
+        this.leftPatientRepo = leftPatientRepo;
+        this.stayingPatientRepo = stayingPatientRepo;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -54,7 +72,8 @@ public class PatientServiceImpl
      */
     @Override
     public PatientDTO createPatient(CreatePatientDTO createPatientDTO) {
-        UserEntity user = userRepo.findById(createPatientDTO.getUserId()).orElseThrow(() -> new ObjectNotFoundException("No user found."));
+        UserEntity user = userRepo.findById(createPatientDTO.getUserId())
+                .orElseThrow(() -> new ObjectNotFoundException("No user found."));
 
         Patient patient = new Patient();
         patient.setRhFactor(createPatientDTO.getRhFactor());
@@ -135,8 +154,57 @@ public class PatientServiceImpl
     }
 
     @Override
-    public PatientDTO deleteAppointment(Long id) {
+    public PatientDTO cancelAppointment(Long id) {
         return null;
+    }
+
+    @Override
+    @Transactional
+    public String changeToStayingPatient(Long patientId, String wardNum) {
+        try {
+            Object[] result = (Object[]) entityManager.createNativeQuery(
+                        "select p.patient_id, hw.hospital_ward_id" +
+                            "from Patient p, Hospital_ward hw" +
+                            "where p.patient_id = :patientId and hw.wardNum = :wardNum"
+                    )
+                    .setParameter("patient_id", patientId)
+                    .setParameter("wardNum", wardNum)
+                    .getSingleResult();
+
+            leftPatientRepo.deleteById(patientId);
+
+            StayingPatient stayingPatient = new StayingPatient();
+            stayingPatient.setId(patientId);
+            stayingPatient.setPatient(entityManager.getReference(Patient.class, patientId));
+
+            stayingPatientRepo.save(stayingPatient);
+
+            return "Patient is now staying";
+        } catch (NoResultException e) {
+            throw new ObjectNotFoundException("No patient or ward was found.");
+        }
+    }
+
+    @Override
+    @Transactional
+    public String changeToLeftPatient(Long patientId, String conclusion) {
+        if (conclusion == null || conclusion.isEmpty()) {
+            throw new ObjectNotFoundException("Conclusion cannot be null or empty.");
+        }
+
+        Patient patient = patientRepo.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        stayingPatientRepo.deleteById(patientId);
+
+        LeftPatient leftPatient = new LeftPatient();
+        leftPatient.setId(patient.getId());
+        leftPatient.setPatient(patient);
+        leftPatient.setDateOfLeave(LocalDate.now());
+
+        leftPatientRepo.save(leftPatient);
+
+        return "Patient has left";
     }
 
     /**
@@ -150,6 +218,16 @@ public class PatientServiceImpl
         patientDTO.setId(patient.getId());
         patientDTO.setRhFactor(patient.getRhFactor());
         patientDTO.setBloodGroup(patient.getBloodGroup());
+        patientDTO.setAppointments(patient.getAppointments().stream()
+                .map(appointment -> {
+                    AppointmentDTO appointmentDTO = new AppointmentDTO();
+                    appointmentDTO.setId(appointment.getId());
+                    appointmentDTO.setPatient_id(appointment.getPatient().getId());
+                    appointmentDTO.setDoctor_id(appointment.getDoctor().getId());
+                    appointmentDTO.setDate(appointment.getDate());
+                    appointmentDTO.setAppointmentStatus(appointment.getAppointmentStatus());
+                    return appointmentDTO;
+                }).collect(Collectors.toSet()));
 
         UserDTO userDTO = new UserDTO();
 

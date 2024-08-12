@@ -10,6 +10,7 @@ public class OnePatientValidator implements ConstraintValidator<OnePatientCheck,
     public void initialize(OnePatientCheck constraintAnnotation) {
     }
 
+    // TODO: review validator logic
     @Override
     public boolean isValid(Patient patient, ConstraintValidatorContext context) {
         if (patient == null) {

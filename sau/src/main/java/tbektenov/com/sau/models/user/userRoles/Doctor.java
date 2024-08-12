@@ -17,6 +17,9 @@ import java.util.Set;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @NamedEntityGraphs({
         @NamedEntityGraph(
                 name = "Doctor.hospitalAndLaboratory",
@@ -27,9 +30,6 @@ import java.util.Set;
                 }
         )
 })
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Doctor{
 
     @Id
@@ -69,4 +69,8 @@ public class Doctor{
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<OrderEntity> orders = new HashSet<>();
+
+    public void addAppointment(Appointment appointment) {
+        this.appointments.add(appointment);
+    }
 }

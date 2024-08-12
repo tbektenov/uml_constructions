@@ -25,6 +25,15 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "User.roles",
+                attributeNodes = {
+                        @NamedAttributeNode("doctor"),
+                        @NamedAttributeNode("patient"),
+                        @NamedAttributeNode("nurse")
+                })
+)
 public class UserEntity {
 
     @Id

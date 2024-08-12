@@ -2,8 +2,6 @@ package tbektenov.com.sau.models.user.patientRoles;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.TreatmentTracker;
 import tbektenov.com.sau.models.user.userRoles.Patient;

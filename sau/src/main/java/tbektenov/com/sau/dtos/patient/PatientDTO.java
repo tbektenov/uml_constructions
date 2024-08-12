@@ -1,9 +1,12 @@
 package tbektenov.com.sau.dtos.patient;
 
 import lombok.Data;
+import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.user.UserDTO;
 import tbektenov.com.sau.models.user.userRoles.BloodGroup;
 import tbektenov.com.sau.models.user.userRoles.RhFactor;
+
+import java.util.Set;
 
 /**
  * Data Transfer Object (DTO) for Patient.
@@ -17,4 +20,5 @@ public class PatientDTO {
     private RhFactor rhFactor;
     private BloodGroup bloodGroup;
     private UserDTO user;
+    private Set<AppointmentDTO> appointments;
 }
