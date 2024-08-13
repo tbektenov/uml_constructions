@@ -1,5 +1,6 @@
 package tbektenov.com.sau.repositories;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 
@@ -35,5 +36,6 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
      * @param hospitalId the ID of the hospital
      * @return a list of doctors associated with the specified hospital
      */
+    @EntityGraph(value = "Doctor.detailsHospitalAndLaboratory", type = EntityGraph.EntityGraphType.LOAD)
     List<Doctor> findByHospitalId(Long hospitalId);
 }

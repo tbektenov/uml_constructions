@@ -248,6 +248,15 @@ public class HospitalServiceImpl
                     privatePharmacyDTO.setCompoundPharmacy(pharmacy.isCompoundPharmacy());
                     return privatePharmacyDTO;
                 }).collect(Collectors.toSet()));
+        hospitalDTO.setDoctors(hospital.getDoctors().stream()
+                .map(doctor -> {
+                    DoctorDTO doctorDTO = new DoctorDTO();
+                    doctorDTO.setId(doctor.getId());
+                    doctorDTO.setName(doctor.getUser().getName());
+                    doctorDTO.setSurname(doctor.getUser().getSurname());
+                    doctorDTO.setSpecialization(doctor.getSpecialization());
+                    return doctorDTO;
+                }).collect(Collectors.toSet()));
 
         return hospitalDTO;
     }

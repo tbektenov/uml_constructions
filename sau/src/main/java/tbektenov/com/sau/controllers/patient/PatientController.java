@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tbektenov.com.sau.dtos.left_patient.ChangeToLeftPatientDTO;
 import tbektenov.com.sau.dtos.patient.CreatePatientDTO;
 import tbektenov.com.sau.dtos.patient.PatientDTO;
 import tbektenov.com.sau.dtos.staying_patient.ChangeToStayingPatientDTO;
@@ -68,14 +69,13 @@ public class PatientController {
      * Endpoint to change a patient to LeftPatient.
      *
      * @param patientId  The ID of the patient to change.
-     * @param conclusion The conclusion or reason for leaving.
      * @return A response message indicating the result of the operation.
      */
     @PostMapping("changeToLeftPatient/{patientId}")
     public ResponseEntity<String> changeToLeftPatient(
             @PathVariable("patientId") Long patientId,
-            @RequestBody String conclusion) {
-        String result = patientService.changeToLeftPatient(patientId, conclusion);
+            @RequestBody ChangeToLeftPatientDTO changeToLeftPatientDTO) {
+        String result = patientService.changeToLeftPatient(patientId, changeToLeftPatientDTO);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

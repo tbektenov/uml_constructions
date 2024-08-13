@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
+import tbektenov.com.sau.dtos.left_patient.ChangeToLeftPatientDTO;
 import tbektenov.com.sau.dtos.patient.CreatePatientDTO;
 import tbektenov.com.sau.dtos.patient.PatientDTO;
 import tbektenov.com.sau.dtos.patient.UpdatePatientDTO;
@@ -163,6 +164,13 @@ public class PatientServiceImpl
     @Transactional
     public String changeToStayingPatient(Long patientId, ChangeToStayingPatientDTO changeToStayingPatientDTO) {
         try {
+            Patient patient = patientRepo.findById(patientId)
+                    .orElseThrow(() -> new ObjectNotFoundException("Patient not found."));
+
+            if (patient.getLeftPatient() != null) {
+                patient.setLeftPatient(null);
+            }
+
             Object[] result = (Object[]) entityManager.createNativeQuery(
                             "select p.patient_id, hw.hospital_ward_id " +
                                     "from Patient p, Hospital_ward hw " +
@@ -175,10 +183,10 @@ public class PatientServiceImpl
                     .setParameter("hospitalId", changeToStayingPatientDTO.getHospitalId())
                     .getSingleResult();
 
-            leftPatientRepo.deleteById(patientId);
-
             StayingPatient stayingPatient = new StayingPatient();
-            stayingPatient.setPatient(entityManager.getReference(Patient.class, patientId));
+            stayingPatient.setPatient(patient);
+
+            patient.setStayingPatient(stayingPatient);
 
             stayingPatientRepo.save(stayingPatient);
 
@@ -190,25 +198,29 @@ public class PatientServiceImpl
 
     @Override
     @Transactional
-    public String changeToLeftPatient(Long patientId, String conclusion) {
-        if (conclusion == null || conclusion.isEmpty()) {
+    public String changeToLeftPatient(Long patientId, ChangeToLeftPatientDTO changeToLeftPatientDTO) {
+        if (changeToLeftPatientDTO.getConclusion() == null || changeToLeftPatientDTO.getConclusion().isEmpty()) {
             throw new ObjectNotFoundException("Conclusion cannot be null or empty.");
         }
-
         Patient patient = patientRepo.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
-        stayingPatientRepo.deleteById(patientId);
+        if (patient.getStayingPatient() != null) {
+            patient.setStayingPatient(null);
+        }
 
         LeftPatient leftPatient = new LeftPatient();
         leftPatient.setPatient(patient);
         leftPatient.setDateOfLeave(LocalDate.now());
-        leftPatient.setConclusion(conclusion);
+        leftPatient.setConclusion(changeToLeftPatientDTO.getConclusion());
+
+        patient.setLeftPatient(leftPatient);
 
         leftPatientRepo.save(leftPatient);
 
         return "Patient has left";
     }
+
 
     /**
      * Converts a Patient entity to a PatientDTO.

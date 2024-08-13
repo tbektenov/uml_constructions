@@ -39,6 +39,38 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "Hospital.withPharmaciesAndDoctors",
+                attributeNodes = {
+                        @NamedAttributeNode("partnerPharmacies"),
+                        @NamedAttributeNode(value = "doctors", subgraph = "doctor.subgraph")
+                },
+                subgraphs = {
+                        @NamedSubgraph(
+                                name = "doctor.subgraph",
+                                attributeNodes = {
+                                        @NamedAttributeNode(value = "user", subgraph = "user.subgraph")
+                                }
+                        ),
+                        @NamedSubgraph(
+                                name = "user.subgraph",
+                                attributeNodes = {
+                                        @NamedAttributeNode("doctor"),
+                                        @NamedAttributeNode(value = "patient", subgraph = "patient.subgraph"),
+                                        @NamedAttributeNode("nurse")
+                                }
+                        ),
+                        @NamedSubgraph(
+                                name = "patient.subgraph",
+                                attributeNodes = {
+                                        @NamedAttributeNode("stayingPatient"),
+                                        @NamedAttributeNode("leftPatient")
+                                }
+                        )
+                }
+        )
+)
 public class Hospital {
 
     @Id

@@ -1,7 +1,12 @@
 package tbektenov.com.sau.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import tbektenov.com.sau.models.hospital.Hospital;
+
+import java.util.List;
 
 /**
  * Repository interface for {@link Hospital} entities.
@@ -15,4 +20,7 @@ import tbektenov.com.sau.models.hospital.Hospital;
  */
 public interface HospitalRepo
         extends JpaRepository<Hospital, Long> {
+
+    @EntityGraph(value = "Hospital.withPharmaciesAndDoctors", type = EntityGraph.EntityGraphType.FETCH)
+    Page<Hospital> findAll(Pageable pageable);
 }

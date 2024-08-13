@@ -1,6 +1,7 @@
 package tbektenov.com.sau.dtos.hospital;
 
 import lombok.Data;
+import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyDTO;
 
 import java.util.Set;
@@ -36,4 +37,5 @@ public class HospitalDTO {
     private String name;
     private String address;
     private Set<PrivatePharmacyDTO> partnerPharmacies;
+    private Set<DoctorDTO> doctors;
 }

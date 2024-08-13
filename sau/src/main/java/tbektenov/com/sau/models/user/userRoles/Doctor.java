@@ -1,7 +1,7 @@
 package tbektenov.com.sau.models.user.userRoles;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
@@ -11,7 +11,6 @@ import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.Laboratory;
 import tbektenov.com.sau.models.user.UserEntity;
 
-import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,11 +21,28 @@ import java.util.Set;
 @Builder
 @NamedEntityGraphs({
         @NamedEntityGraph(
-                name = "Doctor.hospitalAndLaboratory",
+                name = "Doctor.detailsHospitalAndLaboratory",
                 attributeNodes = {
                         @NamedAttributeNode("hospital"),
                         @NamedAttributeNode("laboratory"),
-                        @NamedAttributeNode("user")
+                        @NamedAttributeNode(value = "user", subgraph = "user.subgraph")
+                },
+                subgraphs = {
+                        @NamedSubgraph(
+                                name = "user.subgraph",
+                                attributeNodes = {
+                                        @NamedAttributeNode("doctor"),
+                                        @NamedAttributeNode(value = "patient", subgraph = "patient.subgraph"),
+                                        @NamedAttributeNode("nurse")
+                                }
+                        ),
+                        @NamedSubgraph(
+                                name = "patient.subgraph",
+                                attributeNodes = {
+                                        @NamedAttributeNode("stayingPatient"),
+                                        @NamedAttributeNode("leftPatient")
+                                }
+                        )
                 }
         )
 })

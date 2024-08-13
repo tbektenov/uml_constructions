@@ -1,6 +1,7 @@
 package tbektenov.com.sau.services;
 
 import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
+import tbektenov.com.sau.dtos.left_patient.ChangeToLeftPatientDTO;
 import tbektenov.com.sau.dtos.patient.CreatePatientDTO;
 import tbektenov.com.sau.dtos.patient.PatientDTO;
 import tbektenov.com.sau.dtos.patient.UpdatePatientDTO;
@@ -73,5 +74,5 @@ public interface IPatientService {
     PatientDTO cancelAppointment(Long id);
 
     String changeToStayingPatient(Long id, ChangeToStayingPatientDTO changeToStayingPatientDTO);
-    String changeToLeftPatient(Long id, String conclusion);
+    String changeToLeftPatient(Long id, ChangeToLeftPatientDTO changeToLeftPatientDTO);
 }
