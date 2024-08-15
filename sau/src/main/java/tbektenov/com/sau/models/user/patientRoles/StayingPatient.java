@@ -23,7 +23,7 @@ public class StayingPatient {
     @EqualsAndHashCode.Exclude
     private Patient patient;
 
-    @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Hospitalization hospitalization;

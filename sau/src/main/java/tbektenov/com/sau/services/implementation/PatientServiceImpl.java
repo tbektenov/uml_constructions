@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
@@ -15,10 +16,13 @@ import tbektenov.com.sau.dtos.staying_patient.ChangeToStayingPatientDTO;
 import tbektenov.com.sau.dtos.user.UserDTO;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
+import tbektenov.com.sau.models.Hospitalization;
+import tbektenov.com.sau.models.TreatmentTracker;
+import tbektenov.com.sau.models.hospital.HospitalWard;
+import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 import tbektenov.com.sau.models.user.userRoles.Patient;
-import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.repositories.LeftPatientRepo;
 import tbektenov.com.sau.repositories.PatientRepo;
 import tbektenov.com.sau.repositories.StayingPatientRepo;
@@ -168,23 +172,35 @@ public class PatientServiceImpl
                     .orElseThrow(() -> new ObjectNotFoundException("Patient not found."));
 
             if (patient.getLeftPatient() != null) {
+                leftPatientRepo.delete(patient.getLeftPatient());
                 patient.setLeftPatient(null);
             }
 
-            Object[] result = (Object[]) entityManager.createNativeQuery(
-                            "select p.patient_id, hw.hospital_ward_id " +
-                                    "from Patient p, Hospital_ward hw " +
-                                    "where p.patient_id = :patientId " +
-                                    "and hw.ward_num = :wardNum " +
+            Long hospitalWardId = (Long) entityManager.createNativeQuery(
+                            "select hw.hospital_ward_id " +
+                                    "from Hospital_ward hw " +
+                                    "where hw.ward_num = :wardNum " +
                                     "and hw.hospital_id = :hospitalId"
                     )
-                    .setParameter("patientId", patientId)
                     .setParameter("wardNum", changeToStayingPatientDTO.getWardNum())
                     .setParameter("hospitalId", changeToStayingPatientDTO.getHospitalId())
                     .getSingleResult();
 
             StayingPatient stayingPatient = new StayingPatient();
+            Hospitalization hospitalization = new Hospitalization();
+            TreatmentTracker treatmentTracker = new TreatmentTracker();
+
             stayingPatient.setPatient(patient);
+
+            hospitalization.setStartDate(LocalDate.now());
+            hospitalization.setHospitalWard(entityManager.getReference(HospitalWard.class, hospitalWardId));
+            hospitalization.setPatient(stayingPatient);
+            stayingPatient.setHospitalization(hospitalization);
+
+            treatmentTracker.setDate(LocalDate.now());
+            treatmentTracker.setGotTreatmentToday(true);
+            treatmentTracker.setPatient(stayingPatient);
+            stayingPatient.setTreatmentTracker(treatmentTracker);
 
             patient.setStayingPatient(stayingPatient);
 
@@ -206,6 +222,7 @@ public class PatientServiceImpl
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
         if (patient.getStayingPatient() != null) {
+            stayingPatientRepo.delete(patient.getStayingPatient());
             patient.setStayingPatient(null);
         }
 

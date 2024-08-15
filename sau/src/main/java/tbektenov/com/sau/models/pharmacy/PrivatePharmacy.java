@@ -16,7 +16,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PrivatePharmacy extends Pharmacy {
+public class PrivatePharmacy
+        extends Pharmacy {
 
     private String address;
 

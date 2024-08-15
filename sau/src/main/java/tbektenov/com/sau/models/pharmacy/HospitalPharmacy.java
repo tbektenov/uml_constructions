@@ -17,7 +17,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HospitalPharmacy extends Pharmacy {
+public class HospitalPharmacy
+        extends Pharmacy {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hospital_id", nullable = false, updatable = false)

@@ -64,8 +64,15 @@ import java.util.Set;
                         @NamedSubgraph(
                                 name = "patient.subgraph",
                                 attributeNodes = {
-                                        @NamedAttributeNode("stayingPatient"),
+                                        @NamedAttributeNode(value = "stayingPatient", subgraph = "stayingPatient.subgraph"),
                                         @NamedAttributeNode("leftPatient")
+                                }
+                        ),
+                        @NamedSubgraph(
+                                name = "stayingPatient.subgraph",
+                                attributeNodes = {
+                                        @NamedAttributeNode("hospitalization"),
+                                        @NamedAttributeNode("treatmentTracker")
                                 }
                         )
                 }

@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+import tbektenov.com.sau.exceptions.ObjectNotFoundException;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.user.Sex;
 import tbektenov.com.sau.models.user.UserEntity;
-import tbektenov.com.sau.models.user.userRoles.Doctor;
-import tbektenov.com.sau.models.user.userRoles.Specialization;
+import tbektenov.com.sau.models.user.userRoles.*;
 import tbektenov.com.sau.repositories.*;
 
 import javax.print.Doc;
@@ -32,9 +32,23 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     private OrderRepo orderRepo;
     private PrivatePharmacyRepo privatePharmacyRepo;
     private UserRepo userRepo;
+    private DoctorRepo doctorRepo;
+    private PatientRepo patientRepo;
+    private NurseRepo nurseRepo;
 
     @Autowired
-    public DataInitializer(AppointmentRepo appointmentRepo, HospitalizationRepo hospitalizationRepo, HospitalPharmacyRepo hospitalPharmacyRepo, HospitalRepo hospitalRepo, HospitalWardRepo hospitalWardRepo, LaboratoryRepo laboratoryRepo, OrderRepo orderRepo, PrivatePharmacyRepo privatePharmacyRepo, UserRepo userRepo) {
+    public DataInitializer(AppointmentRepo appointmentRepo,
+                           HospitalizationRepo hospitalizationRepo,
+                           HospitalPharmacyRepo hospitalPharmacyRepo,
+                           HospitalRepo hospitalRepo,
+                           HospitalWardRepo hospitalWardRepo,
+                           LaboratoryRepo laboratoryRepo,
+                           OrderRepo orderRepo,
+                           PrivatePharmacyRepo privatePharmacyRepo,
+                           UserRepo userRepo,
+                           DoctorRepo doctorRepo,
+                           PatientRepo patientRepo,
+                           NurseRepo nurseRepo) {
         this.appointmentRepo = appointmentRepo;
         this.hospitalizationRepo = hospitalizationRepo;
         this.hospitalPharmacyRepo = hospitalPharmacyRepo;
@@ -44,6 +58,9 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         this.orderRepo = orderRepo;
         this.privatePharmacyRepo = privatePharmacyRepo;
         this.userRepo = userRepo;
+        this.doctorRepo = doctorRepo;
+        this.patientRepo = patientRepo;
+        this.nurseRepo = nurseRepo;
     }
 
     @Override
