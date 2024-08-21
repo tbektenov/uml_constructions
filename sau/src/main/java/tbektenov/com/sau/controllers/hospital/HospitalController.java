@@ -3,6 +3,7 @@ package tbektenov.com.sau.controllers.hospital;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tbektenov.com.sau.dtos.hospital.CreateUpdateHospitalDTO;
 import tbektenov.com.sau.dtos.hospital.HospitalAndDoctorsDTO;
@@ -12,8 +13,7 @@ import tbektenov.com.sau.services.IHospitalService;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/hospital/")
+@Controller
 public class HospitalController {
 
     private IHospitalService hospitalService;
@@ -30,12 +30,12 @@ public class HospitalController {
      * @param pageSize the number of hospitals per page, defaults to 10
      * @return a paginated list of hospitals wrapped in a HospitalResponse
      */
-    @GetMapping("hospitals")
-    public ResponseEntity<HospitalResponse> getHospitals(
+    @GetMapping("/hospitals")
+    public String getHospitals(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
     ) {
-        return new ResponseEntity<>(hospitalService.getAllHospitals(pageNo, pageSize), HttpStatus.OK);
+        return ("hospitals");
     }
 
     @GetMapping("hospitals/doctors")

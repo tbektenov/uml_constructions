@@ -3,6 +3,7 @@ package tbektenov.com.sau.controllers.patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tbektenov.com.sau.dtos.left_patient.ChangeToLeftPatientDTO;
 import tbektenov.com.sau.dtos.patient.CreatePatientDTO;
@@ -12,7 +13,7 @@ import tbektenov.com.sau.services.IPatientService;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/patient/")
 public class PatientController {
 

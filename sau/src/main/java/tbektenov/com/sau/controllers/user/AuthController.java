@@ -8,45 +8,80 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import tbektenov.com.sau.dtos.user.LoginDTO;
+import org.springframework.web.bind.annotation.RequestParam;
+import tbektenov.com.sau.config.LoggedUserHolder;
 import tbektenov.com.sau.dtos.user.RegisterDTO;
 import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.repositories.UserRepo;
 import tbektenov.com.sau.services.IUserService;
-import tbektenov.com.sau.services.implementation.UserServiceImpl;
 
 import java.util.Optional;
 
-@RestController
+@Controller
 public class AuthController {
     private UserRepo userRepo;
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
     private IUserService userService;
+    private LoggedUserHolder loggedUserHolder;
 
     @Autowired
     public AuthController(UserRepo userRepo,
                           AuthenticationManager authenticationManager,
                           PasswordEncoder passwordEncoder,
-                          IUserService userService) {
+                          IUserService userService,
+                          LoggedUserHolder loggedUserHolder) {
         this.userRepo = userRepo;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
+        this.loggedUserHolder = loggedUserHolder;
     }
 
-    /**
-     * Authenticates a user based on their username and password.
-     *
-     * @param loginDTO the DTO containing the user's login credentials
-     * @return a response message indicating success or failure of the login attempt
-     */
+    @GetMapping("/")
+    public String showLogin() {
+        return "login";
+    }
+
+    @GetMapping("/home")
+    public String showHome() {
+        UserEntity user = loggedUserHolder.getLoggedUser();
+        System.out.println(user);
+        return "home";
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {
-        return userService.login(loginDTO);
+    public String login(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
+        Optional<UserEntity> userOptional = userRepo.findByUsername(username);
+
+        if (userOptional.isEmpty()) {
+            model.addAttribute("error", "Username does not exist");
+            return "login";
+        }
+
+        UserEntity user = userOptional.get();
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            model.addAttribute("error", "Invalid password");
+            return "login";
+        }
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return "redirect:/home";
+        } catch (Exception e) {
+            model.addAttribute("error", "Authentication failed");
+            return "login";
+        }
     }
 
     /**

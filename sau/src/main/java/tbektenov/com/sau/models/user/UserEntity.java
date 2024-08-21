@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,11 +28,27 @@ import java.util.Set;
 @Builder
 @NamedEntityGraphs(
         @NamedEntityGraph(
-                name = "User.roles",
+                name = "User.details",
                 attributeNodes = {
                         @NamedAttributeNode("doctor"),
-                        @NamedAttributeNode("patient"),
+                        @NamedAttributeNode(value = "patient", subgraph = "patient.subgraph"),
                         @NamedAttributeNode("nurse")
+                },
+                subgraphs = {
+                        @NamedSubgraph(
+                                name = "patient.subgraph",
+                                attributeNodes = {
+                                        @NamedAttributeNode(value = "stayingPatient", subgraph = "stayingPatient.subgraph"),
+                                        @NamedAttributeNode("leftPatient")
+                                }
+                        ),
+                        @NamedSubgraph(
+                                name = "stayingPatient.subgraph",
+                                attributeNodes = {
+                                        @NamedAttributeNode("hospitalization"),
+                                        @NamedAttributeNode("treatmentTracker")
+                                }
+                        )
                 })
 )
 public class UserEntity {

@@ -39,7 +39,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**").permitAll()
-          //              .requestMatchers("/api/appoint/**").hasRole("PATIENT")
+                        .requestMatchers("/api/appoint/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .httpBasic(withDefaults())

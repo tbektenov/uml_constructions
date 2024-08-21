@@ -53,33 +53,6 @@ public class UserServiceImpl
 
     @Override
     @Transactional
-    public ResponseEntity<String> login(LoginDTO loginDTO) {
-        Optional<UserEntity> userOptional = userRepo.findByUsername(loginDTO.getUsername());
-
-        if (userOptional.isEmpty()) {
-            return new ResponseEntity<>("Username does not exist", HttpStatus.BAD_REQUEST);
-        }
-
-        UserEntity user = userOptional.get();
-
-        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            return new ResponseEntity<>("Invalid password", HttpStatus.BAD_REQUEST);
-        }
-
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return new ResponseEntity<>("User signed in.", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Authentication failed", HttpStatus.UNAUTHORIZED);
-        }
-    }
-
-    @Override
-    @Transactional
     public void registerUser(RegisterDTO registerDTO) {
         UserEntity user = createUserEntityFromDTO(registerDTO);
         Set<UserRole> userRoles = new HashSet<>();

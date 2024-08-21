@@ -3,13 +3,14 @@ package tbektenov.com.sau.controllers.pharmacy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.CreateUpdatePrivatePharmacyDTO;
 import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyDTO;
 import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyResponse;
 import tbektenov.com.sau.services.IPrivatePharmacyService;
 
-@RestController
+@Controller
 @RequestMapping("/api/pp/")
 public class PrivatePharmacyController {
 

@@ -1,5 +1,6 @@
 package tbektenov.com.sau.repositories;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import tbektenov.com.sau.models.user.UserEntity;
 
@@ -20,6 +21,7 @@ public interface UserRepo
      * @param username The username of the user to find.
      * @return An Optional containing the found UserEntity, or empty if no user is found.
      */
+    @EntityGraph(value = "User.details", type = EntityGraph.EntityGraphType.LOAD)
     Optional<UserEntity> findByUsername(String username);
 
     /**

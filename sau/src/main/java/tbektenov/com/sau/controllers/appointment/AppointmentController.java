@@ -2,6 +2,7 @@ package tbektenov.com.sau.controllers.appointment;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tbektenov.com.sau.config.CustomUserDetailsService;
 import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
@@ -12,7 +13,7 @@ import tbektenov.com.sau.services.IAppointmentService;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/appoint/")
 public class AppointmentController {
     private IAppointmentService appointmentService;

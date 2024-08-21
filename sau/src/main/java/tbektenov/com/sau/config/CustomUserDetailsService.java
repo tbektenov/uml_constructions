@@ -1,6 +1,7 @@
 package tbektenov.com.sau.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,6 +41,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public UserEntity getLoggedUser() {
-        return userRepo.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).get();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("Logged in user: " + username);
+        return userRepo.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

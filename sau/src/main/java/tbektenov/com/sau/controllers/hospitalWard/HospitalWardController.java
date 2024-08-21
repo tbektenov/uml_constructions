@@ -3,6 +3,7 @@ package tbektenov.com.sau.controllers.hospitalWard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tbektenov.com.sau.dtos.hospitalWard.CreateUpdateHospitalWardDTO;
 import tbektenov.com.sau.dtos.hospitalWard.HospitalWardDTO;
@@ -10,7 +11,7 @@ import tbektenov.com.sau.services.IHospitalWardService;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/ward/")
 public class HospitalWardController {
 

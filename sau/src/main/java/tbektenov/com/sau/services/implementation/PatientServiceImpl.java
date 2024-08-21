@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
