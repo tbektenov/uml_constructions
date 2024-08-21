@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.CreateUpdatePrivatePharmacyDTO;
 import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyDTO;
 import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyResponse;
+import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
 import tbektenov.com.sau.services.IPrivatePharmacyService;
 
 @Controller

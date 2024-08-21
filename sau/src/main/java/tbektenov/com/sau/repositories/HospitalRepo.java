@@ -4,9 +4,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import tbektenov.com.sau.models.hospital.Hospital;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for {@link Hospital} entities.
@@ -23,4 +26,10 @@ public interface HospitalRepo
 
     @EntityGraph(value = "Hospital.withPharmaciesAndDoctors", type = EntityGraph.EntityGraphType.FETCH)
     Page<Hospital> findAll(Pageable pageable);
+
+    @Query("SELECT h FROM Hospital h LEFT JOIN FETCH h.partnerPharmacies WHERE h.name = :name")
+    Optional<Hospital> findByNameWithPharmacies(@Param("name") String name);
+
+    Boolean existsByName(String name);
+    Optional<Hospital> findByName(String name);
 }

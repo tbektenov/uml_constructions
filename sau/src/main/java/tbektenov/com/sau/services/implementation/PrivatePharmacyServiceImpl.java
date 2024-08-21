@@ -1,5 +1,6 @@
 package tbektenov.com.sau.services.implementation;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -153,6 +154,7 @@ public class PrivatePharmacyServiceImpl
      * @throws InvalidArgumentsException if the hospital is already a partner.
      */
     @Override
+    @Transactional
     public PrivatePharmacyDTO addPartnerHospital(Long pharmacyId, Long hospitalId) {
         PrivatePharmacy pharmacy = privatePharmacyRepo.findById(pharmacyId).orElseThrow(
                 () -> new ObjectNotFoundException("Private pharmacy not found.")

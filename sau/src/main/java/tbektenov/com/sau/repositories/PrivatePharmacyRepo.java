@@ -15,5 +15,6 @@ import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
  */
 public interface PrivatePharmacyRepo
         extends JpaRepository<PrivatePharmacy, Long> {
+    Boolean existsByAddressAndPharmaCompany(String address, String pharmaCompany);
 }
 

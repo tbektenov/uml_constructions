@@ -38,7 +38,6 @@ import java.util.Set;
 @Table(name = "HOSPITAL")
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @NamedEntityGraphs(
         @NamedEntityGraph(
                 name = "Hospital.withPharmaciesAndDoctors",
@@ -78,6 +77,7 @@ import java.util.Set;
                 }
         )
 )
+@Builder
 public class Hospital {
 
     @Id
@@ -86,7 +86,7 @@ public class Hospital {
     private Long id;
 
     @NotBlank(message = "Name cannot be null or empty")
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @NotBlank(message = "Address cannot be null or empty")
@@ -108,6 +108,7 @@ public class Hospital {
     @EqualsAndHashCode.Exclude
     private Set<HospitalWard> hospitalWards = new HashSet<>();
 
+    @Getter
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "pharmacy_hospital_partners",
@@ -122,4 +123,18 @@ public class Hospital {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Doctor> doctors = new HashSet<>();
+
+    public Hospital(String name, String address) {
+        this.name = name;
+        this.address = address;
+    }
+
+    public void addPartnerPharmacy(PrivatePharmacy pharmacy) {
+        if (pharmacy != null && !this.partnerPharmacies.contains(pharmacy)) {
+            this.partnerPharmacies.add(pharmacy);
+            if (!pharmacy.getPartnerHospitals().contains(this)) {
+                pharmacy.addPartnerHospital(this);
+            }
+        }
+    }
 }

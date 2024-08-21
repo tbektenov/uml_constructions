@@ -1,6 +1,7 @@
 package tbektenov.com.sau.models.pharmacy;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import tbektenov.com.sau.models.hospital.Hospital;
 
@@ -12,24 +13,27 @@ import java.util.Set;
  */
 @Data
 @Entity
-@Table(name = "PRIVATE_PHARMACY")
+@Table(name = "PRIVATE_PHARMACY", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"address", "company"})
+})
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PrivatePharmacy
         extends Pharmacy {
 
+    @NotBlank(message = "address cannot be blank.")
+    @Column(name = "Address", updatable = false, nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private String address;
 
+    @NotBlank(message = "company cannot be blank")
+    @Column(name = "Company", updatable = false, nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private String pharmaCompany;
 
-    /**
-     * -- GETTER --
-     *  Gets the list of partner hospitals.
-     *
-     * @return list of partner hospitals
-     */
-    @Getter
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "pharmacy_hospital_partners",
@@ -40,6 +44,14 @@ public class PrivatePharmacy
     @EqualsAndHashCode.Exclude
     private Set<Hospital> partnerHospitals = new HashSet<>();
 
+    @Builder
+    public PrivatePharmacy(String name, boolean isCompoundPharmacy, String address, String pharmaCompany) {
+        this.name = name;
+        this.isCompoundPharmacy = isCompoundPharmacy;
+        this.address = address;
+        this.pharmaCompany = pharmaCompany;
+    }
+
     /**
      * Checks if a given hospital is a partner.
      *
@@ -48,6 +60,15 @@ public class PrivatePharmacy
      */
     public boolean checkIfHospitalIsPartner(Hospital hospital) {
         return partnerHospitals.contains(hospital);
+    }
+
+    public void addPartnerHospital(Hospital hospital) {
+        if (hospital != null && !partnerHospitals.contains(hospital)) {
+            this.partnerHospitals.add(hospital);
+            if (!hospital.getPartnerPharmacies().contains(this)) {
+                hospital.addPartnerPharmacy(this);
+            }
+        }
     }
 
 }

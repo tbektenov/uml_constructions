@@ -4,6 +4,7 @@ import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.CreateUpdatePrivatePharma
 import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyDTO;
 import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyResponse;
 import tbektenov.com.sau.models.hospital.Hospital;
+import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
 
 import java.util.List;
 

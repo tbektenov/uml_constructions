@@ -1,10 +1,7 @@
 package tbektenov.com.sau.models.user.userRoles;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.user.UserEntity;
 
@@ -23,7 +20,6 @@ public class Nurse{
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nurse_id", nullable = false, updatable = false)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private UserEntity user;

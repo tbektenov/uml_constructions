@@ -31,11 +31,19 @@ public class HospitalController {
      * @return a paginated list of hospitals wrapped in a HospitalResponse
      */
     @GetMapping("/hospitals")
-    public String getHospitals(
+    public String showHospitals(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
     ) {
         return ("hospitals");
+    }
+
+    @GetMapping("/hospitals1")
+    public ResponseEntity<HospitalResponse> getHospitals(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        return new ResponseEntity<>(hospitalService.getAllHospitals(pageNo, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("hospitals/doctors")
