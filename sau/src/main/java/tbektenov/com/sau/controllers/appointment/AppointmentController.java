@@ -42,11 +42,19 @@ public class AppointmentController {
      * @return a confirmation message
      */
     @DeleteMapping("delete/{appointId}")
-    public ResponseEntity<String> createAppointment(
+    public ResponseEntity<String> cancelAppointment(
             @PathVariable Long appointId
     ) {
         appointmentService.cancelAppointmentById(appointId);
         return ResponseEntity.ok("Appointment was canceled.");
+    }
+
+    @PutMapping("/finish/{appointId}")
+    public ResponseEntity<String> finishAppointment(
+            @PathVariable Long appointId
+    ) {
+        appointmentService.archiveAppointmentById(appointId);
+        return ResponseEntity.ok("Appointment was finished.");
     }
 
     @GetMapping("patient/getUpcoming/")

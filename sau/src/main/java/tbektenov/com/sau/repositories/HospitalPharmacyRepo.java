@@ -27,4 +27,5 @@ public interface HospitalPharmacyRepo extends JpaRepository<HospitalPharmacy, Lo
      * @return a list of {@link HospitalPharmacy} entities associated with the specified hospital ID
      */
     List<HospitalPharmacy> findByHospitalId(Long hospitalId);
+    Boolean existsByHospitalIdAndName(Long hospitalId, String name);
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import tbektenov.com.sau.dtos.doctor.CreateDoctorDTO;
 import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.dtos.doctor.DoctorResponse;
+import tbektenov.com.sau.dtos.order.CreateOrderDTO;
 import tbektenov.com.sau.services.IDoctorService;
 
 import java.util.List;
@@ -65,6 +66,16 @@ public class DoctorController {
     ) {
         doctorService.finishAppointment(doctorId, appointId);
         return new ResponseEntity<>(String.format("Appointment: %d was finished and archived", appointId), HttpStatus.OK);
+    }
+
+    @PostMapping("order/{doctorId}/{hospitalPharmacyId}")
+    public ResponseEntity<String> createOrder(
+            @PathVariable Long doctorId,
+            @PathVariable Long hospitalPharmacyId,
+            @RequestBody CreateOrderDTO createOrderDTO
+    ) {
+        doctorService.createOrder(doctorId, hospitalPharmacyId, createOrderDTO);
+        return new ResponseEntity<>("Order successfully created", HttpStatus.CREATED);
     }
 
     @PutMapping("doctors/{doctor_id}/hospital/{hospital_id}")

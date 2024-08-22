@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.pharmacy.hospitalPharmacy.CreateUpdateHospitalPharmacyDTO;
 import tbektenov.com.sau.dtos.pharmacy.hospitalPharmacy.HospitalPharmacyDTO;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
@@ -45,6 +46,10 @@ public class HospitalPharmacyServiceImpl
     /** {@inheritDoc} */
     @Override
     public HospitalPharmacyDTO createHospitalPharmacy(Long hospitalId, CreateUpdateHospitalPharmacyDTO createUpdateHospitalPharmacyDTO) {
+        if (hospitalPharmacyRepo.existsByHospitalIdAndName(hospitalId, createUpdateHospitalPharmacyDTO.getName())) {
+            throw new InvalidArgumentsException("Hospital already has such pharmacy.");
+        }
+
         HospitalPharmacy hospitalPharmacy = mapToEntity(createUpdateHospitalPharmacyDTO);
 
         Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(

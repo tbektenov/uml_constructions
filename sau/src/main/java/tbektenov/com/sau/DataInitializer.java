@@ -8,31 +8,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
-import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.CreateUpdatePrivatePharmacyDTO;
-import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyDTO;
 import tbektenov.com.sau.dtos.user.RegisterDTO;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
-import tbektenov.com.sau.exceptions.ObjectNotFoundException;
+import tbektenov.com.sau.models.Appointment;
+import tbektenov.com.sau.models.AppointmentStatus;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.HospitalWard;
+import tbektenov.com.sau.models.hospital.Laboratory;
+import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
 import tbektenov.com.sau.models.user.Sex;
-import tbektenov.com.sau.models.user.UserEntity;
-import tbektenov.com.sau.models.user.userRoles.*;
+import tbektenov.com.sau.models.user.userRoles.Doctor;
+import tbektenov.com.sau.models.user.userRoles.Patient;
+import tbektenov.com.sau.models.user.userRoles.Specialization;
 import tbektenov.com.sau.repositories.*;
 import tbektenov.com.sau.services.implementation.PrivatePharmacyServiceImpl;
 import tbektenov.com.sau.services.implementation.UserServiceImpl;
 
-import javax.print.Doc;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataInitializer.class);
-
+    private final PatientRepo patientRepo;
+    private final DoctorRepo doctorRepo;
     private AppointmentRepo appointmentRepo;
     private HospitalizationRepo hospitalizationRepo;
     private HospitalPharmacyRepo hospitalPharmacyRepo;
@@ -56,7 +59,9 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                            UserRepo userRepo,
                            UserServiceImpl userService,
                            PrivatePharmacyServiceImpl privatePharmacyService,
-                           PrivatePharmacyRepo privatePharmacyRepo) {
+                           PrivatePharmacyRepo privatePharmacyRepo,
+                           PatientRepo patientRepo,
+                           DoctorRepo doctorRepo) {
         this.appointmentRepo = appointmentRepo;
         this.hospitalizationRepo = hospitalizationRepo;
         this.hospitalPharmacyRepo = hospitalPharmacyRepo;
@@ -68,6 +73,8 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         this.userService = userService;
         this.privatePharmacyService = privatePharmacyService;
         this.privatePharmacyRepo = privatePharmacyRepo;
+        this.patientRepo = patientRepo;
+        this.doctorRepo = doctorRepo;
     }
 
     @Override
@@ -273,7 +280,133 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
             privatePharmacyRepo.save(privatePharmacy);
         }
 
+        String hpName = "hp1";
+        if (!hospitalPharmacyRepo.existsByHospitalIdAndName(sau.getId(), hpName)) {
+            HospitalPharmacy hospitalPharmacy = HospitalPharmacy.builder()
+                    .name(hpName)
+                    .isCompoundPharmacy(false)
+                    .hospital(sau)
+                    .build();
 
+            hospitalPharmacyRepo.save(hospitalPharmacy);
+        }
+
+        String hpName1 = "hp2";
+        if (!hospitalPharmacyRepo.existsByHospitalIdAndName(sau.getId(), hpName1)) {
+            HospitalPharmacy hospitalPharmacy = HospitalPharmacy.builder()
+                    .name(hpName1)
+                    .isCompoundPharmacy(false)
+                    .hospital(sau)
+                    .build();
+
+            hospitalPharmacyRepo.save(hospitalPharmacy);
+        }
+
+        String hpName2 = "hp3";
+        if (!hospitalPharmacyRepo.existsByHospitalIdAndName(sau.getId(), hpName2)) {
+            HospitalPharmacy hospitalPharmacy = HospitalPharmacy.builder()
+                    .name(hpName2)
+                    .isCompoundPharmacy(true)
+                    .hospital(sau)
+                    .build();
+
+            hospitalPharmacyRepo.save(hospitalPharmacy);
+        }
+
+        String hpName3 = "hp1";
+        if (!hospitalPharmacyRepo.existsByHospitalIdAndName(mau.getId(), hpName3)) {
+            HospitalPharmacy hospitalPharmacy = HospitalPharmacy.builder()
+                    .name(hpName3)
+                    .isCompoundPharmacy(true)
+                    .hospital(mau)
+                    .build();
+
+            hospitalPharmacyRepo.save(hospitalPharmacy);
+        }
+
+        String hpName4 = "hp2";
+        if (!hospitalPharmacyRepo.existsByHospitalIdAndName(mau.getId(), hpName4)) {
+            HospitalPharmacy hospitalPharmacy = HospitalPharmacy.builder()
+                    .name(hpName4)
+                    .isCompoundPharmacy(false)
+                    .hospital(mau)
+                    .build();
+
+            hospitalPharmacyRepo.save(hospitalPharmacy);
+        }
+
+        if (!laboratoryRepo.existsByHospitalIdAndFloor(sau.getId(), 1)) {
+            Laboratory laboratory = Laboratory.builder()
+                    .floor(1)
+                    .hospital(sau)
+                    .build();
+
+            laboratoryRepo.save(laboratory);
+        }
+
+        if (!laboratoryRepo.existsByHospitalIdAndFloor(sau.getId(), 2)) {
+            Laboratory laboratory = Laboratory.builder()
+                    .floor(2)
+                    .hospital(sau)
+                    .build();
+
+            laboratoryRepo.save(laboratory);
+        }
+
+        if (!laboratoryRepo.existsByHospitalIdAndFloor(mau.getId(), 2)) {
+            Laboratory laboratory = Laboratory.builder()
+                    .floor(2)
+                    .hospital(mau)
+                    .build();
+
+            laboratoryRepo.save(laboratory);
+        }
+
+        Patient patient = patientRepo.findById(1L).orElseThrow(() -> new RuntimeException("Patient not found"));
+        Patient patient1 = patientRepo.findById(3L).orElseThrow(() -> new RuntimeException("Patient not found"));
+        Patient patient2 = patientRepo.findById(2L).orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        Doctor doctor = doctorRepo.findById(2L).orElseThrow(() -> new RuntimeException("Doctor not found"));
+        Doctor doctor1 = doctorRepo.findById(3L).orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        createAppointments(patient, doctor);
+        createAppointments(patient2, doctor1);
+        createAppointments(patient1, doctor);
+    }
+
+    private void createAppointments(Patient patient, Doctor doctor) {
+        if (checkPatientAndDoctorNotSamePerson(patient, doctor)) {
+            if (!appointmentRepo.existsByPatientIdAndDoctorId(patient.getId(), doctor.getId())) {
+                Appointment appointment = Appointment.builder()
+                        .date(LocalDate.now())
+                        .appointmentStatus(AppointmentStatus.UPCOMING)
+                        .patient(patient)
+                        .doctor(doctor)
+                        .build();
+
+                appointmentRepo.save(appointment);
+
+                Appointment appointment1 = Appointment.builder()
+                        .date(LocalDate.now())
+                        .appointmentStatus(AppointmentStatus.ARCHIVED)
+                        .patient(patient)
+                        .doctor(doctor)
+                        .build();
+
+                appointmentRepo.save(appointment1);
+
+                Appointment appointment2 = Appointment.builder()
+                        .date(LocalDate.now())
+                        .appointmentStatus(AppointmentStatus.UPCOMING)
+                        .patient(patient)
+                        .doctor(doctor)
+                        .build();
+
+                appointmentRepo.save(appointment2);
+            }
+        } else {
+            throw new InvalidArgumentsException("Patient and Doctor are the same person");
+        }
     }
 
     private void createHospitalWardIfNotExists(Hospital hospital, String wardNum, int capacity) {
@@ -285,5 +418,9 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                     .build();
             hospitalWardRepo.save(hospitalWard);
         }
+    }
+
+    private boolean checkPatientAndDoctorNotSamePerson(Patient patient, Doctor doctor) {
+        return !Objects.equals(patient.getId(), doctor.getId());
     }
 }

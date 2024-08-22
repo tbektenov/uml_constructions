@@ -11,20 +11,22 @@ import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.dtos.doctor.DoctorResponse;
 import tbektenov.com.sau.dtos.doctor.UpdateDoctorDTO;
 import tbektenov.com.sau.dtos.hospital.HospitalDoctorCompDTO;
+import tbektenov.com.sau.dtos.order.CreateOrderDTO;
 import tbektenov.com.sau.dtos.user.UserDTO;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
 import tbektenov.com.sau.models.Appointment;
 import tbektenov.com.sau.models.AppointmentStatus;
+import tbektenov.com.sau.models.OrderEntity;
+import tbektenov.com.sau.models.OrderStatus;
 import tbektenov.com.sau.models.hospital.Hospital;
+import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.UserEntity;
-import tbektenov.com.sau.repositories.AppointmentRepo;
-import tbektenov.com.sau.repositories.DoctorRepo;
-import tbektenov.com.sau.repositories.HospitalRepo;
-import tbektenov.com.sau.repositories.UserRepo;
+import tbektenov.com.sau.repositories.*;
 import tbektenov.com.sau.services.IDoctorService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,16 +44,22 @@ public class DoctorServiceImpl
     private UserRepo userRepo;
     private HospitalRepo hospitalRepo;
     private AppointmentRepo appointmentRepo;
+    private HospitalPharmacyRepo hospitalPharmacyRepo;
+    private OrderRepo orderRepo;
 
     @Autowired
     public DoctorServiceImpl(DoctorRepo doctorRepo,
                              UserRepo userRepo,
                              HospitalRepo hospitalRepo,
-                             AppointmentRepo appointmentRepo) {
+                             AppointmentRepo appointmentRepo,
+                             HospitalPharmacyRepo hospitalPharmacyRepo,
+                             OrderRepo orderRepo) {
         this.doctorRepo = doctorRepo;
         this.userRepo = userRepo;
         this.hospitalRepo = hospitalRepo;
         this.appointmentRepo = appointmentRepo;
+        this.hospitalPharmacyRepo = hospitalPharmacyRepo;
+        this.orderRepo = orderRepo;
     }
 
     /**
@@ -244,6 +252,31 @@ public class DoctorServiceImpl
 
         appointment.setAppointmentStatus(AppointmentStatus.ARCHIVED);
         appointmentRepo.save(appointment);
+    }
+
+    @Override
+    public void createOrder(Long doctorId, Long hospitalPharmacyId, CreateOrderDTO createOrderDTO) {
+        Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
+                () -> new ObjectNotFoundException("Doctor not found.")
+        );
+
+        HospitalPharmacy hospitalPharmacy = hospitalPharmacyRepo.findById(hospitalPharmacyId).orElseThrow(
+                () -> new ObjectNotFoundException("Hospital pharmacy not found.")
+        );
+
+        if (!doctor.getHospital().equals(hospitalPharmacy.getHospital())) {
+            throw new InvalidArgumentsException("Doctor and hospital pharmacy are in different hospitals");
+        }
+
+        OrderEntity order = OrderEntity.builder()
+                .dateTimeOfIssue(LocalDateTime.now())
+                .orderBody(createOrderDTO.getOrderBody())
+                .orderStatus(OrderStatus.ONGOING)
+                .doctor(doctor)
+                .hospitalPharmacy(hospitalPharmacy)
+                .build();
+
+        orderRepo.save(order);
     }
 
     /**

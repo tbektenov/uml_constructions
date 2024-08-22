@@ -2,7 +2,6 @@ package tbektenov.com.sau.services;
 
 import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
-import tbektenov.com.sau.models.Appointment;
 
 import java.util.List;
 
@@ -26,5 +25,6 @@ public interface IAppointmentService {
      * @param id The unique identifier of the appointment to be canceled.
      */
     void cancelAppointmentById(Long id);
+    void archiveAppointmentById(Long id);
     List<AppointmentDTO> getUpcomingAppointmentsByPatientId(Long patient_id);
 }

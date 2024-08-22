@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
 import tbektenov.com.sau.models.Appointment;
+import tbektenov.com.sau.models.AppointmentStatus;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 import tbektenov.com.sau.repositories.AppointmentRepo;
@@ -60,6 +62,10 @@ public class AppointmentServiceImpl
     @Override
     @Transactional
     public AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO) {
+        if (createAppointmentDTO.getPatient_id() == createAppointmentDTO.getDoctor_id()) {
+            throw new InvalidArgumentsException("Patient ID and Doctor ID cannot be the same");
+        }
+
         try {
             Object[] result = (Object[]) entityManager.createNativeQuery(
                             "select p.patient_id, d.doctor_id " +
@@ -96,6 +102,20 @@ public class AppointmentServiceImpl
         );
 
         appointmentRepo.delete(appointment);
+    }
+
+    @Override
+    public void archiveAppointmentById(Long id) {
+        Appointment appointment = appointmentRepo.findById(id).orElseThrow(
+                () -> new ObjectNotFoundException("No such appointment.")
+        );
+
+        if (appointment.getAppointmentStatus().equals(AppointmentStatus.ARCHIVED)) {
+            throw new InvalidArgumentsException("Appointment is already archived");
+        }
+
+        appointment.setAppointmentStatus(AppointmentStatus.ARCHIVED);
+        appointmentRepo.save(appointment);
     }
 
     @Override

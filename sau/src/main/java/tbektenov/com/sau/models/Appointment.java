@@ -19,12 +19,12 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "appointment_id", nullable = false, updatable = false)
     private Long id;
-    private LocalDate date;
+    private LocalDate date = LocalDate.now();
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private AppointmentStatus appointmentStatus;
+    private AppointmentStatus appointmentStatus = AppointmentStatus.UPCOMING;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

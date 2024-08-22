@@ -24,4 +24,5 @@ public interface LaboratoryRepo extends JpaRepository<Laboratory, Long> {
      * @return a list of laboratories associated with the specified hospital ID
      */
     List<Laboratory> findByHospitalId(Long hospitalId);
+    Boolean existsByHospitalIdAndFloor(Long hospitalId, int floor);
 }

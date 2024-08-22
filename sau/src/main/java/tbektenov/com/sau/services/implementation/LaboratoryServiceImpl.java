@@ -41,6 +41,10 @@ public class LaboratoryServiceImpl implements ILaboratoryService {
      */
     @Override
     public LaboratoryDTO createLaboratory(Long hospitalId, CreateUpdateLaboratoryDTO createUpdateLaboratoryDTO) {
+        if (laboratoryRepo.existsByHospitalIdAndFloor(hospitalId, createUpdateLaboratoryDTO.getFloor())) {
+            throw new ObjectNotFoundException("Laboratory already exists");
+        }
+
         Laboratory laboratory = mapToEntity(createUpdateLaboratoryDTO);
 
         Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(

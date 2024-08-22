@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import tbektenov.com.sau.models.Appointment;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * IAppointmentRepo is a repository interface for managing {@link Appointment} entities.
@@ -49,12 +50,11 @@ import java.util.List;
  * @see Appointment
  */
 public interface AppointmentRepo extends JpaRepository<Appointment, Long> {
-    @Query(value = "SELECT * FROM APPOINTMENTS a WHERE a.doctor_id = :doctorId", nativeQuery = true)
-    List<Appointment> findByDoctorId(@Param("doctorId") Long doctorId);
-    @Query(value = "SELECT * FROM APPOINTMENTS a WHERE a.patient_id = :patientId", nativeQuery = true)
-    List<Appointment> findByPatientId(@Param("patientId") Long patientId);
+    List<Appointment> findByDoctorId(Long doctorId);
+    List<Appointment> findByPatientId(Long patientId);
     @Query(value = "SELECT * FROM APPOINTMENTS a WHERE a.patient_id = :patientId AND a.status = 'UPCOMING'", nativeQuery = true)
     List<Appointment> findUpcomingByPatientId(@Param("patientId") Long patientId);
     @Query(value = "SELECT * FROM APPOINTMENTS a WHERE a.doctor_id = :doctorId AND a.status = 'UPCOMING'", nativeQuery = true)
     List<Appointment> findUpcomingByDoctorId(@Param("doctorId") Long doctorId);
+    Boolean existsByPatientIdAndDoctorId(Long patientId, Long doctorId);
 }

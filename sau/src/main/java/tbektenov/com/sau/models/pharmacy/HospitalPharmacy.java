@@ -16,7 +16,6 @@ import java.util.Set;
 @Table(name = "HOSPITAL_PHARMACY")
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class HospitalPharmacy
         extends Pharmacy {
 
@@ -30,4 +29,11 @@ public class HospitalPharmacy
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<OrderEntity> orders = new HashSet<>();
+
+    @Builder
+    public HospitalPharmacy(String name, boolean isCompoundPharmacy, Hospital hospital) {
+        this.name = name;
+        this.isCompoundPharmacy = isCompoundPharmacy;
+        this.hospital = hospital;
+    }
 }

@@ -4,6 +4,8 @@ import tbektenov.com.sau.dtos.doctor.CreateDoctorDTO;
 import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.dtos.doctor.DoctorResponse;
 import tbektenov.com.sau.dtos.doctor.UpdateDoctorDTO;
+import tbektenov.com.sau.dtos.order.CreateOrderDTO;
+import tbektenov.com.sau.models.hospital.Laboratory;
 
 import java.util.List;
 
@@ -80,4 +82,5 @@ public interface IDoctorService {
      */
     void removeDoctorFromHospital(Long doctorId, Long hospitalId);
     void finishAppointment(Long doctorId, Long appointId);
+    void createOrder(Long doctorId, Long hospitalPharmacyId, CreateOrderDTO createOrderDTO);
 }
