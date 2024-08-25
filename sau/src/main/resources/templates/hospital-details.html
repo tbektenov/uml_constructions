@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Hospital Details</title>
     <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
 <body>
@@ -27,36 +27,26 @@
 </div>
 
 <div class="content">
-    <div th:if="${user == null}">
-        <h2>Hello </h2>
+    <h2>Doctors in this Hospital</h2>
+    <div th:if="${doctors.empty}">
+        <p>No doctors available for this hospital.</p>
     </div>
-
-    <div th:if="${user != null}">
-        <h2>Hello, <span th:text="${user.name}">User</span></h2>
-    </div>
-
-    <div th:if="${appointments.empty}">
-        <h3>You have no appointments upcoming</h3>
-    </div>
-
-    <div th:if="${!appointments.empty}">
+    <div th:if="${!doctors.empty}">
         <table border="1" cellpadding="5" cellspacing="0">
             <thead>
             <tr>
                 <th>ID</th>
+                <th>Name</th>
+                <th>Surname</th>
                 <th>Specialization</th>
-                <th>Hospital</th>
-                <th>Status</th>
-                <th>Date</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="appointment : ${appointments}">
-                <td th:text="${appointment.id}"></td>
-                <td th:text="${appointment.specialization}"></td>
-                <td th:text="${appointment.hospital + ', ' + appointment.hospitalAddress}"></td>
-                <td th:text="${appointment.appointmentStatus}"></td>
-                <td th:text="${appointment.date}"></td>
+            <tr th:each="doctor : ${doctors}">
+                <td th:text="${doctor.id}"></td>
+                <td th:text="${doctor.name}"></td>
+                <td th:text="${doctor.surname}"></td>
+                <td th:text="${doctor.specialization}"></td>
             </tr>
             </tbody>
         </table>
@@ -64,6 +54,5 @@
 
     <a th:href="@{/appointments/new}" class="appointment-button">Make an Appointment</a>
 </div>
-<script src="/js/script.js"></script>
 </body>
 </html>

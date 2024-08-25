@@ -130,6 +130,78 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
             mau = hospitalRepo.findByName(hospName1).orElseThrow(() -> new RuntimeException("Hospital not found"));
         }
 
+        String hospName2 = "DAU";
+        Hospital dau;
+        if (!hospitalRepo.existsByName(hospName2)) {
+            Hospital hospital = Hospital.builder()
+                    .name(hospName2)
+                    .address("Chyngyz Aitmatov, 22B")
+                    .laboratories(new HashSet<>())
+                    .hospitalPharmacies(new HashSet<>())
+                    .hospitalWards(new HashSet<>())
+                    .partnerPharmacies(new HashSet<>())
+                    .doctors(new HashSet<>())
+                    .build();
+
+            dau = hospitalRepo.save(hospital);
+        } else {
+            dau = hospitalRepo.findByName(hospName1).orElseThrow(() -> new RuntimeException("Hospital not found"));
+        }
+
+        String hospName3 = "Med Life Hospital";
+        Hospital mlh;
+        if (!hospitalRepo.existsByName(hospName3)) {
+            Hospital hospital = Hospital.builder()
+                    .name(hospName3)
+                    .address("Manas, 22B")
+                    .laboratories(new HashSet<>())
+                    .hospitalPharmacies(new HashSet<>())
+                    .hospitalWards(new HashSet<>())
+                    .partnerPharmacies(new HashSet<>())
+                    .doctors(new HashSet<>())
+                    .build();
+
+            mlh = hospitalRepo.save(hospital);
+        } else {
+            mlh = hospitalRepo.findByName(hospName1).orElseThrow(() -> new RuntimeException("Hospital not found"));
+        }
+
+        String hospName4 = "AmirMed";
+        Hospital am;
+        if (!hospitalRepo.existsByName(hospName4)) {
+            Hospital hospital = Hospital.builder()
+                    .name(hospName4)
+                    .address("Tunguch, 21A")
+                    .laboratories(new HashSet<>())
+                    .hospitalPharmacies(new HashSet<>())
+                    .hospitalWards(new HashSet<>())
+                    .partnerPharmacies(new HashSet<>())
+                    .doctors(new HashSet<>())
+                    .build();
+
+            am = hospitalRepo.save(hospital);
+        } else {
+            am = hospitalRepo.findByName(hospName1).orElseThrow(() -> new RuntimeException("Hospital not found"));
+        }
+
+        String hospName5 = "Hello Health";
+        Hospital hh;
+        if (!hospitalRepo.existsByName(hospName5)) {
+            Hospital hospital = Hospital.builder()
+                    .name(hospName5)
+                    .address("Abdrahmanov, 77H")
+                    .laboratories(new HashSet<>())
+                    .hospitalPharmacies(new HashSet<>())
+                    .hospitalWards(new HashSet<>())
+                    .partnerPharmacies(new HashSet<>())
+                    .doctors(new HashSet<>())
+                    .build();
+
+            hh = hospitalRepo.save(hospital);
+        } else {
+            hh = hospitalRepo.findByName(hospName1).orElseThrow(() -> new RuntimeException("Hospital not found"));
+        }
+
         createHospitalWardIfNotExists(sau, "Ward 1", 2);
         createHospitalWardIfNotExists(sau, "Ward 2", 2);
         createHospitalWardIfNotExists(sau, "Ward 3", 3);
@@ -214,7 +286,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
             registerDTO3.setPesel("94111315113");
             registerDTO3.setSex(Sex.FEMALE);
 
-            registerDTO3.setSsn("123789456");
             registerDTO3.setHospitalId(2L);
             registerDTO3.setSpecialization(Specialization.OPHTHALMOLOGIST);
             registerDTO3.setIsNurse(false);

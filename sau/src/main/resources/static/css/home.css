@@ -1,81 +1,87 @@
-.home {
-    position: relative;
-    margin-left: 350px;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    font-family: "Poppins", sans-serif;
 }
 
-.home_inner {
+.sidebar {
+    background: #0053ec;
+    position: fixed;
+    height: 100%;
+    width: 20%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    overflow-x: hidden;
     padding-top: 20px;
 }
 
-.user {
-    width: 1150px;
-    text-align: end;
-    align-items: end;
-}
-
-.user img {
-    width: 150px;
-}
-
-.hello {
-    color: #47525E;
+.sidebar a {
+    color: #fff;
+    padding: 10px 15px 10px 16px;
+    text-decoration: none;
     font-size: 25px;
-    margin-left: 80px;
+    display: block;
 }
 
-.table_text {
-    color: #47525E;
-    margin: 20px 0px 0px 50px;
-    font-size: 23px;
+.content {
+    background: transparent;
+    margin-left: 20%;
+    padding: 4px 10px;
+    color: #212121;
+    display: inline-block;
+    width: 80%;
 }
 
-.tableContainer {
-    margin-top: 20px;
-}
-
-.table {
-    width: 90%;
-    border-collapse: collapse;
-}
-
-.table th, .table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-.table th {
-    font-size: 20px;
-}
-
-.table td {
-    font-size: 18px;
-}
-
-.table th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    text-align: left;
-    background-color: #f2f2f2;
-}
-
-.pagination {
-    margin-top: 20px;
+.logo {
+    margin-bottom: 30px;
     text-align: center;
 }
 
-.pageNumber {
-    display: inline-block;
-    padding: 8px 12px;
-    margin: 0 4px;
-    cursor: pointer;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-    color: #333;
+.logo img {
+    width: 250px;
+    max-width: 100%;
 }
 
-.pageNumber:hover, .pageNumber.active {
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
+.logo a {
+    padding: 0;
 }
+
+.appointment-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #0053ec;
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.appointment-button:hover {
+    background-color: #004ada;
+}
+
+.appointment-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #0053ec;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 40px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    transition: background-color 0.3s;
+}
+
+.appointment-button:hover {
+    background-color: #004ada;
+}
+

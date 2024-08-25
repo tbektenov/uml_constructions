@@ -1,5 +1,6 @@
 package tbektenov.com.sau.controllers.user;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,28 +53,43 @@ public class AuthController {
         this.customUserDetailsService = customUserDetailsService;
     }
 
+    @GetMapping("/")
+    public String showWelcomePage() {
+        return "welcomePage";
+    }
+
     @GetMapping("/login")
     public String showLogin(
             Model model,
-            @RequestParam(name = "error", required = false) String error
+            @RequestParam(name = "error", required = false) Boolean error
     ) {
-        if (error != null) {
+        if (error != null && error) {
             model.addAttribute("error", "Invalid username or password.");
         }
+        System.out.println("============================");
         return "login";
     }
 
     @GetMapping("/home")
-    public String showHome() {
-        System.out.println("7");
+    public String showHome(
+            Model model,
+            HttpSession session
+    ) {
+        UserEntity user;
+        if (session.getAttribute("user") == null) {
+            user = customUserDetailsService.getLoggedUser();
+            session.setAttribute("user", user);
+        } else {
+            user = (UserEntity) session.getAttribute("user");
+        }
+        System.out.println("============================");
         List<AppointmentDTO> appointments = appointmentService.getUpcomingAppointmentsByPatientId(
-                customUserDetailsService.getLoggedUser().getId()
+                user.getId()
         );
-        System.out.println("8");
 
-        appointments.forEach(System.out::println);
-        System.out.println("9");
-
+        model.addAttribute("user", user);
+        model.addAttribute("appointments", appointments);
+        System.out.println("============================");
         return "home";
     }
 

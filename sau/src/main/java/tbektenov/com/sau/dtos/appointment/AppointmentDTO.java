@@ -1,7 +1,9 @@
 package tbektenov.com.sau.dtos.appointment;
 
 import lombok.Data;
+import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.models.AppointmentStatus;
+import tbektenov.com.sau.models.user.userRoles.Specialization;
 
 import java.time.LocalDate;
 
@@ -14,8 +16,9 @@ import java.time.LocalDate;
 @Data
 public class AppointmentDTO {
     private Long id;
-    private Long patient_id;
-    private Long doctor_id;
-    private LocalDate date;
+    private Specialization specialization;
+    private String hospital;
+    private String hospitalAddress;
     private AppointmentStatus appointmentStatus;
+    private LocalDate date;
 }

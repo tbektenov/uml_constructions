@@ -1,9 +1,11 @@
 package tbektenov.com.sau.repositories;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import tbektenov.com.sau.models.Appointment;
+import tbektenov.com.sau.models.AppointmentStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,11 +52,10 @@ import java.util.Optional;
  * @see Appointment
  */
 public interface AppointmentRepo extends JpaRepository<Appointment, Long> {
+
     List<Appointment> findByDoctorId(Long doctorId);
-    List<Appointment> findByPatientId(Long patientId);
-    @Query(value = "SELECT * FROM APPOINTMENTS a WHERE a.patient_id = :patientId AND a.status = 'UPCOMING'", nativeQuery = true)
-    List<Appointment> findUpcomingByPatientId(@Param("patientId") Long patientId);
-    @Query(value = "SELECT * FROM APPOINTMENTS a WHERE a.doctor_id = :doctorId AND a.status = 'UPCOMING'", nativeQuery = true)
-    List<Appointment> findUpcomingByDoctorId(@Param("doctorId") Long doctorId);
+    @EntityGraph(value = "Appointment.details", type = EntityGraph.EntityGraphType.FETCH)
+    List<Appointment> findByPatientIdAndAppointmentStatus(Long patientId, AppointmentStatus status);
+
     Boolean existsByPatientIdAndDoctorId(Long patientId, Long doctorId);
 }

@@ -14,6 +14,22 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "Appointment.details",
+                attributeNodes = {
+                        @NamedAttributeNode(value = "doctor", subgraph = "doctor.hospital")
+                },
+                subgraphs = {
+                        @NamedSubgraph(
+                                name = "doctor.hospital",
+                                attributeNodes = {
+                                        @NamedAttributeNode("hospital")
+                                }
+                        )
+                }
+        )
+)
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

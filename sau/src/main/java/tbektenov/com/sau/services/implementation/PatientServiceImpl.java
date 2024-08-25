@@ -256,8 +256,9 @@ public class PatientServiceImpl
                 .map(appointment -> {
                     AppointmentDTO appointmentDTO = new AppointmentDTO();
                     appointmentDTO.setId(appointment.getId());
-                    appointmentDTO.setPatient_id(appointment.getPatient().getId());
-                    appointmentDTO.setDoctor_id(appointment.getDoctor().getId());
+                    appointmentDTO.setSpecialization(appointment.getDoctor().getSpecialization());
+                    appointmentDTO.setHospital(appointment.getDoctor().getHospital().getName());
+                    appointmentDTO.setHospitalAddress(appointment.getDoctor().getHospital().getAddress());
                     appointmentDTO.setDate(appointment.getDate());
                     appointmentDTO.setAppointmentStatus(appointment.getAppointmentStatus());
                     return appointmentDTO;

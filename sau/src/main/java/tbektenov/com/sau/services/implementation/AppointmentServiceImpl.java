@@ -19,6 +19,7 @@ import tbektenov.com.sau.repositories.PatientRepo;
 import tbektenov.com.sau.services.IAppointmentService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -62,7 +63,7 @@ public class AppointmentServiceImpl
     @Override
     @Transactional
     public AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO) {
-        if (createAppointmentDTO.getPatient_id() == createAppointmentDTO.getDoctor_id()) {
+        if (Objects.equals(createAppointmentDTO.getPatient_id(), createAppointmentDTO.getDoctor_id())) {
             throw new InvalidArgumentsException("Patient ID and Doctor ID cannot be the same");
         }
 
@@ -123,7 +124,10 @@ public class AppointmentServiceImpl
     @Override
     @Transactional
     public List<AppointmentDTO> getUpcomingAppointmentsByPatientId(Long patient_id) {
-        List<Appointment> appointments = appointmentRepo.findUpcomingByPatientId(patient_id);
+        List<Appointment> appointments = appointmentRepo.findByPatientIdAndAppointmentStatus(
+                patient_id, AppointmentStatus.UPCOMING
+        );
+
         return appointments.stream().map(appointment -> mapToDto(appointment)).collect(Collectors.toList());
     }
 
@@ -136,8 +140,9 @@ public class AppointmentServiceImpl
     private AppointmentDTO mapToDto(Appointment appointment) {
         AppointmentDTO appointmentDTO = new AppointmentDTO();
         appointmentDTO.setId(appointment.getId());
-        appointmentDTO.setPatient_id(appointment.getPatient().getId());
-        appointmentDTO.setDoctor_id(appointment.getDoctor().getId());
+        appointmentDTO.setSpecialization(appointment.getDoctor().getSpecialization());
+        appointmentDTO.setHospital(appointment.getDoctor().getHospital().getName());
+        appointmentDTO.setHospitalAddress(appointment.getDoctor().getHospital().getAddress());
         appointmentDTO.setDate(appointment.getDate());
         appointmentDTO.setAppointmentStatus(appointment.getAppointmentStatus());
 

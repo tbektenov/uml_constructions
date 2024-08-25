@@ -38,28 +38,20 @@ public class HospitalController {
     @GetMapping("/hospitals")
     public String showHospitals(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
-    ) {
-        return ("hospitals");
-    }
-
-    @GetMapping("/hospitals1")
-    public ResponseEntity<HospitalResponse> getHospitals(
-            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
             Model model,
             HttpSession session
     ) {
         HospitalResponse hospitalResponse = hospitalService.getAllHospitals(pageNo, pageSize);
 
+        model.addAttribute("hospitals", hospitalResponse);
         session.setAttribute("content", hospitalResponse.getContent());
-        System.out.println(hospitalResponse.getContent());
-
-        return new ResponseEntity<>(hospitalResponse, HttpStatus.OK);
+        System.out.println("============================");
+        return ("hospitals");
     }
 
-    @GetMapping("/hospitals2/{hospitalId}")
-    public ResponseEntity<String> getHospitals2(
+    @GetMapping("/hospitals/{hospitalId}")
+    public String getHospitals2(
             @PathVariable Long hospitalId,
             Model model,
             HttpSession session
@@ -71,11 +63,11 @@ public class HospitalController {
                     .filter(hospital -> hospital.getHospitalId().equals(hospitalId))
                     .findFirst();
 
-            matchingHospital.ifPresent(hospital -> hospital.getDoctors().forEach(System.out::println));
             matchingHospital.ifPresent(hospitalDTO -> model.addAttribute("doctors", hospitalDTO.getDoctors()));
         }
-
-        return new ResponseEntity<>("Okay", HttpStatus.OK);
+        System.out.println("Showing doctors");
+        System.out.println("============================");
+        return "hospital-details";
     }
 
     @GetMapping("hospitals/doctors")
