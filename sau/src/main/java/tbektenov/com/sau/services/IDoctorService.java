@@ -16,14 +16,7 @@ import java.util.List;
  * deleting, and managing their association with hospitals.
  */
 public interface IDoctorService {
-    /**
-     * Retrieves a paginated list of all doctors.
-     *
-     * @param pageNo The page number to retrieve.
-     * @param pageSize The number of doctors per page.
-     * @return A DoctorResponse containing the paginated list of doctors.
-     */
-    DoctorResponse getAllDoctors(int pageNo, int pageSize);
+    List<DoctorDTO> getAllDoctors();
 
     /**
      * Creates a new doctor with the specified details.

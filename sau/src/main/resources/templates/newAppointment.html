@@ -2,9 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>New Appointment</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/filter.js"></script>
+    <script src="/js/minDate.js"></script>
+    <link rel="stylesheet" th:href="@{/css/makeAppointment.css}">
 </head>
 <body>
+<h2>Make an Appointment</h2>
 
+<div th:if="${doctors.empty}">
+    <h2>Error loading doctors</h2>
+</div>
+
+<div th:if="${!doctors.empty}">
+    <div>
+        <label for="date">Choose Date:</label>
+        <input type="date" id="date" name="date" required>
+    </div>
+
+    <div>
+        <label for="hospitalFilter">Filter by Hospital:</label>
+        <select id="hospitalFilter">
+            <option value="">All Hospitals</option>
+            <option th:each="hospital : ${hospitals}" th:value="${hospital}" th:text="${hospital}"></option>
+        </select>
+
+        <label for="specializationFilter">Filter by Specialization:</label>
+        <select id="specializationFilter">
+            <option value="">All Specializations</option>
+            <option th:each="specialization : ${specializations}" th:value="${specialization}" th:text="${specialization}"></option>
+        </select>
+    </div>
+
+    <form th:action="@{/appointments/create}" method="post">
+        <input type="hidden" name="patient_id" th:value="${user.id}">
+
+        <div class="table-container">
+            <label>Choose Doctor:</label>
+            <table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Full Name</th>
+                    <th>Specialization</th>
+                    <th>Hospital</th>
+                    <th>Select</th>
+                </tr>
+                </thead>
+                <tbody id="doctorTable">
+                <tr th:each="doctor : ${doctors}">
+                    <td th:text="${doctor.id}"></td>
+                    <td th:text="${doctor.name + ' ' + doctor.surname}"></td>
+                    <td th:text="${doctor.specialization}"></td>
+                    <td th:text="${doctor.hospitalName}"></td>
+                    <td>
+                        <input type="radio" name="doctor_id" th:value="${doctor.id}" required>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="cancel-button" onclick="window.location.href='/home';">Cancel</button>
+            <button type="submit" class="submit-button">Submit</button>
+        </div>
+    </form>
+</div>
 </body>
 </html>

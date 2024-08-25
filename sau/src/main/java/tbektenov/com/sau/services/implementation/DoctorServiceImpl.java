@@ -10,9 +10,7 @@ import tbektenov.com.sau.dtos.doctor.CreateDoctorDTO;
 import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.dtos.doctor.DoctorResponse;
 import tbektenov.com.sau.dtos.doctor.UpdateDoctorDTO;
-import tbektenov.com.sau.dtos.hospital.HospitalDoctorCompDTO;
 import tbektenov.com.sau.dtos.order.CreateOrderDTO;
-import tbektenov.com.sau.dtos.user.UserDTO;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
 import tbektenov.com.sau.models.Appointment;
@@ -62,29 +60,10 @@ public class DoctorServiceImpl
         this.orderRepo = orderRepo;
     }
 
-    /**
-     * Retrieves a paginated list of all doctors.
-     *
-     * @param pageNo The page number to retrieve.
-     * @param pageSize The number of doctors per page.
-     * @return A DoctorResponse containing the paginated list of doctors.
-     */
     @Override
-    public DoctorResponse getAllDoctors(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Doctor> doctors = doctorRepo.findAll(pageable);
-        List<Doctor> listOfDoctors = doctors.getContent();
-        List<DoctorDTO> content = listOfDoctors.stream().map(doctor -> mapToDto(doctor)).collect(Collectors.toList());
-
-        DoctorResponse doctorResponse = new DoctorResponse();
-        doctorResponse.setContent(content);
-        doctorResponse.setPageNo(doctors.getNumber());
-        doctorResponse.setPageSize(doctors.getSize());
-        doctorResponse.setTotalElements(doctors.getTotalElements());
-        doctorResponse.setTotalPages(doctors.getTotalPages());
-        doctorResponse.setLast(doctors.isLast());
-
-        return doctorResponse;
+    public List<DoctorDTO> getAllDoctors() {
+        List<Doctor> doctors = doctorRepo.findAll();
+        return doctors.stream().map(doctor -> mapToDto(doctor)).collect(Collectors.toList());
     }
 
     /**
@@ -288,9 +267,10 @@ public class DoctorServiceImpl
     private DoctorDTO mapToDto(Doctor doctor) {
         DoctorDTO doctorDTO = new DoctorDTO();
         doctorDTO.setId(doctor.getId());
+        doctorDTO.setName(doctor.getUser().getName());
+        doctorDTO.setSurname(doctor.getUser().getSurname());
         doctorDTO.setSpecialization(doctor.getSpecialization());
-        doctorDTO.setSpecialization(doctor.getSpecialization());
-        doctorDTO.setHospitalId(doctor.getHospital().getId());
+        doctorDTO.setHospitalName(doctor.getHospital().getName());
         return doctorDTO;
     }
 

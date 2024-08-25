@@ -42,7 +42,6 @@ import java.util.Set;
         @NamedEntityGraph(
                 name = "Hospital.withPharmaciesAndDoctors",
                 attributeNodes = {
-                        @NamedAttributeNode("partnerPharmacies"),
                         @NamedAttributeNode(value = "doctors", subgraph = "doctor.subgraph")
                 },
                 subgraphs = {

@@ -32,11 +32,11 @@ public class DoctorController {
      * @return a paginated list of doctors wrapped in a DoctorResponse
      */
     @GetMapping("doctors")
-    public ResponseEntity<DoctorResponse> getDoctors(
+    public ResponseEntity<List<DoctorDTO>> getDoctors(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize
     ) {
-        return new ResponseEntity<>(doctorService.getAllDoctors(pageNo, pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(doctorService.getAllDoctors(), HttpStatus.OK);
     }
 
     @GetMapping("doctors/hospital/{id}")

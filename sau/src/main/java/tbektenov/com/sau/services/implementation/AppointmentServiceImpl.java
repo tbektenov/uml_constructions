@@ -67,28 +67,23 @@ public class AppointmentServiceImpl
             throw new InvalidArgumentsException("Patient ID and Doctor ID cannot be the same");
         }
 
-        try {
-            Object[] result = (Object[]) entityManager.createNativeQuery(
-                            "select p.patient_id, d.doctor_id " +
-                                    "from Patient p, Doctor d " +
-                                    "WHERE p.patient_id = :patientId AND d.doctor_id = :doctorId"
-                    )
-                    .setParameter("patientId", createAppointmentDTO.getPatient_id())
-                    .setParameter("doctorId", createAppointmentDTO.getDoctor_id())
-                    .getSingleResult();
+        Patient patient = patientRepo.findById(createAppointmentDTO.getPatient_id()).orElseThrow(
+                () -> new ObjectNotFoundException("Patient not found")
+        );
 
-            Appointment appointment = new Appointment();
-            appointment.setDate(createAppointmentDTO.getDate());
-            appointment.setAppointmentStatus(createAppointmentDTO.getAppointmentStatus());
-            appointment.setPatient(entityManager.getReference(Patient.class, createAppointmentDTO.getPatient_id()));
-            appointment.setDoctor(entityManager.getReference(Doctor.class, createAppointmentDTO.getDoctor_id()));
+        Doctor doctor = doctorRepo.findById(createAppointmentDTO.getDoctor_id()).orElseThrow(
+                () -> new ObjectNotFoundException("Doctor not found")
+        );
 
-            Appointment newAppointment = appointmentRepo.save(appointment);
+        Appointment appointment = new Appointment();
+        appointment.setDate(createAppointmentDTO.getDate());
+        appointment.setAppointmentStatus(createAppointmentDTO.getAppointmentStatus());
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
 
-            return mapToDto(newAppointment);
-        } catch (NoResultException e) {
-            throw new ObjectNotFoundException("Patient or Doctor not found");
-        }
+        Appointment newAppointment = appointmentRepo.save(appointment);
+
+        return mapToDto(newAppointment);
     }
 
     /**

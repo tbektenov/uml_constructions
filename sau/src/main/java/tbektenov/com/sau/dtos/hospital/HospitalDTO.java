@@ -36,6 +36,5 @@ public class HospitalDTO {
     private Long hospitalId;
     private String name;
     private String address;
-    private Set<PrivatePharmacyDTO> partnerPharmacies;
     private Set<DoctorDTO> doctors;
 }

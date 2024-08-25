@@ -238,16 +238,6 @@ public class HospitalServiceImpl
         hospitalDTO.setHospitalId(hospital.getId());
         hospitalDTO.setName(hospital.getName());
         hospitalDTO.setAddress(hospital.getAddress());
-        hospitalDTO.setPartnerPharmacies(hospital.getPartnerPharmacies().stream()
-                .map(pharmacy -> {
-                    PrivatePharmacyDTO privatePharmacyDTO = new PrivatePharmacyDTO();
-                    privatePharmacyDTO.setId(pharmacy.getId());
-                    privatePharmacyDTO.setName(pharmacy.getName());
-                    privatePharmacyDTO.setAddress(pharmacy.getAddress());
-                    privatePharmacyDTO.setPharmaCompany(pharmacy.getPharmaCompany());
-                    privatePharmacyDTO.setCompoundPharmacy(pharmacy.isCompoundPharmacy());
-                    return privatePharmacyDTO;
-                }).collect(Collectors.toSet()));
         hospitalDTO.setDoctors(hospital.getDoctors().stream()
                 .map(doctor -> {
                     DoctorDTO doctorDTO = new DoctorDTO();
@@ -255,7 +245,7 @@ public class HospitalServiceImpl
                     doctorDTO.setName(doctor.getUser().getName());
                     doctorDTO.setSurname(doctor.getUser().getSurname());
                     doctorDTO.setSpecialization(doctor.getSpecialization());
-                    doctorDTO.setHospitalId(hospital.getId());
+                    doctorDTO.setHospitalName(hospital.getName());
                     return doctorDTO;
                 }).collect(Collectors.toSet()));
 

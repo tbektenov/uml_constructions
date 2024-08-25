@@ -1,11 +1,14 @@
 package tbektenov.com.sau.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.userRoles.Specialization;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for managing {@link Doctor} entities.
@@ -31,10 +34,12 @@ import java.util.List;
  * @see Doctor
  */
 public interface DoctorRepo extends JpaRepository<Doctor, Long> {
+    @EntityGraph(value = "Doctor.detailsHospitalAndLaboratory", type = EntityGraph.EntityGraphType.LOAD)
+    List<Doctor> findAll();
 
     @Override
     @EntityGraph(value = "Doctor.detailsHospitalAndLaboratory", type = EntityGraph.EntityGraphType.LOAD)
-    List<Doctor> findAll();
+    Optional<Doctor> findById(Long aLong);
 
     /**
      * Finds all doctors associated with the specified hospital ID.
