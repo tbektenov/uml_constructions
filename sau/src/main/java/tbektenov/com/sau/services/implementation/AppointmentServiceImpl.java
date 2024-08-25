@@ -96,6 +96,7 @@ public class AppointmentServiceImpl
      * @param id The unique identifier of the appointment to be cancelled.
      */
     @Override
+    @Transactional
     public void cancelAppointmentById(Long id) {
         Appointment appointment = appointmentRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("No such appointment.")
@@ -105,6 +106,7 @@ public class AppointmentServiceImpl
     }
 
     @Override
+    @Transactional
     public void archiveAppointmentById(Long id) {
         Appointment appointment = appointmentRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("No such appointment.")
@@ -119,6 +121,7 @@ public class AppointmentServiceImpl
     }
 
     @Override
+    @Transactional
     public List<AppointmentDTO> getUpcomingAppointmentsByPatientId(Long patient_id) {
         List<Appointment> appointments = appointmentRepo.findUpcomingByPatientId(patient_id);
         return appointments.stream().map(appointment -> mapToDto(appointment)).collect(Collectors.toList());

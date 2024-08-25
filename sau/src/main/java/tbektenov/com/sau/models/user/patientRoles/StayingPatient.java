@@ -32,5 +32,4 @@ public class StayingPatient {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private TreatmentTracker treatmentTracker;
-
 }

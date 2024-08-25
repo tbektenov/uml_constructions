@@ -21,11 +21,9 @@ import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
+import tbektenov.com.sau.models.user.userRoles.Nurse;
 import tbektenov.com.sau.models.user.userRoles.Patient;
-import tbektenov.com.sau.repositories.LeftPatientRepo;
-import tbektenov.com.sau.repositories.PatientRepo;
-import tbektenov.com.sau.repositories.StayingPatientRepo;
-import tbektenov.com.sau.repositories.UserRepo;
+import tbektenov.com.sau.repositories.*;
 import tbektenov.com.sau.services.IPatientService;
 
 import java.time.LocalDate;
@@ -38,6 +36,7 @@ import java.util.stream.Collectors;
 @Service
 public class PatientServiceImpl
         implements IPatientService {
+    private final NurseRepo nurseRepo;
     private PatientRepo patientRepo;
     private UserRepo userRepo;
     private LeftPatientRepo leftPatientRepo;
@@ -49,12 +48,13 @@ public class PatientServiceImpl
                               UserRepo userRepo,
                               LeftPatientRepo leftPatientRepo,
                               StayingPatientRepo stayingPatientRepo,
-                              EntityManager entityManager) {
+                              EntityManager entityManager, NurseRepo nurseRepo) {
         this.patientRepo = patientRepo;
         this.userRepo = userRepo;
         this.leftPatientRepo = leftPatientRepo;
         this.stayingPatientRepo = stayingPatientRepo;
         this.entityManager = entityManager;
+        this.nurseRepo = nurseRepo;
     }
 
     /**
@@ -169,6 +169,9 @@ public class PatientServiceImpl
         try {
             Patient patient = patientRepo.findById(patientId)
                     .orElseThrow(() -> new ObjectNotFoundException("Patient not found."));
+
+            Nurse nurse = nurseRepo.findById(changeToStayingPatientDTO.getNurseId())
+                    .orElseThrow(() -> new ObjectNotFoundException("Nurse not found."));
 
             if (patient.getLeftPatient() != null) {
                 leftPatientRepo.delete(patient.getLeftPatient());

@@ -12,13 +12,17 @@ import tbektenov.com.sau.dtos.user.RegisterDTO;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.Appointment;
 import tbektenov.com.sau.models.AppointmentStatus;
+import tbektenov.com.sau.models.Hospitalization;
+import tbektenov.com.sau.models.TreatmentTracker;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.hospital.Laboratory;
 import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
 import tbektenov.com.sau.models.user.Sex;
+import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
+import tbektenov.com.sau.models.user.userRoles.Nurse;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 import tbektenov.com.sau.models.user.userRoles.Specialization;
 import tbektenov.com.sau.repositories.*;
@@ -36,6 +40,8 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     private static final Logger LOG = LoggerFactory.getLogger(DataInitializer.class);
     private final PatientRepo patientRepo;
     private final DoctorRepo doctorRepo;
+    private final StayingPatientRepo stayingPatientRepo;
+    private final NurseRepo nurseRepo;
     private AppointmentRepo appointmentRepo;
     private HospitalizationRepo hospitalizationRepo;
     private HospitalPharmacyRepo hospitalPharmacyRepo;
@@ -61,7 +67,7 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                            PrivatePharmacyServiceImpl privatePharmacyService,
                            PrivatePharmacyRepo privatePharmacyRepo,
                            PatientRepo patientRepo,
-                           DoctorRepo doctorRepo) {
+                           DoctorRepo doctorRepo, StayingPatientRepo stayingPatientRepo, NurseRepo nurseRepo) {
         this.appointmentRepo = appointmentRepo;
         this.hospitalizationRepo = hospitalizationRepo;
         this.hospitalPharmacyRepo = hospitalPharmacyRepo;
@@ -75,6 +81,8 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         this.privatePharmacyRepo = privatePharmacyRepo;
         this.patientRepo = patientRepo;
         this.doctorRepo = doctorRepo;
+        this.stayingPatientRepo = stayingPatientRepo;
+        this.nurseRepo = nurseRepo;
     }
 
     @Override
@@ -407,6 +415,12 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         } else {
             throw new InvalidArgumentsException("Patient and Doctor are the same person");
         }
+
+//        Nurse nurse = nurseRepo.findById(1L).orElseThrow(() -> new RuntimeException("Nurse not found"));
+//        HospitalWard ward = hospitalWardRepo.findById(1L).orElseThrow(() -> new RuntimeException("Hospital ward not found"));
+//        if (!stayingPatientRepo.existsById(patient.getId())) {
+//            createHospitalization(patient, ward, nurse);
+//        }
     }
 
     private void createHospitalWardIfNotExists(Hospital hospital, String wardNum, int capacity) {
@@ -422,5 +436,22 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
 
     private boolean checkPatientAndDoctorNotSamePerson(Patient patient, Doctor doctor) {
         return !Objects.equals(patient.getId(), doctor.getId());
+    }
+
+    private void createHospitalization(Patient patient, HospitalWard ward, Nurse nurse) {
+        StayingPatient stayingPatient = new StayingPatient();
+
+        Hospitalization hospitalization = new Hospitalization();
+        hospitalization.setHospitalWard(ward);
+        hospitalization.setPatient(stayingPatient);
+        hospitalization.addNurse(nurse);
+        stayingPatient.setPatient(patient);
+
+        TreatmentTracker treatmentTracker = new TreatmentTracker();
+        treatmentTracker.setGotTreatmentToday(true);
+        treatmentTracker.setPatient(stayingPatient);
+        stayingPatient.setTreatmentTracker(treatmentTracker);
+
+        stayingPatientRepo.save(stayingPatient);
     }
 }

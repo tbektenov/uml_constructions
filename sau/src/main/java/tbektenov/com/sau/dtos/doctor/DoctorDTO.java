@@ -17,5 +17,5 @@ public class DoctorDTO {
     private String name;
     private String surname;
     private Specialization specialization;
-    private HospitalDoctorCompDTO hospital;
+    private Long hospitalId;
 }

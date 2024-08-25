@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 import tbektenov.com.sau.models.Appointment;
+import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.OrderEntity;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.Laboratory;
@@ -92,6 +93,13 @@ public class Doctor{
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<OrderEntity> orders = new HashSet<>();
+
+    public void assignNurseToHospitalization(Nurse nurse,
+                                             Hospitalization hospitalization) {
+        if (nurse != null && hospitalization != null) {
+            nurse.addHospitalization(hospitalization);
+        }
+    }
 
     public void addAppointment(Appointment appointment) {
         this.appointments.add(appointment);

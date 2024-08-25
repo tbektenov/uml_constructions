@@ -41,7 +41,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public UserEntity getLoggedUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("Logged in user: " + username);
         return userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }

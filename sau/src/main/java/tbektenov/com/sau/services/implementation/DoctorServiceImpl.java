@@ -290,12 +290,7 @@ public class DoctorServiceImpl
         doctorDTO.setId(doctor.getId());
         doctorDTO.setSpecialization(doctor.getSpecialization());
         doctorDTO.setSpecialization(doctor.getSpecialization());
-
-        HospitalDoctorCompDTO hospitalDTO = new HospitalDoctorCompDTO();
-        hospitalDTO.setId(doctor.getHospital().getId());
-        hospitalDTO.setName(doctor.getHospital().getName());
-        hospitalDTO.setAddress(doctor.getHospital().getAddress());
-        doctorDTO.setHospital(hospitalDTO);
+        doctorDTO.setHospitalId(doctor.getHospital().getId());
         return doctorDTO;
     }
 

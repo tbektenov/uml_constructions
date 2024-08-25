@@ -240,7 +240,7 @@ public class PrivatePharmacyServiceImpl
         privatePharmacyDTO.setPartnerHospitals(privatePharmacy.getPartnerHospitals().stream()
                 .map(hospital -> {
                     HospitalDTO hospitalDTO = new HospitalDTO();
-                    hospitalDTO.setId(hospital.getId());
+                    hospitalDTO.setHospitalId(hospital.getId());
                     hospitalDTO.setName(hospital.getName());
                     hospitalDTO.setAddress(hospital.getAddress());
                     return hospitalDTO;

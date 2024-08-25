@@ -33,7 +33,7 @@ import java.util.Set;
  */
 @Data
 public class HospitalDTO {
-    private Long id;
+    private Long hospitalId;
     private String name;
     private String address;
     private Set<PrivatePharmacyDTO> partnerPharmacies;

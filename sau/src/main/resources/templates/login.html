@@ -4,16 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
 <div class="login-container">
-    <h2>Login</h2>
+    <h1>Login</h1>
     <form th:action="@{/login}" method="post">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
+        <div class="input-box">
+            <input type="text" name="username" placeholder="Username" required>
+            <box-icon type='solid' name='user'></box-icon>
+        </div>
+
+        <div class="input-box">
+            <input type="password" name="password" placeholder="Password" required>
+            <box-icon type='solid' name='lock-alt'></box-icon>
+            <p id="error" th:if="${error}" th:text="${error}" style="color:red;"></p>
+        </div>
+        <button type="submit" class="btn">Login</button>
     </form>
-    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
 </div>
+<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 </body>
 </html>

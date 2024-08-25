@@ -38,11 +38,20 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/").permitAll()
-//                        .requestMatchers("/").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/login", "/register", "/login?error=true", "/login?logout").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .httpBasic(withDefaults())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home", true)
+                        .failureUrl("/login?error")
+                        .permitAll())
+                .logout(logout -> logout
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll())
+                .rememberMe(rememberMe -> rememberMe.disable())
                 .headers(header -> header
                         .frameOptions(frameOptionsConfig -> frameOptionsConfig.disable())
                 );

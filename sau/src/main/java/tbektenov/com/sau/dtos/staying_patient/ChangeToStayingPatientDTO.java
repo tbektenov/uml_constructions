@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class ChangeToStayingPatientDTO {
     Long hospitalId;
+    Long nurseId;
     String wardNum;
 }

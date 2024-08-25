@@ -1,13 +1,12 @@
 package tbektenov.com.sau.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import tbektenov.com.sau.models.hospital.HospitalWard;
-import tbektenov.com.sau.models.user.userRoles.Nurse;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
+import tbektenov.com.sau.models.user.userRoles.Nurse;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,8 +15,6 @@ import java.util.Set;
 @Entity
 @Table(name = "HOSPITALIZATION")
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Hospitalization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,4 +50,32 @@ public class Hospitalization {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Nurse> nurses = new HashSet<>();
+
+    @Builder
+    public Hospitalization(
+            HospitalWard hospitalWard,
+            StayingPatient patient,
+            @NotNull(message = "there should be at least 1 nurse.") Nurse nurse
+    ) {
+        if (nurse == null) {
+            throw new IllegalArgumentException("At least one nurse must be assigned.");
+        }
+
+        this.startDate = LocalDate.now();
+        this.hospitalWard = hospitalWard;
+        hospitalWard.addHospitalization(this);
+        this.patient = patient;
+        patient.setHospitalization(this);
+        this.nurses.add(nurse);
+        nurse.addHospitalization(this);
+    }
+
+    public void addNurse(Nurse nurse) {
+        if (nurse != null && !nurses.contains(nurse)) {
+            nurses.add(nurse);
+            if (!nurse.getHospitalizations().contains(this)) {
+                nurse.addHospitalization(this);
+            }
+        }
+    }
 }

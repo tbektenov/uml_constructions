@@ -14,74 +14,67 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import tbektenov.com.sau.config.CustomUserDetailsService;
 import tbektenov.com.sau.config.LoggedUserHolder;
+import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.user.RegisterDTO;
 import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.repositories.UserRepo;
 import tbektenov.com.sau.services.IUserService;
+import tbektenov.com.sau.services.implementation.AppointmentServiceImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class AuthController {
+    private final CustomUserDetailsService customUserDetailsService;
     private UserRepo userRepo;
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
     private IUserService userService;
     private LoggedUserHolder loggedUserHolder;
+    private AppointmentServiceImpl appointmentService;
 
     @Autowired
     public AuthController(UserRepo userRepo,
                           AuthenticationManager authenticationManager,
                           PasswordEncoder passwordEncoder,
                           IUserService userService,
-                          LoggedUserHolder loggedUserHolder) {
+                          LoggedUserHolder loggedUserHolder,
+                          AppointmentServiceImpl appointmentService, CustomUserDetailsService customUserDetailsService) {
         this.userRepo = userRepo;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.loggedUserHolder = loggedUserHolder;
+        this.appointmentService = appointmentService;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
-    @GetMapping("/")
-    public String showLogin() {
+    @GetMapping("/login")
+    public String showLogin(
+            Model model,
+            @RequestParam(name = "error", required = false) String error
+    ) {
+        if (error != null) {
+            model.addAttribute("error", "Invalid username or password.");
+        }
         return "login";
     }
 
     @GetMapping("/home")
     public String showHome() {
-        UserEntity user = loggedUserHolder.getLoggedUser();
-        System.out.println(user);
+        System.out.println("7");
+        List<AppointmentDTO> appointments = appointmentService.getUpcomingAppointmentsByPatientId(
+                customUserDetailsService.getLoggedUser().getId()
+        );
+        System.out.println("8");
+
+        appointments.forEach(System.out::println);
+        System.out.println("9");
+
         return "home";
-    }
-
-    @PostMapping("/login")
-    public String login(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
-        Optional<UserEntity> userOptional = userRepo.findByUsername(username);
-
-        if (userOptional.isEmpty()) {
-            model.addAttribute("error", "Username does not exist");
-            return "login";
-        }
-
-        UserEntity user = userOptional.get();
-
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            model.addAttribute("error", "Invalid password");
-            return "login";
-        }
-
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return "redirect:/home";
-        } catch (Exception e) {
-            model.addAttribute("error", "Authentication failed");
-            return "login";
-        }
     }
 
     /**

@@ -13,6 +13,14 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "Nurse.hospitalizations",
+                attributeNodes = {
+                        @NamedAttributeNode("hospitalizations")
+                }
+        )
+)
 public class Nurse{
     @Id
     private Long id;
@@ -33,4 +41,13 @@ public class Nurse{
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Hospitalization> hospitalizations = new HashSet<>();
+
+    public void addHospitalization(Hospitalization hospitalization) {
+        if (hospitalization != null && !hospitalizations.contains(hospitalization)) {
+            hospitalizations.add(hospitalization);
+            if (!hospitalization.getNurses().contains(this)) {
+                hospitalization.addNurse(this);
+            }
+        }
+    }
 }

@@ -1,17 +1,22 @@
 package tbektenov.com.sau.controllers.hospital;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import tbektenov.com.sau.dtos.hospital.CreateUpdateHospitalDTO;
 import tbektenov.com.sau.dtos.hospital.HospitalAndDoctorsDTO;
 import tbektenov.com.sau.dtos.hospital.HospitalDTO;
 import tbektenov.com.sau.dtos.hospital.HospitalResponse;
+import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.services.IHospitalService;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class HospitalController {
@@ -41,9 +46,36 @@ public class HospitalController {
     @GetMapping("/hospitals1")
     public ResponseEntity<HospitalResponse> getHospitals(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            Model model,
+            HttpSession session
     ) {
-        return new ResponseEntity<>(hospitalService.getAllHospitals(pageNo, pageSize), HttpStatus.OK);
+        HospitalResponse hospitalResponse = hospitalService.getAllHospitals(pageNo, pageSize);
+
+        session.setAttribute("content", hospitalResponse.getContent());
+        System.out.println(hospitalResponse.getContent());
+
+        return new ResponseEntity<>(hospitalResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/hospitals2/{hospitalId}")
+    public ResponseEntity<String> getHospitals2(
+            @PathVariable Long hospitalId,
+            Model model,
+            HttpSession session
+    ) {
+        List<HospitalDTO> hospitalDTOS = (List<HospitalDTO>) session.getAttribute("content");
+
+        if (hospitalDTOS != null) {
+            Optional<HospitalDTO> matchingHospital = hospitalDTOS.stream()
+                    .filter(hospital -> hospital.getHospitalId().equals(hospitalId))
+                    .findFirst();
+
+            matchingHospital.ifPresent(hospital -> hospital.getDoctors().forEach(System.out::println));
+            matchingHospital.ifPresent(hospitalDTO -> model.addAttribute("doctors", hospitalDTO.getDoctors()));
+        }
+
+        return new ResponseEntity<>("Okay", HttpStatus.OK);
     }
 
     @GetMapping("hospitals/doctors")

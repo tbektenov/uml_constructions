@@ -6,6 +6,10 @@ import lombok.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import tbektenov.com.sau.models.Hospitalization;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -34,4 +38,18 @@ public class HospitalWard {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Hospital hospital;
+
+    @OneToMany(mappedBy = "hospitalWard", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Hospitalization> hospitalizations = new HashSet<>();
+
+    public void addHospitalization(Hospitalization hospitalization) {
+        if (hospitalization != null) {
+            hospitalizations.add(hospitalization);
+            if (!hospitalization.getHospitalWard().equals(this)) {
+                hospitalization.setHospitalWard(this);
+            }
+        }
+    }
 }

@@ -235,7 +235,7 @@ public class HospitalServiceImpl
      */
     private HospitalDTO mapToDto(Hospital hospital) {
         HospitalDTO hospitalDTO = new HospitalDTO();
-        hospitalDTO.setId(hospital.getId());
+        hospitalDTO.setHospitalId(hospital.getId());
         hospitalDTO.setName(hospital.getName());
         hospitalDTO.setAddress(hospital.getAddress());
         hospitalDTO.setPartnerPharmacies(hospital.getPartnerPharmacies().stream()
@@ -255,6 +255,7 @@ public class HospitalServiceImpl
                     doctorDTO.setName(doctor.getUser().getName());
                     doctorDTO.setSurname(doctor.getUser().getSurname());
                     doctorDTO.setSpecialization(doctor.getSpecialization());
+                    doctorDTO.setHospitalId(hospital.getId());
                     return doctorDTO;
                 }).collect(Collectors.toSet()));
 
