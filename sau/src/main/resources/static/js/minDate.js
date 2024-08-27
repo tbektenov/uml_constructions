@@ -1,6 +1,10 @@
 $(document).ready(() => {
-    var today = new Date();
-    var tomorrow = new Date(today);
+
+    /**
+     * Sets the minimum selectable date in an HTML input element with the ID 'date'
+     * to be the date of tomorrow. The date is formatted as 'YYYY-MM-DD'.
+     */
+    var tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     var day = ("0" + tomorrow.getDate()).slice(-2);
@@ -8,4 +12,5 @@ $(document).ready(() => {
     var formattedDate = tomorrow.getFullYear() + "-" + month + "-" + day;
 
     $('#date').attr('min', formattedDate);
+
 });

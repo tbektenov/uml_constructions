@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.Setter;
 
 /**
- * Abstract base class representing a Pharmacy.
+ * Abstract base class representing a Pharmacy entity.
  */
 @Data
 @Entity
@@ -26,6 +26,11 @@ public abstract class Pharmacy {
     @Column(name = "isCompoundPharmacy", nullable = false)
     protected boolean isCompoundPharmacy = false;
 
+    /**
+     * Sets the compound pharmacy status.
+     *
+     * @param isCompoundPharmacy true if the pharmacy is a compound pharmacy, false otherwise
+     */
     public void setCompoundPharmacy(boolean isCompoundPharmacy) {
         this.isCompoundPharmacy = isCompoundPharmacy;
     }

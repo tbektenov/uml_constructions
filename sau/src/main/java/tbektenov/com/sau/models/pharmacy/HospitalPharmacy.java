@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Entity representing a Hospital Pharmacy.
+ * Entity representing a hospital pharmacy associated with a specific hospital.
  */
 @Data
 @Entity
@@ -30,8 +30,17 @@ public class HospitalPharmacy
     @EqualsAndHashCode.Exclude
     private Set<OrderEntity> orders = new HashSet<>();
 
+    /**
+     * Constructs a new HospitalPharmacy with the specified name, type, and associated hospital.
+     *
+     * @param name              the name of the pharmacy
+     * @param isCompoundPharmacy whether the pharmacy is a compound pharmacy
+     * @param hospital          the hospital to which this pharmacy belongs
+     */
     @Builder
-    public HospitalPharmacy(String name, boolean isCompoundPharmacy, Hospital hospital) {
+    public HospitalPharmacy(String name,
+                            boolean isCompoundPharmacy,
+                            Hospital hospital) {
         this.name = name;
         this.isCompoundPharmacy = isCompoundPharmacy;
         this.hospital = hospital;

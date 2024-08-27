@@ -11,12 +11,20 @@ import tbektenov.com.sau.services.IHospitalWardService;
 
 import java.util.List;
 
+/**
+ * Controller class for managing hospital wards.
+ */
 @Controller
 @RequestMapping("/api/ward/")
 public class HospitalWardController {
 
     private final IHospitalWardService hospitalWardService;
 
+    /**
+     * Constructs a {@code HospitalWardController} with the specified {@code IHospitalWardService}.
+     *
+     * @param hospitalWardService the service handling hospital ward-related operations
+     */
     @Autowired
     public HospitalWardController(IHospitalWardService hospitalWardService) {
         this.hospitalWardService = hospitalWardService;
@@ -27,7 +35,7 @@ public class HospitalWardController {
      *
      * @param hospitalId the ID of the hospital
      * @param createUpdateHospitalWardDTO the DTO containing details of the new ward
-     * @return the created hospital ward details
+     * @return the created hospital ward details wrapped in a {@link ResponseEntity}
      */
     @PostMapping("/create/{hospitalId}")
     public ResponseEntity<HospitalWardDTO> createHospitalWard(
@@ -42,7 +50,7 @@ public class HospitalWardController {
      * Retrieves all wards for a specific hospital.
      *
      * @param hospitalId the ID of the hospital
-     * @return a list of hospital wards associated with the specified hospital
+     * @return a list of hospital wards associated with the specified hospital wrapped in a {@link ResponseEntity}
      */
     @GetMapping("/hospital/{hospitalId}/wards")
     public ResponseEntity<List<HospitalWardDTO>> getWardsByHospitalId(@PathVariable("hospitalId") Long hospitalId) {
@@ -55,7 +63,7 @@ public class HospitalWardController {
      *
      * @param hospitalId the ID of the hospital
      * @param wardId the ID of the ward
-     * @return the details of the specified hospital ward
+     * @return the details of the specified hospital ward wrapped in a {@link ResponseEntity}
      */
     @GetMapping("/hospital/{hospitalId}/ward/{wardId}")
     public ResponseEntity<HospitalWardDTO> getWardById(
@@ -72,7 +80,7 @@ public class HospitalWardController {
      * @param hospitalId the ID of the hospital
      * @param wardId the ID of the ward to update
      * @param createUpdateHospitalWardDTO the DTO containing updated details of the ward
-     * @return the updated hospital ward details
+     * @return the updated hospital ward details wrapped in a {@link ResponseEntity}
      */
     @PutMapping("/hospital/{hospitalId}/ward/{wardId}")
     public ResponseEntity<HospitalWardDTO> updateHospitalWard(
@@ -89,7 +97,7 @@ public class HospitalWardController {
      *
      * @param hospitalId the ID of the hospital
      * @param wardId the ID of the ward to delete
-     * @return a confirmation message of the deletion
+     * @return a confirmation message of the deletion wrapped in a {@link ResponseEntity}
      */
     @DeleteMapping("/hospital/{hospitalId}/ward/{wardId}")
     public ResponseEntity<String> deleteHospitalWard(

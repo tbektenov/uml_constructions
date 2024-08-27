@@ -45,6 +45,7 @@ public class PrivatePharmacyServiceImpl
      * @throws InvalidArgumentsException if validation fails.
      */
     @Override
+    @Transactional
     public PrivatePharmacyDTO createPrivatePharmacy(CreateUpdatePrivatePharmacyDTO createUpdatePrivatePharmacyDTO) {
         validateCreateUpdatePrivatePharmacyDTO(createUpdatePrivatePharmacyDTO);
 
@@ -63,6 +64,7 @@ public class PrivatePharmacyServiceImpl
      * @return A response containing the paginated list of PrivatePharmacyDTOs.
      */
     @Override
+    @Transactional
     public PrivatePharmacyResponse getAllPrivatePharmacies(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<PrivatePharmacy> pharmacies = privatePharmacyRepo.findAll(pageable);
@@ -88,6 +90,7 @@ public class PrivatePharmacyServiceImpl
      * @throws ObjectNotFoundException if the private pharmacy is not found.
      */
     @Override
+    @Transactional
     public PrivatePharmacyDTO getPrivatePharmacyById(Long privatePharmacyId) {
         PrivatePharmacy privatePharmacy = privatePharmacyRepo.findById(privatePharmacyId).orElseThrow(
                 () -> new ObjectNotFoundException(String.format("Private Pharmacy with id: %d was not found", privatePharmacyId))
@@ -105,6 +108,7 @@ public class PrivatePharmacyServiceImpl
      * @throws ObjectNotFoundException if the private pharmacy is not found.
      */
     @Override
+    @Transactional
     public PrivatePharmacyDTO updatePrivatePharmacy(CreateUpdatePrivatePharmacyDTO createUpdatePrivatePharmacyDTO, Long privatePharmacyId) {
         PrivatePharmacy privatePharmacy = privatePharmacyRepo.findById(privatePharmacyId).orElseThrow(
                 () -> new ObjectNotFoundException(String.format("Private Pharmacy with id: %d was not found", privatePharmacyId))
@@ -136,6 +140,7 @@ public class PrivatePharmacyServiceImpl
      * @throws ObjectNotFoundException if the private pharmacy is not found.
      */
     @Override
+    @Transactional
     public void deletePrivatePharmacy(Long privatePharmacyId) {
         PrivatePharmacy privatePharmacy = privatePharmacyRepo.findById(privatePharmacyId).orElseThrow(
                 () -> new ObjectNotFoundException(String.format("Private Pharmacy with id: %d was not found", privatePharmacyId))
@@ -184,6 +189,7 @@ public class PrivatePharmacyServiceImpl
      * @throws InvalidArgumentsException if the hospital is not a partner.
      */
     @Override
+    @Transactional
     public PrivatePharmacyDTO removePartnerHospital(Long pharmacyId, Long hospitalId) {
         PrivatePharmacy pharmacy = privatePharmacyRepo.findById(pharmacyId).orElseThrow(
                 () -> new ObjectNotFoundException("Private pharmacy not found.")

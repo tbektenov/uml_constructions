@@ -11,25 +11,8 @@ import java.util.Set;
 /**
  * Represents a laboratory entity associated with a hospital.
  *
- * <p>This class uses JPA annotations to map to a database table and Lombok annotations
- * to automatically generate getters, setters, constructors, and other utility methods.</p>
- *
- * <p>Fields:</p>
- * <ul>
- *   <li>{@code id}: The unique identifier for the laboratory.</li>
- *   <li>{@code floor}: The floor on which the laboratory is located.</li>
- *   <li>{@code hospital}: The hospital to which this laboratory belongs (many-to-one relationship).</li>
- * </ul>
- *
- * <p>Relationships:</p>
- * <ul>
- *   <li>{@code hospital}: Many-to-one relationship with {@link Hospital}, with lazy fetching and a join column named {@code hospital_id}.</li>
- * </ul>
- *
- * @see Hospital
- * @see lombok.Data
- * @see lombok.AllArgsConstructor
- * @see lombok.NoArgsConstructor
+ * <p>This entity manages the details of a hospital's laboratory, including its floor location
+ * and its association with both the hospital and the doctors who work there.</p>
  */
 @Data
 @Entity

@@ -21,9 +21,12 @@ import tbektenov.com.sau.services.IUserService;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Implementation of the IUserService interface for managing user-related operations.
+ * Handles user registration, deletion, and role assignment.
+ */
 @Service
-public class UserServiceImpl
-    implements IUserService {
+public class UserServiceImpl implements IUserService {
 
     private UserRepo userRepo;
     private HospitalRepo hospitalRepo;
@@ -31,6 +34,15 @@ public class UserServiceImpl
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Constructs a UserServiceImpl with the specified repositories and services.
+     *
+     * @param userRepo             The repository for user entities.
+     * @param hospitalRepo         The repository for hospital entities.
+     * @param doctorRepo           The repository for doctor entities.
+     * @param authenticationManager The authentication manager for user authentication.
+     * @param passwordEncoder      The password encoder for encoding user passwords.
+     */
     @Autowired
     public UserServiceImpl(UserRepo userRepo,
                            HospitalRepo hospitalRepo,
@@ -44,6 +56,13 @@ public class UserServiceImpl
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Registers a new user based on the provided RegisterDTO.
+     * This method creates a UserEntity and associates it with roles such as Patient, Doctor, or Nurse
+     * based on the information in the RegisterDTO.
+     *
+     * @param registerDTO The DTO containing registration details for the user.
+     */
     @Override
     @Transactional
     public void registerUser(RegisterDTO registerDTO) {
@@ -70,7 +89,6 @@ public class UserServiceImpl
             nurse.setUser(user);
             userRoles.add(UserRole.NURSE);
 
-            nurse.setUser(user);
             user.setNurse(nurse);
         }
 
@@ -79,7 +97,15 @@ public class UserServiceImpl
         userRepo.save(user);
     }
 
+    /**
+     * Deletes a user by their ID.
+     *
+     * @param id The ID of the user to delete.
+     * @return A message indicating the result of the deletion operation.
+     * @throws ObjectNotFoundException if no user with the specified ID is found.
+     */
     @Override
+    @Transactional
     public String deleteUserById(Long id) {
         UserEntity user = userRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("No such user.")
@@ -89,6 +115,12 @@ public class UserServiceImpl
         return String.format("User with id: %d was deleted", id);
     }
 
+    /**
+     * Creates a UserEntity from the provided RegisterDTO.
+     *
+     * @param registerDTO The DTO containing user registration details.
+     * @return The created UserEntity.
+     */
     private UserEntity createUserEntityFromDTO(RegisterDTO registerDTO) {
         UserEntity user = new UserEntity();
         user.setName(registerDTO.getName());
@@ -103,6 +135,13 @@ public class UserServiceImpl
         return user;
     }
 
+    /**
+     * Creates a Patient entity from the provided RegisterDTO and associates it with the given UserEntity.
+     *
+     * @param registerDTO The DTO containing patient details.
+     * @param user        The UserEntity to associate with the Patient.
+     * @return The created Patient entity.
+     */
     private Patient createPatientFromDTO(RegisterDTO registerDTO, UserEntity user) {
         Patient patient = new Patient();
         patient.setBloodGroup(registerDTO.getBloodGroup());
@@ -112,6 +151,14 @@ public class UserServiceImpl
         return patient;
     }
 
+    /**
+     * Creates a Doctor entity from the provided RegisterDTO and associates it with the given UserEntity.
+     *
+     * @param registerDTO The DTO containing doctor details.
+     * @param user        The UserEntity to associate with the Doctor.
+     * @return The created Doctor entity.
+     * @throws ObjectNotFoundException if no hospital with the specified ID is found.
+     */
     private Doctor createDoctorFromDTO(RegisterDTO registerDTO, UserEntity user) {
         Hospital hospital = hospitalRepo.findById(registerDTO.getHospitalId()).orElseThrow(
                 () -> new ObjectNotFoundException("No such hospital.")

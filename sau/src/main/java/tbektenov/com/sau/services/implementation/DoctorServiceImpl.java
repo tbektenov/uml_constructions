@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DoctorServiceImpl
-    implements IDoctorService {
+        implements IDoctorService {
 
     private DoctorRepo doctorRepo;
     private UserRepo userRepo;
@@ -61,6 +61,7 @@ public class DoctorServiceImpl
     }
 
     @Override
+    @Transactional
     public List<DoctorDTO> getAllDoctors() {
         List<Doctor> doctors = doctorRepo.findAll();
         return doctors.stream().map(doctor -> mapToDto(doctor)).collect(Collectors.toList());
@@ -73,6 +74,7 @@ public class DoctorServiceImpl
      * @return The created DoctorDTO with the doctor's details.
      */
     @Override
+    @Transactional
     public String createDoctor(CreateDoctorDTO createDoctorDTO) {
         validateCreateDoctorDTO(createDoctorDTO);
 
@@ -100,6 +102,7 @@ public class DoctorServiceImpl
      * @return The DoctorDTO with the doctor's details.
      */
     @Override
+    @Transactional
     public DoctorDTO getDoctorById(Long id) {
         Doctor doctor = doctorRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(
@@ -117,6 +120,7 @@ public class DoctorServiceImpl
      * @return The updated DoctorDTO with the doctor's new details.
      */
     @Override
+    @Transactional
     public DoctorDTO updateDoctor(UpdateDoctorDTO updateDoctorDTO, Long id) {
         Doctor doctor = doctorRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(
@@ -155,6 +159,7 @@ public class DoctorServiceImpl
      * @return A list of DoctorDTOs with the details of the doctors working at the hospital.
      */
     @Override
+    @Transactional
     public List<DoctorDTO> getDoctorsFromHospitalById(Long id) {
         List<Doctor> doctors = doctorRepo.findByHospitalId(id);
         return doctors.stream().map(doctor -> mapToDto(doctor)).collect(Collectors.toList());
@@ -168,6 +173,7 @@ public class DoctorServiceImpl
      * @return The updated DoctorDTO with the doctor's details.
      */
     @Override
+    @Transactional
     public DoctorDTO assignDoctorToAnotherHospital(Long doctorId, Long hospitalId) {
         Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
                 () -> new ObjectNotFoundException("No doctor was found.")
@@ -196,6 +202,7 @@ public class DoctorServiceImpl
      * @param hospitalId The unique identifier of the hospital.
      */
     @Override
+    @Transactional
     public void removeDoctorFromHospital(Long doctorId, Long hospitalId) {
         Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
                 () -> new ObjectNotFoundException("Doctor not found.")
@@ -216,6 +223,7 @@ public class DoctorServiceImpl
     }
 
     @Override
+    @Transactional
     public void finishAppointment(Long doctorId, Long appointId) {
         Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
                 () -> new ObjectNotFoundException("No such doctor.")
@@ -234,6 +242,7 @@ public class DoctorServiceImpl
     }
 
     @Override
+    @Transactional
     public void createOrder(Long doctorId, Long hospitalPharmacyId, CreateOrderDTO createOrderDTO) {
         Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
                 () -> new ObjectNotFoundException("Doctor not found.")
@@ -288,6 +297,12 @@ public class DoctorServiceImpl
         return doctor;
     }
 
+    /**
+     * Validates the CreateDoctorDTO.
+     *
+     * @param createDoctorDTO The data transfer object containing doctor details.
+     * @throws InvalidArgumentsException If the DTO contains invalid data.
+     */
     private void validateCreateDoctorDTO(CreateDoctorDTO createDoctorDTO) {
         if (createDoctorDTO.getUserId() == 0 ||
                 createDoctorDTO.getHospitalId() == 0 ||

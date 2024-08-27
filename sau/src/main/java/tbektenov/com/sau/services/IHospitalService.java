@@ -28,7 +28,6 @@ public interface IHospitalService {
      * @return a {@link HospitalResponse} containing the list of hospitals and pagination details
      */
     HospitalResponse getAllHospitals(int pageNo, int pageSize);
-    List<HospitalAndDoctorsDTO> getAllHospitalsWithDoctors();
 
     /**
      * Retrieves a hospital by its ID.

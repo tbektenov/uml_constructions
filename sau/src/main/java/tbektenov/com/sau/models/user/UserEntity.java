@@ -20,6 +20,13 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Entity representing a user in the system.
+ *
+ * <p>Includes personal details, credentials, and associated roles such as Doctor, Patient, or Nurse.</p>
+ *
+ * <p>Uses JPA annotations for ORM mapping and Lombok for reducing boilerplate code.</p>
+ */
 @Data
 @Entity
 @Table(name = "USERS")

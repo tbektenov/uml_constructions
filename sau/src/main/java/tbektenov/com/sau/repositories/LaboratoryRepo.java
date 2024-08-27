@@ -5,12 +5,12 @@ import tbektenov.com.sau.models.hospital.Laboratory;
 
 import java.util.List;
 
+
 /**
- * Repository interface for {@link Laboratory} entities.
- * Provides CRUD operations for managing laboratory entities in the database.
+ * Repository interface for managing Laboratory entities.
  *
- * <p>This interface extends {@link JpaRepository}, which includes methods for
- * basic CRUD operations, pagination, and sorting.</p>
+ * <p>Extends {@link JpaRepository} to provide CRUD operations for Laboratory entities.
+ * Includes custom methods for finding laboratories by hospital ID and checking existence by hospital ID and floor.</p>
  *
  * @see JpaRepository
  * @see Laboratory
@@ -18,11 +18,19 @@ import java.util.List;
 public interface LaboratoryRepo extends JpaRepository<Laboratory, Long> {
 
     /**
-     * Finds all laboratories associated with the specified hospital ID.
+     * Finds all laboratories associated with a specific hospital ID.
      *
      * @param hospitalId the ID of the hospital
-     * @return a list of laboratories associated with the specified hospital ID
+     * @return a list of laboratories associated with the specified hospital
      */
     List<Laboratory> findByHospitalId(Long hospitalId);
+
+    /**
+     * Checks if a laboratory exists by its hospital ID and floor.
+     *
+     * @param hospitalId the ID of the hospital
+     * @param floor the floor of the laboratory
+     * @return true if a laboratory with the specified hospital ID and floor exists, false otherwise
+     */
     Boolean existsByHospitalIdAndFloor(Long hospitalId, int floor);
 }

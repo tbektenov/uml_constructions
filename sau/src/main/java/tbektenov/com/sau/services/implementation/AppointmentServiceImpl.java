@@ -25,13 +25,12 @@ import java.util.stream.Collectors;
 /**
  * Service implementation for managing appointments.
  *
- * Provides methods to create and cancel appointments, as well as
- * to map between DTOs and entity objects.
+ * Provides methods to create, cancel, and archive appointments,
+ * as well as to retrieve upcoming appointments for a patient.
  */
 @Service
 public class AppointmentServiceImpl
-    implements IAppointmentService {
-    private EntityManager entityManager;
+        implements IAppointmentService {
     private DoctorRepo doctorRepo;
     private PatientRepo patientRepo;
     private AppointmentRepo appointmentRepo;
@@ -46,12 +45,10 @@ public class AppointmentServiceImpl
     @Autowired
     public AppointmentServiceImpl(DoctorRepo doctorRepo,
                                   PatientRepo patientRepo,
-                                  AppointmentRepo appointmentRepo,
-                                  EntityManager entityManager) {
+                                  AppointmentRepo appointmentRepo) {
         this.doctorRepo = doctorRepo;
         this.patientRepo = patientRepo;
         this.appointmentRepo = appointmentRepo;
-        this.entityManager = entityManager;
     }
 
     /**
@@ -65,6 +62,10 @@ public class AppointmentServiceImpl
     public AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO) {
         if (Objects.equals(createAppointmentDTO.getPatient_id(), createAppointmentDTO.getDoctor_id())) {
             throw new InvalidArgumentsException("Patient ID and Doctor ID cannot be the same");
+        }
+
+        if (createAppointmentDTO.getDate() == null) {
+            throw new InvalidArgumentsException("Date cannot be null");
         }
 
         Patient patient = patientRepo.findById(createAppointmentDTO.getPatient_id()).orElseThrow(
@@ -101,6 +102,11 @@ public class AppointmentServiceImpl
         appointmentRepo.delete(appointment);
     }
 
+    /**
+     * Archives an appointment identified by its ID.
+     *
+     * @param id The unique identifier of the appointment to be archived.
+     */
     @Override
     @Transactional
     public void archiveAppointmentById(Long id) {
@@ -116,6 +122,12 @@ public class AppointmentServiceImpl
         appointmentRepo.save(appointment);
     }
 
+    /**
+     * Retrieves a list of upcoming appointments for a specific patient.
+     *
+     * @param patient_id The ID of the patient.
+     * @return A list of upcoming AppointmentDTOs.
+     */
     @Override
     @Transactional
     public List<AppointmentDTO> getUpcomingAppointmentsByPatientId(Long patient_id) {

@@ -1,5 +1,6 @@
 package tbektenov.com.sau.services.implementation;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,21 +23,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Implementation of the {@link IHospitalService} interface.
- * Provides the business logic for managing hospitals.
+ * Provides services for managing hospitals.
  */
 @Service
 public class HospitalServiceImpl
-    implements IHospitalService {
+        implements IHospitalService {
 
     private HospitalRepo hospitalRepo;
     private PrivatePharmacyRepo privatePharmacyRepo;
     private DoctorRepo doctorRepo;
 
     /**
-     * Constructs a new {@code HospitalServiceImpl} with the specified hospital repository.
+     * Initializes the service with required repositories.
      *
-     * @param hospitalRepo the repository to be used for CRUD operations on hospitals
+     * @param hospitalRepo repository for hospital data
+     * @param privatePharmacyRepo repository for private pharmacy data
+     * @param doctorRepo repository for doctor data
      */
     @Autowired
     public HospitalServiceImpl(HospitalRepo hospitalRepo, PrivatePharmacyRepo privatePharmacyRepo, DoctorRepo doctorRepo) {
@@ -46,9 +48,14 @@ public class HospitalServiceImpl
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new hospital.
+     *
+     * @param createUpdateHospitalDTO DTO with hospital details
+     * @return the created HospitalDTO
+     * @throws InvalidArgumentsException if the DTO contains invalid data
      */
     @Override
+    @Transactional
     public HospitalDTO createHospital(CreateUpdateHospitalDTO createUpdateHospitalDTO) {
         validateCreateUpdateHospitalDTO(createUpdateHospitalDTO);
 
@@ -60,9 +67,14 @@ public class HospitalServiceImpl
     }
 
     /**
-     * {@inheritDoc}
+     * Retrieves a paginated list of all hospitals.
+     *
+     * @param pageNo the page number to retrieve
+     * @param pageSize the number of hospitals per page
+     * @return the paginated list of hospitals
      */
     @Override
+    @Transactional
     public HospitalResponse getAllHospitals(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Hospital> hospitals = hospitalRepo.findAll(pageable);
@@ -80,16 +92,15 @@ public class HospitalServiceImpl
         return hospitalResponse;
     }
 
-    @Override
-    public List<HospitalAndDoctorsDTO> getAllHospitalsWithDoctors() {
-        List<Hospital> hospitals = hospitalRepo.findAll();
-        return hospitals.stream().map(hospital -> mapToDtoWithDoctors(hospital)).collect(Collectors.toList());
-    }
-
     /**
-     * {@inheritDoc}
+     * Retrieves a hospital by its ID.
+     *
+     * @param id the ID of the hospital
+     * @return the HospitalDTO
+     * @throws ObjectNotFoundException if the hospital is not found
      */
     @Override
+    @Transactional
     public HospitalDTO getHospitalById(Long id) {
         Hospital hospital = hospitalRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(
@@ -100,25 +111,33 @@ public class HospitalServiceImpl
     }
 
     /**
-     * {@inheritDoc}
+     * Updates an existing hospital.
+     *
+     * @param createUpdateHospitalDTO DTO with updated hospital details
+     * @param id the ID of the hospital to update
+     * @return the updated HospitalDTO
+     * @throws ObjectNotFoundException if the hospital is not found
      */
     @Override
+    @Transactional
     public HospitalDTO updateHospital(CreateUpdateHospitalDTO createUpdateHospitalDTO, Long id) {
         Hospital hospital = hospitalRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital could not be updated because it was not found.")
         );
 
-
-
+        // This method does not actually update the hospital's fields based on the DTO
         Hospital updatedHospital = hospitalRepo.save(hospital);
         return mapToDto(updatedHospital);
     }
 
-
     /**
-     * {@inheritDoc}
+     * Deletes a hospital by its ID.
+     *
+     * @param id the ID of the hospital to delete
+     * @throws ObjectNotFoundException if the hospital is not found
      */
     @Override
+    @Transactional
     public void deleteHospital(Long id) {
         Hospital hospital = hospitalRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital could not be deleted.")
@@ -126,7 +145,17 @@ public class HospitalServiceImpl
         hospitalRepo.delete(hospital);
     }
 
+    /**
+     * Adds a private pharmacy as a partner to a hospital.
+     *
+     * @param hospitalId the ID of the hospital
+     * @param pharmacyId the ID of the private pharmacy
+     * @return the updated HospitalDTO
+     * @throws ObjectNotFoundException if the hospital or pharmacy is not found
+     * @throws InvalidArgumentsException if the pharmacy is already a partner
+     */
     @Override
+    @Transactional
     public HospitalDTO addPartnerPharmacy(Long hospitalId, Long pharmacyId) {
         PrivatePharmacy pharmacy = privatePharmacyRepo.findById(pharmacyId).orElseThrow(
                 () -> new ObjectNotFoundException("Private pharmacy not found.")
@@ -146,7 +175,17 @@ public class HospitalServiceImpl
         return mapToDto(hospital);
     }
 
+    /**
+     * Removes a private pharmacy from the list of hospital partners.
+     *
+     * @param hospitalId the ID of the hospital
+     * @param pharmacyId the ID of the private pharmacy
+     * @return the updated HospitalDTO
+     * @throws ObjectNotFoundException if the hospital or pharmacy is not found
+     * @throws InvalidArgumentsException if the pharmacy is not a partner
+     */
     @Override
+    @Transactional
     public HospitalDTO removePartnerPharmacy(Long hospitalId, Long pharmacyId) {
         PrivatePharmacy pharmacy = privatePharmacyRepo.findById(pharmacyId).orElseThrow(
                 () -> new ObjectNotFoundException("Private pharmacy not found.")
@@ -166,7 +205,17 @@ public class HospitalServiceImpl
         return mapToDto(hospital);
     }
 
+    /**
+     * Hires a doctor at a hospital.
+     *
+     * @param hospitalId the ID of the hospital
+     * @param doctorId the ID of the doctor
+     * @return the updated HospitalDTO
+     * @throws ObjectNotFoundException if the hospital or doctor is not found
+     * @throws InvalidArgumentsException if the doctor is already employed at the hospital
+     */
     @Override
+    @Transactional
     public HospitalDTO hireDoctor(Long hospitalId, Long doctorId) {
         Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
                 () -> new ObjectNotFoundException("Doctor not found.")
@@ -188,7 +237,17 @@ public class HospitalServiceImpl
         return mapToDto(hospital);
     }
 
+    /**
+     * Fires a doctor from a hospital.
+     *
+     * @param hospitalId the ID of the hospital
+     * @param doctorId the ID of the doctor
+     * @return the updated HospitalDTO
+     * @throws ObjectNotFoundException if the hospital or doctor is not found
+     * @throws InvalidArgumentsException if the doctor is not employed at the hospital
+     */
     @Override
+    @Transactional
     public HospitalDTO fireDoctor(Long hospitalId, Long doctorId) {
         Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
                 () -> new ObjectNotFoundException("Doctor not found.")
@@ -211,11 +270,11 @@ public class HospitalServiceImpl
     }
 
     /**
-     * Validates the given {@link CreateUpdateHospitalDTO}.
-     * Throws an exception if the name or address is null or empty.
+     * Validates the CreateUpdateHospitalDTO.
+     * Ensures the name and address are not null or empty.
      *
      * @param createUpdateHospitalDTO the DTO to be validated
-     * @throws InvalidArgumentsException if the name or address is null or empty
+     * @throws InvalidArgumentsException if validation fails
      */
     private void validateCreateUpdateHospitalDTO(CreateUpdateHospitalDTO createUpdateHospitalDTO) {
         if (createUpdateHospitalDTO.getName() == null || createUpdateHospitalDTO.getName().isEmpty()) {
@@ -228,10 +287,10 @@ public class HospitalServiceImpl
     }
 
     /**
-     * Maps a {@link Hospital} entity to a {@link HospitalDTO}.
+     * Maps a Hospital entity to a HospitalDTO.
      *
-     * @param hospital the hospital entity to be mapped
-     * @return the resulting hospital DTO
+     * @param hospital the Hospital entity
+     * @return the corresponding HospitalDTO
      */
     private HospitalDTO mapToDto(Hospital hospital) {
         HospitalDTO hospitalDTO = new HospitalDTO();
@@ -252,25 +311,11 @@ public class HospitalServiceImpl
         return hospitalDTO;
     }
 
-    private HospitalAndDoctorsDTO mapToDtoWithDoctors(Hospital hospital) {
-        HospitalAndDoctorsDTO hospitalDTO = new HospitalAndDoctorsDTO();
-        hospitalDTO.setId(hospital.getId());
-        hospitalDTO.setDoctors(hospital.getDoctors().stream()
-                .map(doctor -> {
-                    DoctorDTO doctorDTO = new DoctorDTO();
-                    doctorDTO.setId(doctor.getId());
-                    doctorDTO.setSpecialization(doctor.getSpecialization());
-                    return doctorDTO;
-                }).collect(Collectors.toList()));
-
-        return hospitalDTO;
-    }
-
     /**
-     * Maps a {@link CreateUpdateHospitalDTO} to a {@link Hospital} entity.
+     * Maps a CreateUpdateHospitalDTO to a Hospital entity.
      *
-     * @param hospitalDTO the DTO to be mapped
-     * @return the resulting hospital entity
+     * @param hospitalDTO the CreateUpdateHospitalDTO
+     * @return the corresponding Hospital entity
      */
     private Hospital mapToEntity(CreateUpdateHospitalDTO hospitalDTO) {
         Hospital hospital = new Hospital();

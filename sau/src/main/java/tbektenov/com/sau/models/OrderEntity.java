@@ -8,8 +8,10 @@ import tbektenov.com.sau.models.user.userRoles.Doctor;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
+/**
+ * Represents an order made by a doctor to a hospital pharmacy.
+ */
 @Entity
-@Table(name = "ORDERS")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

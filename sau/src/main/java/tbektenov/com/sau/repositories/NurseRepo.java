@@ -8,12 +8,23 @@ import java.util.Optional;
 
 /**
  * Repository interface for {@link Nurse} entities.
- * <p>
- * Provides basic CRUD operations and a method to check if a nurse exists by user ID.
- * </p>
+ *
+ * <p>Provides basic CRUD operations and a method to find a nurse by ID with associated hospitalizations.</p>
+ *
+ * @see JpaRepository
+ * @see Nurse
  */
 public interface NurseRepo extends JpaRepository<Nurse, Long> {
 
+    /**
+     * Finds a {@link Nurse} by its ID and fetches associated hospitalizations.
+     *
+     * <p>This method uses an entity graph to load the associated hospitalizations
+     * of the nurse to avoid lazy loading issues.</p>
+     *
+     * @param aLong the ID of the nurse to find
+     * @return an {@link Optional} containing the nurse if found, or empty if not
+     */
     @Override
     @EntityGraph(value = "Nurse.hospitalizations", type = EntityGraph.EntityGraphType.FETCH)
     Optional<Nurse> findById(Long aLong);

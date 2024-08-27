@@ -8,6 +8,13 @@ import tbektenov.com.sau.models.user.userRoles.Patient;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
+/**
+ * Represents an appointment between a doctor and a patient.
+ *
+ * <p>Mapped to the "APPOINTMENTS" table in the database.</p>
+ *
+ * <p>Includes details like date, status, doctor, and patient.</p>
+ */
 @Entity
 @Data
 @Table(name = "APPOINTMENTS")

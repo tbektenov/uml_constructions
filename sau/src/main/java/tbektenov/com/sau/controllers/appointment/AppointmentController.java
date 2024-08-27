@@ -21,20 +21,34 @@ import tbektenov.com.sau.services.implementation.DoctorServiceImpl;
 
 import java.util.List;
 
+/**
+ * Controller class that handles requests related to appointments.
+ */
 @Controller
 @RequestMapping("/appointments/")
 public class AppointmentController {
-    private final DoctorServiceImpl doctorServiceImpl;
-    private IAppointmentService appointmentService;
-    private CustomUserDetailsService customUserDetailsService;
-    private PatientRepo patientRepo;
-    private DoctorRepo doctorRepo;
 
+    private final DoctorServiceImpl doctorServiceImpl;
+    private final IAppointmentService appointmentService;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final PatientRepo patientRepo;
+    private final DoctorRepo doctorRepo;
+
+    /**
+     * Constructs an {@code AppointmentController} with the required dependencies.
+     *
+     * @param appointmentService the service handling appointment logic
+     * @param patientRepo the repository for managing patient data
+     * @param doctorRepo the repository for managing doctor data
+     * @param customUserDetailsService the service for managing user details
+     * @param doctorServiceImpl the service for managing doctor-related operations
+     */
     @Autowired
     public AppointmentController(IAppointmentService appointmentService,
                                  PatientRepo patientRepo,
                                  DoctorRepo doctorRepo,
-                                 CustomUserDetailsService customUserDetailsService, DoctorServiceImpl doctorServiceImpl) {
+                                 CustomUserDetailsService customUserDetailsService,
+                                 DoctorServiceImpl doctorServiceImpl) {
         this.appointmentService = appointmentService;
         this.customUserDetailsService = customUserDetailsService;
         this.patientRepo = patientRepo;
@@ -43,9 +57,12 @@ public class AppointmentController {
     }
 
     /**
-     * Creates a new appointment between a doctor and a patient on the specified date.
+     * Handles the creation of a new appointment between a doctor and a patient.
      *
-     * @return the created appointment details
+     * @param createAppointmentDTO the data transfer object containing appointment details
+     * @param result the binding result for handling validation errors
+     * @param model the model to add attributes used in the view
+     * @return a string indicating the next view to render
      */
     @PostMapping("create")
     public String createAppointment(
@@ -60,6 +77,13 @@ public class AppointmentController {
         return "redirect:/home";
     }
 
+    /**
+     * Renders the form for creating a new appointment.
+     *
+     * @param model the model to add attributes used in the view
+     * @param session the current HTTP session
+     * @return the view name for creating a new appointment
+     */
     @GetMapping("new")
     public String newAppointment(
             Model model,
@@ -92,10 +116,10 @@ public class AppointmentController {
     }
 
     /**
-     * Cancels the appointment with the given ID.
+     * Cancels the appointment with the specified ID.
      *
      * @param appointId the ID of the appointment to cancel
-     * @return a confirmation message
+     * @return a {@link ResponseEntity} with a confirmation message
      */
     @DeleteMapping("delete/{appointId}")
     public ResponseEntity<String> cancelAppointment(
@@ -105,6 +129,12 @@ public class AppointmentController {
         return ResponseEntity.ok("Appointment was canceled.");
     }
 
+    /**
+     * Marks the appointment with the specified ID as finished.
+     *
+     * @param appointId the ID of the appointment to finish
+     * @return a {@link ResponseEntity} with a confirmation message
+     */
     @PutMapping("/finish/{appointId}")
     public ResponseEntity<String> finishAppointment(
             @PathVariable Long appointId
@@ -113,14 +143,16 @@ public class AppointmentController {
         return ResponseEntity.ok("Appointment was finished.");
     }
 
+    /**
+     * Retrieves upcoming appointments for the patient with the specified ID.
+     *
+     * @param patientId the ID of the patient whose appointments are to be retrieved
+     * @return a {@link ResponseEntity} containing a list of upcoming appointments
+     */
     @GetMapping("patient/getUpcoming/{patientId}")
     public ResponseEntity<List<AppointmentDTO>> getUpcomingUserAppointmentsByPatientId(
             @PathVariable Long patientId
     ) {
-        return ResponseEntity.ok(appointmentService.getUpcomingAppointmentsByPatientId(
-                patientId
-        ));
+        return ResponseEntity.ok(appointmentService.getUpcomingAppointmentsByPatientId(patientId));
     }
-
-
 }

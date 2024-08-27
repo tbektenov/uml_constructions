@@ -3,10 +3,12 @@ package tbektenov.com.sau.dtos.hospitalWard;
 import lombok.Data;
 
 /**
- * Data Transfer Object (DTO) for Hospital Ward.
+ * DTO for Hospital Ward details.
  *
- * This DTO represents the detailed information of a hospital ward,
- * including its unique identifier, ward number, and capacity.
+ * Fields:
+ * - {@code id}: Unique identifier of the ward.
+ * - {@code wardNum}: The ward number.
+ * - {@code capacity}: The capacity of the ward.
  */
 @Data
 public class HospitalWardDTO {

@@ -8,6 +8,12 @@ import tbektenov.com.sau.models.user.UserEntity;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents a nurse entity associated with a user and multiple hospitalizations.
+ *
+ * <p>This class manages the relationship between a nurse and hospitalizations,
+ * and it is mapped to the database using JPA annotations.</p>
+ */
 @Entity
 @Data
 @NoArgsConstructor
@@ -42,6 +48,11 @@ public class Nurse{
     @EqualsAndHashCode.Exclude
     private Set<Hospitalization> hospitalizations = new HashSet<>();
 
+    /**
+     * Adds a hospitalization to the nurse's list of hospitalizations.
+     *
+     * @param hospitalization the hospitalization to add
+     */
     public void addHospitalization(Hospitalization hospitalization) {
         if (hospitalization != null && !hospitalizations.contains(hospitalization)) {
             hospitalizations.add(hospitalization);

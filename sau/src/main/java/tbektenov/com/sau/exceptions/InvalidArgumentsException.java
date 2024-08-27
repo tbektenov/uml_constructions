@@ -3,17 +3,14 @@ package tbektenov.com.sau.exceptions;
 import java.io.Serial;
 
 /**
- * Exception thrown when invalid arguments are provided to a hospital-related operation.
- *
- * <p>This exception is a runtime exception and is used to indicate that
- * the arguments provided to a method or operation are invalid or inappropriate.</p>
+ * Exception thrown for invalid arguments in operations.
  */
 public class InvalidArgumentsException extends RuntimeException {
     @Serial
-    private static final long serialVersionUID = 2;
+    private static final long serialVersionUID = 2L;
 
     /**
-     * Constructs a new {@code HospitalInvalidArgumentsException} with the specified detail message.
+     * Constructs a new {@code InvalidArgumentsException} with the specified message.
      *
      * @param message the detail message
      */

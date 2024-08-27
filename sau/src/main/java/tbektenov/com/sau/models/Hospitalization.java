@@ -11,6 +11,9 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents a hospitalization event for a patient within a hospital ward.
+ */
 @Data
 @Entity
 @Table(name = "HOSPITALIZATION")
@@ -51,6 +54,13 @@ public class Hospitalization {
     @EqualsAndHashCode.Exclude
     private Set<Nurse> nurses = new HashSet<>();
 
+    /**
+     * Constructs a new Hospitalization with the given ward, patient, and nurse.
+     *
+     * @param hospitalWard the hospital ward where the patient is staying
+     * @param patient      the patient being hospitalized
+     * @param nurse        the nurse assigned to the patient
+     */
     @Builder
     public Hospitalization(
             HospitalWard hospitalWard,
@@ -70,6 +80,11 @@ public class Hospitalization {
         nurse.addHospitalization(this);
     }
 
+    /**
+     * Adds a nurse to the hospitalization.
+     *
+     * @param nurse The nurse to add.
+     */
     public void addNurse(Nurse nurse) {
         if (nurse != null && !nurses.contains(nurse)) {
             nurses.add(nurse);

@@ -5,9 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import tbektenov.com.sau.config.CustomUserDetailsService;
-import tbektenov.com.sau.config.LoggedUserHolder;
 import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.user.RegisterDTO;
 import tbektenov.com.sau.models.user.UserEntity;
@@ -25,39 +21,62 @@ import tbektenov.com.sau.services.IUserService;
 import tbektenov.com.sau.services.implementation.AppointmentServiceImpl;
 
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Controller class for managing user authentication and registration.
+ */
 @Controller
 public class AuthController {
-    private final CustomUserDetailsService customUserDetailsService;
-    private UserRepo userRepo;
-    private AuthenticationManager authenticationManager;
-    private PasswordEncoder passwordEncoder;
-    private IUserService userService;
-    private LoggedUserHolder loggedUserHolder;
-    private AppointmentServiceImpl appointmentService;
 
+    private final CustomUserDetailsService customUserDetailsService;
+    private final UserRepo userRepo;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final IUserService userService;
+    private final AppointmentServiceImpl appointmentService;
+
+    /**
+     * Constructs an {@code AuthController} with the specified dependencies.
+     *
+     * @param userRepo the repository for accessing user data
+     * @param authenticationManager the manager for handling authentication processes
+     * @param passwordEncoder the encoder for handling password encryption
+     * @param userService the service for managing user-related operations
+     * @param appointmentService the service for managing appointment-related operations
+     * @param customUserDetailsService the service for loading user-specific details
+     */
     @Autowired
     public AuthController(UserRepo userRepo,
                           AuthenticationManager authenticationManager,
                           PasswordEncoder passwordEncoder,
                           IUserService userService,
-                          LoggedUserHolder loggedUserHolder,
-                          AppointmentServiceImpl appointmentService, CustomUserDetailsService customUserDetailsService) {
+                          AppointmentServiceImpl appointmentService,
+                          CustomUserDetailsService customUserDetailsService) {
         this.userRepo = userRepo;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
-        this.loggedUserHolder = loggedUserHolder;
         this.appointmentService = appointmentService;
         this.customUserDetailsService = customUserDetailsService;
     }
 
+    /**
+     * Displays the welcome page.
+     *
+     * @return the name of the welcome page view
+     */
     @GetMapping("/")
     public String showWelcomePage() {
         return "welcomePage";
     }
 
+    /**
+     * Displays the login page.
+     *
+     * @param model the model to carry data to the view
+     * @param error an optional parameter indicating if there was a login error
+     * @return the name of the login page view
+     */
     @GetMapping("/login")
     public String showLogin(
             Model model,
@@ -66,12 +85,18 @@ public class AuthController {
         if (error != null && error) {
             model.addAttribute("error", "Invalid username or password.");
         }
-        System.out.println("============================");
         return "login";
     }
 
+    /**
+     * Displays the home page with the user's upcoming appointments.
+     *
+     * @param model the model to carry data to the view
+     * @param session the HTTP session to store and retrieve user data
+     * @return the name of the home page view
+     */
     @GetMapping("/home")
-    public String showHome(
+    public String showHomePage(
             Model model,
             HttpSession session
     ) {
@@ -82,14 +107,11 @@ public class AuthController {
         } else {
             user = (UserEntity) session.getAttribute("user");
         }
-        System.out.println("============================");
-        List<AppointmentDTO> appointments = appointmentService.getUpcomingAppointmentsByPatientId(
-                user.getId()
-        );
+
+        List<AppointmentDTO> appointments = appointmentService.getUpcomingAppointmentsByPatientId(user.getId());
 
         model.addAttribute("user", user);
         model.addAttribute("appointments", appointments);
-        System.out.println("============================");
         return "home";
     }
 

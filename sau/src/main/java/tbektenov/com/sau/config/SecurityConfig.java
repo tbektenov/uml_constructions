@@ -13,32 +13,59 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * Configuration class for Spring Security, enabling web security and configuring security-related beans.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
 
+    /**
+     * Constructs a new {@code SecurityConfig} with the provided {@link CustomUserDetailsService}.
+     *
+     * @param userDetailsService the custom user details service for loading user-specific data during authentication.
+     */
     @Autowired
     public SecurityConfig(CustomUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * Creates and configures the {@link AuthenticationManager} bean.
+     *
+     * @param authenticationConfiguration the authentication configuration provided by Spring Security.
+     * @return the configured {@link AuthenticationManager}.
+     * @throws Exception if an error occurs while configuring the {@link AuthenticationManager}.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * Configures and returns a {@link PasswordEncoder} bean using the BCrypt hashing algorithm.
+     *
+     * @return a {@link PasswordEncoder} bean.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configures the security filter chain, including HTTP security, form login, logout, and authorization rules.
+     *
+     * @param http the {@link HttpSecurity} to modify.
+     * @return the configured {@link SecurityFilterChain}.
+     * @throws Exception if an error occurs while configuring the security filter chain.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/login?error=true", "/login?logout").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/login?error=true", "/login?logout").permitAll()
                         .requestMatchers("/appointments/new").hasAuthority("PATIENT")
                         .anyRequest().authenticated()
                 )

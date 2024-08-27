@@ -1,5 +1,6 @@
 package tbektenov.com.sau.services.implementation;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.nurse.CreateNurseDTO;
@@ -40,6 +41,7 @@ public class NurseServiceImpl
      * @return List of NurseDTOs.
      */
     @Override
+    @Transactional
     public List<NurseDTO> getAllNurses() {
         List<Nurse> nurses = nurseRepo.findAll();
         return nurses.stream().map(nurse -> mapToDto(nurse)).collect(Collectors.toList());
@@ -52,6 +54,7 @@ public class NurseServiceImpl
      * @return The created NurseDTO.
      */
     @Override
+    @Transactional
     public NurseDTO createNurse(CreateNurseDTO createNurseDTO) {
         UserEntity user = userRepo.findById(createNurseDTO.getUserId()).orElseThrow(() -> new ObjectNotFoundException("No user found."));
 
@@ -67,6 +70,7 @@ public class NurseServiceImpl
      * @return The NurseDTO with the specified ID.
      */
     @Override
+    @Transactional
     public NurseDTO getNurseById(Long id) {
         Nurse nurse = nurseRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(
@@ -84,6 +88,7 @@ public class NurseServiceImpl
      * @return The updated NurseDTO.
      */
     @Override
+    @Transactional
     public NurseDTO updateNurse(UpdateNurseDTO updateNurseDTO, Long id) {
         Nurse nurse = nurseRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(
@@ -100,6 +105,7 @@ public class NurseServiceImpl
      * @param id The ID of the nurse to delete.
      */
     @Override
+    @Transactional
     public void deleteNurse(Long id) {
         Nurse nurse = nurseRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(

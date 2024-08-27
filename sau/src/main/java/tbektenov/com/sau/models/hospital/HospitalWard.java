@@ -11,6 +11,13 @@ import tbektenov.com.sau.models.Hospitalization;
 import java.util.HashSet;
 import java.util.Set;
 
+
+/**
+ * Represents a hospital ward within a hospital.
+ *
+ * <p>This entity is used to store details about a hospital ward, such as its number, capacity,
+ * and the associated hospital. It also manages the hospitalizations that occur within the ward.</p>
+ */
 @Data
 @Entity
 @Table(name = "HOSPITAL_WARD")
@@ -44,6 +51,11 @@ public class HospitalWard {
     @EqualsAndHashCode.Exclude
     private Set<Hospitalization> hospitalizations = new HashSet<>();
 
+    /**
+     * Adds a hospitalization to the ward and ensures that the ward is correctly set in the hospitalization.
+     *
+     * @param hospitalization the hospitalization to add
+     */
     public void addHospitalization(Hospitalization hospitalization) {
         if (hospitalization != null) {
             hospitalizations.add(hospitalization);

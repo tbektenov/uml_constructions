@@ -2,34 +2,17 @@ package tbektenov.com.sau.dtos.hospital;
 
 import lombok.Data;
 import tbektenov.com.sau.dtos.doctor.DoctorDTO;
-import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyDTO;
 
 import java.util.Set;
 
 /**
- * Data Transfer Object for representing a hospital.
- * This class encapsulates the necessary information
- * about a hospital entity.
+ * DTO representing a hospital.
  *
- * <p>Uses Lombok's {@code @Data} annotation to automatically generate
- * getter, setter, toString, equals, and hashCode methods.</p>
- *
- * <p>Fields:</p>
- * <ul>
- *   <li>{@code id}: The unique identifier of the hospital.</li>
- *   <li>{@code name}: The name of the hospital.</li>
- *   <li>{@code address}: The address of the hospital.</li>
- * </ul>
- *
- * <p>Example:</p>
- * <pre>
- *     HospitalDTO hospitalDTO = new HospitalDTO();
- *     hospitalDTO.setId(1);
- *     hospitalDTO.setName("City Hospital");
- *     hospitalDTO.setAddress("123 Main St, Anytown, USA");
- * </pre>
- *
- * @see lombok.Data
+ * Fields:
+ * - {@code hospitalId}: The unique identifier of the hospital.
+ * - {@code name}: The name of the hospital.
+ * - {@code address}: The address of the hospital.
+ * - {@code doctors}: A set of associated doctors.
  */
 @Data
 public class HospitalDTO {

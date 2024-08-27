@@ -45,7 +45,10 @@ public class PrivatePharmacy
     private Set<Hospital> partnerHospitals = new HashSet<>();
 
     @Builder
-    public PrivatePharmacy(String name, boolean isCompoundPharmacy, String address, String pharmaCompany) {
+    public PrivatePharmacy(String name,
+                           boolean isCompoundPharmacy,
+                           String address,
+                           String pharmaCompany) {
         this.name = name;
         this.isCompoundPharmacy = isCompoundPharmacy;
         this.address = address;
@@ -62,6 +65,11 @@ public class PrivatePharmacy
         return partnerHospitals.contains(hospital);
     }
 
+    /**
+     * Adds a hospital as a partner if not already associated.
+     *
+     * @param hospital the hospital to add as a partner
+     */
     public void addPartnerHospital(Hospital hospital) {
         if (hospital != null && !partnerHospitals.contains(hospital)) {
             this.partnerHospitals.add(hospital);

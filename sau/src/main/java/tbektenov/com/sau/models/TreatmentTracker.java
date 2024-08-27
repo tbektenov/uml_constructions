@@ -9,6 +9,9 @@ import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 
 import java.time.LocalDate;
 
+/**
+ * Entity representing the treatment tracking details for a patient.
+ */
 @Entity
 @Data
 @Table(name = "TREATMENT_TRACKER")

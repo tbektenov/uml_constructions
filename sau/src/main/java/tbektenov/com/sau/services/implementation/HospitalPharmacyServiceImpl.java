@@ -1,5 +1,6 @@
 package tbektenov.com.sau.services.implementation;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.pharmacy.hospitalPharmacy.CreateUpdateHospitalPharmacyDTO;
@@ -16,13 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Service implementation for managing hospital pharmacy data.
- * This class provides services for creating, retrieving, updating, and deleting hospital pharmacies
- * linked to specific hospitals. It ensures that all operations are validated against the existence
- * of associated hospitals and implements business rules regarding the management of hospital pharmacy entities.
- *
- * @author Service
- * @see IHospitalPharmacyService
+ * Service for managing hospital pharmacies.
+ * Provides methods to create, retrieve, update, and delete hospital pharmacies.
  */
 @Service
 public class HospitalPharmacyServiceImpl
@@ -38,13 +34,23 @@ public class HospitalPharmacyServiceImpl
      * @param hospitalRepo the repository for hospital data access
      */
     @Autowired
-    public HospitalPharmacyServiceImpl(HospitalPharmacyRepo hospitalPharmacyRepo, HospitalRepo hospitalRepo) {
+    public HospitalPharmacyServiceImpl(HospitalPharmacyRepo hospitalPharmacyRepo,
+                                       HospitalRepo hospitalRepo) {
         this.hospitalPharmacyRepo = hospitalPharmacyRepo;
         this.hospitalRepo = hospitalRepo;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Creates a new hospital pharmacy for a specific hospital.
+     *
+     * @param hospitalId ID of the hospital
+     * @param createUpdateHospitalPharmacyDTO DTO containing the pharmacy details
+     * @return the created HospitalPharmacyDTO
+     * @throws InvalidArgumentsException if the hospital already has a pharmacy with the same name
+     * @throws ObjectNotFoundException if the hospital is not found
+     */
     @Override
+    @Transactional
     public HospitalPharmacyDTO createHospitalPharmacy(Long hospitalId, CreateUpdateHospitalPharmacyDTO createUpdateHospitalPharmacyDTO) {
         if (hospitalPharmacyRepo.existsByHospitalIdAndName(hospitalId, createUpdateHospitalPharmacyDTO.getName())) {
             throw new InvalidArgumentsException("Hospital already has such pharmacy.");
@@ -63,8 +69,15 @@ public class HospitalPharmacyServiceImpl
         return mapToDto(newHospitalPharmacy);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Retrieves all pharmacies for a specific hospital.
+     *
+     * @param hospitalId ID of the hospital
+     * @return a list of HospitalPharmacyDTOs
+     * @throws ObjectNotFoundException if the hospital is not found
+     */
     @Override
+    @Transactional
     public List<HospitalPharmacyDTO> getHospitalPharmaciesByHospitalId(Long hospitalId) {
         hospitalRepo.findById(hospitalId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital was not found.")
@@ -75,8 +88,16 @@ public class HospitalPharmacyServiceImpl
         return hospitalPharmacies.stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Retrieves a specific hospital pharmacy by its ID.
+     *
+     * @param hospitalId ID of the hospital
+     * @param hospitalPharmacyId ID of the pharmacy
+     * @return the HospitalPharmacyDTO
+     * @throws ObjectNotFoundException if the hospital or pharmacy is not found or if the pharmacy does not belong to the hospital
+     */
     @Override
+    @Transactional
     public HospitalPharmacyDTO getHospitalPharmacyById(Long hospitalId, Long hospitalPharmacyId) {
         Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital was not found.")
@@ -93,8 +114,17 @@ public class HospitalPharmacyServiceImpl
         return mapToDto(hospitalPharmacy);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Updates an existing hospital pharmacy.
+     *
+     * @param hospitalId ID of the hospital
+     * @param hospitalPharmacyId ID of the pharmacy
+     * @param createUpdateHospitalPharmacyDTO DTO with updated details
+     * @return the updated HospitalPharmacyDTO
+     * @throws ObjectNotFoundException if the hospital or pharmacy is not found or if the pharmacy does not belong to the hospital
+     */
     @Override
+    @Transactional
     public HospitalPharmacyDTO updateHospitalPharmacy(Long hospitalId, Long hospitalPharmacyId, CreateUpdateHospitalPharmacyDTO createUpdateHospitalPharmacyDTO) {
         Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital was not found.")
@@ -116,8 +146,15 @@ public class HospitalPharmacyServiceImpl
         return mapToDto(updatedHospitalPharmacy);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Deletes a hospital pharmacy.
+     *
+     * @param hospitalId ID of the hospital
+     * @param hospitalPharmacyId ID of the pharmacy
+     * @throws ObjectNotFoundException if the hospital or pharmacy is not found or if the pharmacy does not belong to the hospital
+     */
     @Override
+    @Transactional
     public void deleteHospitalPharmacy(Long hospitalId, Long hospitalPharmacyId) {
         Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital was not found.")
@@ -135,10 +172,10 @@ public class HospitalPharmacyServiceImpl
     }
 
     /**
-     * Maps a HospitalPharmacy entity to a HospitalPharmacyDTO.
+     * Converts a HospitalPharmacy entity to a DTO.
      *
-     * @param hospitalPharmacy the hospital pharmacy entity to map
-     * @return the mapped DTO
+     * @param hospitalPharmacy the entity to convert
+     * @return the corresponding DTO
      */
     private HospitalPharmacyDTO mapToDto(HospitalPharmacy hospitalPharmacy) {
         HospitalPharmacyDTO hospitalPharmacyDTO = new HospitalPharmacyDTO();
@@ -150,10 +187,10 @@ public class HospitalPharmacyServiceImpl
     }
 
     /**
-     * Maps a CreateUpdateHospitalPharmacyDTO to a HospitalPharmacy entity.
+     * Converts a DTO to a HospitalPharmacy entity.
      *
-     * @param createUpdateHospitalPharmacyDTO the DTO to map from
-     * @return the mapped entity
+     * @param createUpdateHospitalPharmacyDTO the DTO to convert
+     * @return the corresponding entity
      */
     private HospitalPharmacy mapToEntity(CreateUpdateHospitalPharmacyDTO createUpdateHospitalPharmacyDTO) {
         HospitalPharmacy hospitalPharmacy = new HospitalPharmacy();

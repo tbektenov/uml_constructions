@@ -11,12 +11,20 @@ import tbektenov.com.sau.services.ILaboratoryService;
 
 import java.util.List;
 
+/**
+ * Controller class for managing laboratories associated with hospitals.
+ */
 @Controller
 @RequestMapping("/api/lab/")
 public class LaboratoryController {
 
-    private ILaboratoryService laboratoryService;
+    private final ILaboratoryService laboratoryService;
 
+    /**
+     * Constructs a {@code LaboratoryController} with the specified {@code ILaboratoryService}.
+     *
+     * @param laboratoryService the service handling laboratory-related operations
+     */
     @Autowired
     public LaboratoryController(ILaboratoryService laboratoryService) {
         this.laboratoryService = laboratoryService;
@@ -27,7 +35,7 @@ public class LaboratoryController {
      *
      * @param hospitalId the ID of the hospital
      * @param createUpdateLaboratoryDTO the DTO containing details of the new laboratory
-     * @return the created laboratory details
+     * @return the created laboratory details wrapped in a {@link ResponseEntity}
      */
     @PostMapping("/create/{hospitalId}")
     public ResponseEntity<LaboratoryDTO> createLaboratory(
@@ -41,7 +49,7 @@ public class LaboratoryController {
      * Retrieves all laboratories for a specific hospital.
      *
      * @param hospitalId the ID of the hospital
-     * @return a list of laboratories associated with the specified hospital
+     * @return a list of laboratories associated with the specified hospital wrapped in a {@link ResponseEntity}
      */
     @GetMapping("/hospital/{hospitalId}/laboratories")
     public ResponseEntity<List<LaboratoryDTO>> getLaboratoriesByHospitalId(@PathVariable("hospitalId") Long hospitalId) {
@@ -53,7 +61,7 @@ public class LaboratoryController {
      *
      * @param hospitalId the ID of the hospital
      * @param laboratoryId the ID of the laboratory
-     * @return the details of the specified laboratory
+     * @return the details of the specified laboratory wrapped in a {@link ResponseEntity}
      */
     @GetMapping("/hospital/{hospitalId}/laboratory/{laboratoryId}")
     public ResponseEntity<LaboratoryDTO> getLaboratoryById(
@@ -70,7 +78,7 @@ public class LaboratoryController {
      * @param hospitalId the ID of the hospital
      * @param laboratoryId the ID of the laboratory to update
      * @param createUpdateLaboratoryDTO the DTO containing updated details of the laboratory
-     * @return the updated laboratory details
+     * @return the updated laboratory details wrapped in a {@link ResponseEntity}
      */
     @PutMapping("/hospital/{hospitalId}/laboratory/{laboratoryId}")
     public ResponseEntity<LaboratoryDTO> updateLaboratory(
@@ -87,7 +95,7 @@ public class LaboratoryController {
      *
      * @param hospitalId the ID of the hospital
      * @param laboratoryId the ID of the laboratory to delete
-     * @return a confirmation message of the deletion
+     * @return a confirmation message of the deletion wrapped in a {@link ResponseEntity}
      */
     @DeleteMapping("/hospital/{hospitalId}/laboratory/{laboratoryId}")
     public ResponseEntity<String> deleteLaboratory(

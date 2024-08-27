@@ -1,8 +1,6 @@
 package tbektenov.com.sau.dtos.doctor;
 
 import lombok.Data;
-import tbektenov.com.sau.dtos.hospital.HospitalDoctorCompDTO;
-import tbektenov.com.sau.dtos.user.UserDTO;
 import tbektenov.com.sau.models.user.userRoles.Specialization;
 
 /**

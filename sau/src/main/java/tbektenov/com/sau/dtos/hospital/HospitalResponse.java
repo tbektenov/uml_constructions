@@ -5,10 +5,15 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * Data Transfer Object (DTO) for paginated responses of Hospital.
+ * DTO for paginated responses of hospitals.
  *
- * This DTO encapsulates the paginated response details for a list of hospitals,
- * including the hospitals' data and pagination metadata.
+ * Fields:
+ * - {@code content}: The list of hospital data.
+ * - {@code pageNo}: The current page number.
+ * - {@code pageSize}: The number of items per page.
+ * - {@code totalElements}: The total number of elements.
+ * - {@code totalPages}: The total number of pages.
+ * - {@code last}: Indicates if this is the last page.
  */
 @Data
 public class HospitalResponse {

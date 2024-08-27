@@ -15,6 +15,12 @@ import tbektenov.com.sau.models.user.UserEntity;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents a doctor entity associated with a user, hospital, and optionally a laboratory.
+ *
+ * <p>This class handles the relationship of a doctor with appointments, orders, and hospitalizations.
+ * It is mapped to the database using JPA annotations.</p>
+ */
 @Data
 @Entity
 @NoArgsConstructor
@@ -94,6 +100,12 @@ public class Doctor{
     @EqualsAndHashCode.Exclude
     private Set<OrderEntity> orders = new HashSet<>();
 
+    /**
+     * Assigns a nurse to a specific hospitalization.
+     *
+     * @param nurse the nurse to be assigned
+     * @param hospitalization the hospitalization to which the nurse is assigned
+     */
     public void assignNurseToHospitalization(Nurse nurse,
                                              Hospitalization hospitalization) {
         if (nurse != null && hospitalization != null) {
@@ -101,6 +113,11 @@ public class Doctor{
         }
     }
 
+    /**
+     * Adds an appointment to the doctor's list of appointments.
+     *
+     * @param appointment the appointment to add
+     */
     public void addAppointment(Appointment appointment) {
         this.appointments.add(appointment);
     }

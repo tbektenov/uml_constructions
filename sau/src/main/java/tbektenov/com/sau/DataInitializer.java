@@ -33,6 +33,10 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 
+/**
+ * Initializes the application data by populating the database with initial values.
+ * This component is triggered when the application context is refreshed.
+ */
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements ApplicationListener<ContextRefreshedEvent> {
@@ -85,11 +89,22 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         this.nurseRepo = nurseRepo;
     }
 
+    /**
+     * Event handler that initializes data when the application context is refreshed.
+     * This method creates hospitals, hospital wards, users, private pharmacies, and other related entities.
+     * It also adds default data for appointments and other necessary records.
+     *
+     * @param event the event containing the application context refresh information
+     */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         initData();
     }
 
+    /**
+     * Initializes the data in the database by creating and saving default values for hospitals,
+     * hospital wards, users, private pharmacies, and other related entities.
+     */
     @Transactional
     protected void initData() {
         LOG.info("Starting data initialization");

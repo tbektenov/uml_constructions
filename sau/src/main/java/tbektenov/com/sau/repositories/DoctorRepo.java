@@ -17,39 +17,35 @@ import java.util.Optional;
  * methods to manage {@link Doctor} entities in the database.
  * </p>
  *
- * <pre>
- * Example usage:
- * {@code
- * @Autowired
- * private IDoctorRepo doctorRepo;
- *
- * public void someMethod() {
- *     // Check if a doctor exists by user ID
- *     boolean exists = doctorRepo.existsByUserId(1);
- * }
- * }
- * </pre>
- *
  * @see JpaRepository
  * @see Doctor
  */
 public interface DoctorRepo extends JpaRepository<Doctor, Long> {
+
+    /**
+     * Retrieves all doctors with their associated hospital and laboratory details.
+     *
+     * @return a list of all doctors with their hospital and laboratory details
+     */
     @EntityGraph(value = "Doctor.detailsHospitalAndLaboratory", type = EntityGraph.EntityGraphType.LOAD)
     List<Doctor> findAll();
 
+    /**
+     * Retrieves a doctor by their ID, including associated hospital and laboratory details.
+     *
+     * @param id the ID of the doctor
+     * @return an optional containing the doctor if found, or empty if not
+     */
     @Override
     @EntityGraph(value = "Doctor.detailsHospitalAndLaboratory", type = EntityGraph.EntityGraphType.LOAD)
-    Optional<Doctor> findById(Long aLong);
+    Optional<Doctor> findById(Long id);
 
     /**
-     * Finds all doctors associated with the specified hospital ID.
+     * Finds doctors associated with a specific hospital ID, including their hospital and laboratory details.
      *
      * @param hospitalId the ID of the hospital
      * @return a list of doctors associated with the specified hospital
      */
     @EntityGraph(value = "Doctor.detailsHospitalAndLaboratory", type = EntityGraph.EntityGraphType.LOAD)
     List<Doctor> findByHospitalId(Long hospitalId);
-
-    @EntityGraph(value = "Doctor.detailsHospitalAndLaboratory", type = EntityGraph.EntityGraphType.LOAD)
-    List<Doctor> findByHospitalIdAndSpecialization(Long hospitalId, Specialization specialization);
 }

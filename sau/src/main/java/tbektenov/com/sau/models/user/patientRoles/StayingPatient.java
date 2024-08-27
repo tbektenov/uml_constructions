@@ -6,6 +6,9 @@ import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.TreatmentTracker;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 
+/**
+ * Entity representing a hospitalized patient.
+ */
 @Data
 @Entity
 @Table(name = "STAYING_PATIENT")

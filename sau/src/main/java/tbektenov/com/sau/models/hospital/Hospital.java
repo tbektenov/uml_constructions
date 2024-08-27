@@ -13,25 +13,11 @@ import java.util.Set;
 /**
  * Represents a hospital entity with related attributes and relationships.
  *
- * <p>This class uses JPA annotations to map to a database table and Lombok's {@code @Data}
- * annotation to automatically generate getters, setters, and other utility methods.</p>
+ * <p>This class maps to the "HOSPITAL" table in the database and includes relationships
+ * with laboratories, hospital pharmacies, hospital wards, partner pharmacies, and doctors.</p>
  *
- * <p>Fields:</p>
- * <ul>
- *   <li>{@code id}: The unique identifier for the hospital.</li>
- *   <li>{@code name}: The name of the hospital (cannot be null or empty).</li>
- *   <li>{@code address}: The address of the hospital (cannot be null or empty).</li>
- *   <li>{@code laboratories}: The list of laboratories associated with the hospital.</li>
- *   <li>{@code doctors}: The set of doctors associated with the hospital.</li>
- * </ul>
- *
- * <p>Relationships:</p>
- * <ul>
- *   <li>{@code laboratories}: One-to-many relationship with {@link Laboratory}, with cascade operations and orphan removal enabled.</li>
- * </ul>
- *
- * @see Laboratory
- * @see lombok.Data
+ * <p>The entity graph defined by {@code @NamedEntityGraph} allows for optimized fetching
+ * of related entities by specifying subgraphs for complex queries.</p>
  */
 @Data
 @Entity
@@ -123,11 +109,12 @@ public class Hospital {
     @EqualsAndHashCode.Exclude
     private Set<Doctor> doctors = new HashSet<>();
 
-    public Hospital(String name, String address) {
-        this.name = name;
-        this.address = address;
-    }
-
+    /**
+     * Adds a partner pharmacy to the hospital.
+     * Ensures bidirectional consistency by adding the hospital to the pharmacy's partner hospitals.
+     *
+     * @param pharmacy the pharmacy to add as a partner
+     */
     public void addPartnerPharmacy(PrivatePharmacy pharmacy) {
         if (pharmacy != null && !this.partnerPharmacies.contains(pharmacy)) {
             this.partnerPharmacies.add(pharmacy);

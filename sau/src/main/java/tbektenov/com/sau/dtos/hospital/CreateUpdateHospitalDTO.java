@@ -5,27 +5,11 @@ import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * Data Transfer Object for creating a new hospital.
- * This class encapsulates the necessary information
- * required to create a hospital entity.
+ * DTO for creating or updating a hospital.
  *
- * <p>Uses Lombok's {@code @Data} annotation to automatically generate
- * getter, setter, toString, equals, and hashCode methods.</p>
- *
- * <p>Fields:</p>
- * <ul>
- *   <li>{@code name}: The name of the hospital (cannot be null or empty).</li>
- *   <li>{@code address}: The address of the hospital (cannot be null or empty).</li>
- * </ul>
- *
- * <p>Example:</p>
- * <pre>
- *     CreateHospitalDTO hospitalDTO = new CreateHospitalDTO();
- *     hospitalDTO.setName("City Hospital");
- *     hospitalDTO.setAddress("123 Main St, Anytown, USA");
- * </pre>
- *
- * @see lombok.Data
+ * Fields:
+ * - {@code name}: The name of the hospital (required).
+ * - {@code address}: The address of the hospital (required).
  */
 @Data
 public class CreateUpdateHospitalDTO {

@@ -15,6 +15,12 @@ import tbektenov.com.sau.models.user.patientRoles.validator.OnePatientCheck;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents a patient entity with related attributes and relationships.
+ *
+ * <p>This class manages the relationships between a patient and their appointments,
+ * as well as their status as a staying or left patient.</p>
+ */
 @Entity
 @Data
 @Table(name = "PATIENT")
@@ -38,7 +44,6 @@ public class Patient{
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     @JoinColumn(name = "patient_id", nullable = false, updatable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -74,7 +79,14 @@ public class Patient{
     @EqualsAndHashCode.Exclude
     private LeftPatient leftPatient;
 
+    /**
+     * Adds an appointment to the patient's list of appointments.
+     *
+     * @param appointment the appointment to add
+     */
     public void addAppointment(Appointment appointment) {
-        this.appointments.add(appointment);
+        if (appointment != null && !appointments.contains(appointment)) {
+            this.appointments.add(appointment);
+        }
     }
 }

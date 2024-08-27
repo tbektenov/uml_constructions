@@ -2,6 +2,7 @@ package tbektenov.com.sau.services.implementation;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.hospitalWard.CreateUpdateHospitalWardDTO;
@@ -19,17 +20,24 @@ import java.util.stream.Collectors;
 
 /**
  * Service implementation for managing hospital wards.
- *
+ * <p>
  * Provides methods to create, retrieve, update, and delete hospital wards.
  */
 @Service
 public class HospitalWardServiceImpl
-    implements IHospitalWardService {
+        implements IHospitalWardService {
 
     private HospitalWardRepo hospitalWardRepo;
     private HospitalRepo hospitalRepo;
     private EntityManager entityManager;
 
+    /**
+     * Initializes the service with required repositories and entity manager.
+     *
+     * @param hospitalWardRepo repository for hospital ward data
+     * @param hospitalRepo repository for hospital data
+     * @param entityManager entity manager for executing native queries
+     */
     @Autowired
     public HospitalWardServiceImpl(HospitalWardRepo hospitalWardRepo,
                                    HospitalRepo hospitalRepo,
@@ -42,11 +50,14 @@ public class HospitalWardServiceImpl
     /**
      * Creates a new hospital ward and associates it with a hospital.
      *
-     * @param hospitalId ID of the hospital to associate with.
-     * @param createUpdateHospitalWardDTO DTO containing the ward details.
-     * @return The created HospitalWardDTO.
+     * @param hospitalId ID of the hospital to associate with
+     * @param createUpdateHospitalWardDTO DTO containing the ward details
+     * @return The created HospitalWardDTO
+     * @throws InvalidArgumentsException if the capacity is less than 1 or a ward with the same number already exists
+     * @throws ObjectNotFoundException if the hospital is not found
      */
     @Override
+    @Transactional
     public HospitalWardDTO createHospitalWard(Long hospitalId, CreateUpdateHospitalWardDTO createUpdateHospitalWardDTO) {
         if (createUpdateHospitalWardDTO.getCapacity() < 1) {
             throw new InvalidArgumentsException("Capacity cannot be less than 1.");
@@ -54,9 +65,9 @@ public class HospitalWardServiceImpl
 
         try {
             Long count = (Long) entityManager.createNativeQuery(
-                        "select count(*) " +
-                            "from hospital_ward hw " +
-                            "where hw.hospital_id = :hospitalId and hw.ward_num = :wardNum"
+                            "select count(*) " +
+                                    "from hospital_ward hw " +
+                                    "where hw.hospital_id = :hospitalId and hw.ward_num = :wardNum"
                     )
                     .setParameter("hospitalId", hospitalId)
                     .setParameter("wardNum", createUpdateHospitalWardDTO.getWardNum())
@@ -85,10 +96,12 @@ public class HospitalWardServiceImpl
     /**
      * Retrieves a list of wards associated with a hospital.
      *
-     * @param hospitalId ID of the hospital.
-     * @return A list of HospitalWardDTOs.
+     * @param hospitalId ID of the hospital
+     * @return A list of HospitalWardDTOs
+     * @throws ObjectNotFoundException if the hospital is not found
      */
     @Override
+    @Transactional
     public List<HospitalWardDTO> getHospitalWardsByHospitalId(Long hospitalId) {
         hospitalRepo.findById(hospitalId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital was not found.")
@@ -102,17 +115,19 @@ public class HospitalWardServiceImpl
     /**
      * Retrieves a specific ward by its ID and the associated hospital ID.
      *
-     * @param hospitalId ID of the hospital.
-     * @param hospitalWardId ID of the ward.
-     * @return The HospitalWardDTO with the ward's details.
+     * @param hospitalId ID of the hospital
+     * @param hospitalWardId ID of the ward
+     * @return The HospitalWardDTO with the ward's details
+     * @throws ObjectNotFoundException if the hospital or ward is not found or if the ward does not belong to the specified hospital
      */
     @Override
+    @Transactional
     public HospitalWardDTO getHospitalWardById(Long hospitalId, Long hospitalWardId) {
         Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital was not found.")
         );
 
-        HospitalWard hospitalWard = hospitalWardRepo.findById(hospitalId).orElseThrow(
+        HospitalWard hospitalWard = hospitalWardRepo.findById(hospitalWardId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital ward was not found.")
         );
 
@@ -126,18 +141,20 @@ public class HospitalWardServiceImpl
     /**
      * Updates the details of a specific hospital ward.
      *
-     * @param hospitalId ID of the hospital.
-     * @param hospitalWardId ID of the ward.
-     * @param createUpdateHospitalWardDTO DTO containing the updated ward details.
-     * @return The updated HospitalWardDTO.
+     * @param hospitalId ID of the hospital
+     * @param hospitalWardId ID of the ward
+     * @param createUpdateHospitalWardDTO DTO containing the updated ward details
+     * @return The updated HospitalWardDTO
+     * @throws ObjectNotFoundException if the hospital or ward is not found or if the ward does not belong to the specified hospital
      */
     @Override
+    @Transactional
     public HospitalWardDTO updateHospitalWard(Long hospitalId, Long hospitalWardId, CreateUpdateHospitalWardDTO createUpdateHospitalWardDTO) {
         Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital was not found.")
         );
 
-        HospitalWard hospitalWard = hospitalWardRepo.findById(hospitalId).orElseThrow(
+        HospitalWard hospitalWard = hospitalWardRepo.findById(hospitalWardId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital ward was not found.")
         );
 
@@ -161,16 +178,18 @@ public class HospitalWardServiceImpl
     /**
      * Deletes a hospital ward by its ID and the associated hospital ID.
      *
-     * @param hospitalId ID of the hospital.
-     * @param hospitalWardId ID of the ward.
+     * @param hospitalId ID of the hospital
+     * @param hospitalWardId ID of the ward
+     * @throws ObjectNotFoundException if the hospital or ward is not found or if the ward does not belong to the specified hospital
      */
     @Override
+    @Transactional
     public void deleteHospitalWard(Long hospitalId, Long hospitalWardId) {
         Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital was not found.")
         );
 
-        HospitalWard hospitalWard = hospitalWardRepo.findById(hospitalId).orElseThrow(
+        HospitalWard hospitalWard = hospitalWardRepo.findById(hospitalWardId).orElseThrow(
                 () -> new ObjectNotFoundException("Hospital ward was not found.")
         );
 
@@ -184,8 +203,8 @@ public class HospitalWardServiceImpl
     /**
      * Maps a HospitalWard entity to a HospitalWardDTO.
      *
-     * @param hospitalWard The HospitalWard entity to map.
-     * @return The mapped HospitalWardDTO.
+     * @param hospitalWard The HospitalWard entity to map
+     * @return The mapped HospitalWardDTO
      */
     private HospitalWardDTO mapToDto(HospitalWard hospitalWard) {
         HospitalWardDTO hospitalWardDTO = new HospitalWardDTO();
@@ -200,8 +219,8 @@ public class HospitalWardServiceImpl
     /**
      * Maps a CreateUpdateHospitalWardDTO to a HospitalWard entity.
      *
-     * @param createUpdateHospitalWardDTO The DTO with ward details.
-     * @return The mapped HospitalWard entity.
+     * @param createUpdateHospitalWardDTO The DTO with ward details
+     * @return The mapped HospitalWard entity
      */
     private HospitalWard mapToEntity(CreateUpdateHospitalWardDTO createUpdateHospitalWardDTO) {
         HospitalWard hospitalWard = new HospitalWard();

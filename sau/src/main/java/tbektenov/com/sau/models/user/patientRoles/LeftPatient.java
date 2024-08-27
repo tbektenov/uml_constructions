@@ -10,6 +10,9 @@ import tbektenov.com.sau.models.user.userRoles.Patient;
 
 import java.time.LocalDate;
 
+/**
+ * Entity representing a patient who has left the hospital.
+ */
 @Data
 @Entity
 @Table(name = "LEFT_PATIENT")

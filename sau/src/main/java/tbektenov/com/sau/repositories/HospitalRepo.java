@@ -14,11 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for {@link Hospital} entities.
- * Provides CRUD operations for managing hospital entities in the database.
+ * Repository interface for managing {@link Hospital} entities.
  *
- * <p>This interface extends {@link JpaRepository}, which includes methods for
- * basic CRUD operations, pagination, and sorting.</p>
+ * <p>Provides CRUD operations and additional queries for interacting with the database.</p>
  *
  * @see JpaRepository
  * @see Hospital
@@ -26,12 +24,28 @@ import java.util.Optional;
 public interface HospitalRepo
         extends JpaRepository<Hospital, Long> {
 
+    /**
+     * Retrieves a paginated list of hospitals with their associated pharmacies and doctors.
+     *
+     * @param pageable pagination details
+     * @return a paginated list of hospitals
+     */
     @EntityGraph(value = "Hospital.withPharmaciesAndDoctors", type = EntityGraph.EntityGraphType.FETCH)
     Page<Hospital> findAll(Pageable pageable);
 
-    @Query("SELECT h FROM Hospital h LEFT JOIN FETCH h.partnerPharmacies WHERE h.name = :name")
-    Optional<Hospital> findByNameWithPharmacies(@Param("name") String name);
-
+    /**
+     * Checks if a hospital exists by its name.
+     *
+     * @param name the name of the hospital
+     * @return true if a hospital with the given name exists, false otherwise
+     */
     Boolean existsByName(String name);
+
+    /**
+     * Finds a hospital by its name.
+     *
+     * @param name the name of the hospital
+     * @return an optional containing the hospital if found, or empty if not
+     */
     Optional<Hospital> findByName(String name);
 }

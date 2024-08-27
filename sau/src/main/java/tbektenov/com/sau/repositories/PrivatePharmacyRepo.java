@@ -15,6 +15,14 @@ import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
  */
 public interface PrivatePharmacyRepo
         extends JpaRepository<PrivatePharmacy, Long> {
+
+    /**
+     * Checks if a {@link PrivatePharmacy} exists with the given address and pharmaceutical company.
+     *
+     * @param address the address of the pharmacy
+     * @param pharmaCompany the name of the pharmaceutical company
+     * @return {@code true} if a pharmacy exists with the specified address and company, {@code false} otherwise
+     */
     Boolean existsByAddressAndPharmaCompany(String address, String pharmaCompany);
 }
 

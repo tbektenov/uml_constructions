@@ -6,10 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Data Transfer Object (DTO) for creating or updating a hospital ward.
+ * DTO for creating or updating a hospital ward.
  *
- * This DTO contains the necessary details to create a new hospital ward or update an existing one,
- * including the ward number and its capacity.
+ * Fields:
+ * - {@code wardNum}: The ward number.
+ * - {@code capacity}: The capacity of the ward.
  */
 @Data
 @NoArgsConstructor

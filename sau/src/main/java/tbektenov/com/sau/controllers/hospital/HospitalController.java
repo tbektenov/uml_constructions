@@ -18,22 +18,32 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Controller class that handles requests related to hospitals.
+ */
 @Controller
 public class HospitalController {
 
-    private IHospitalService hospitalService;
+    private final IHospitalService hospitalService;
 
+    /**
+     * Constructs a {@code HospitalController} with the specified {@code IHospitalService}.
+     *
+     * @param hospitalService the service handling hospital-related operations
+     */
     @Autowired
     public HospitalController(IHospitalService hospitalService) {
         this.hospitalService = hospitalService;
     }
 
     /**
-     * Retrieves a paginated list of hospitals.
+     * Retrieves a paginated list of hospitals and displays them.
      *
      * @param pageNo the page number to retrieve, defaults to 0
-     * @param pageSize the number of hospitals per page, defaults to 10
-     * @return a paginated list of hospitals wrapped in a HospitalResponse
+     * @param pageSize the number of hospitals per page, defaults to 5
+     * @param model the model to add attributes to
+     * @param session the HTTP session to store the hospital content
+     * @return the name of the view to render
      */
     @GetMapping("/hospitals")
     public String showHospitals(
@@ -46,12 +56,19 @@ public class HospitalController {
 
         model.addAttribute("hospitals", hospitalResponse);
         session.setAttribute("content", hospitalResponse.getContent());
-        System.out.println("============================");
         return ("hospitals");
     }
 
+    /**
+     * Retrieves the doctors associated with a specific hospital and displays them.
+     *
+     * @param hospitalId the ID of the hospital to retrieve doctors for
+     * @param model the model to add attributes to
+     * @param session the HTTP session to retrieve the hospital content from
+     * @return the name of the view to render
+     */
     @GetMapping("/hospitals/{hospitalId}")
-    public String getHospitals2(
+    public String getDoctorsFromHospital(
             @PathVariable Long hospitalId,
             Model model,
             HttpSession session
@@ -65,21 +82,14 @@ public class HospitalController {
 
             matchingHospital.ifPresent(hospitalDTO -> model.addAttribute("doctors", hospitalDTO.getDoctors()));
         }
-        System.out.println("Showing doctors");
-        System.out.println("============================");
         return "hospital-details";
-    }
-
-    @GetMapping("hospitals/doctors")
-    public ResponseEntity<List<HospitalAndDoctorsDTO>> getHospitals() {
-        return new ResponseEntity<>(hospitalService.getAllHospitalsWithDoctors(), HttpStatus.OK);
     }
 
     /**
      * Creates a new hospital with the provided details.
      *
      * @param createUpdateHospitalDTO the data transfer object containing hospital details
-     * @return the created hospital details
+     * @return the created hospital details wrapped in a {@link ResponseEntity}
      */
     @PostMapping("hospital/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -91,7 +101,7 @@ public class HospitalController {
      * Retrieves the details of a specific hospital by its ID.
      *
      * @param hospitalId the ID of the hospital to retrieve
-     * @return the details of the specified hospital
+     * @return the details of the specified hospital wrapped in a {@link ResponseEntity}
      */
     @GetMapping("hospital/find/{id}")
     public ResponseEntity<HospitalDTO> hospitalDetail(@PathVariable("id") Long hospitalId) {
@@ -103,7 +113,7 @@ public class HospitalController {
      *
      * @param createUpdateHospitalDTO the updated hospital details
      * @param hospitalId the ID of the hospital to update
-     * @return the updated hospital details
+     * @return the updated hospital details wrapped in a {@link ResponseEntity}
      */
     @PutMapping("hospital/update/{id}")
     public ResponseEntity<HospitalDTO> updateHospital(@RequestBody CreateUpdateHospitalDTO createUpdateHospitalDTO, @PathVariable("id") Long hospitalId) {
@@ -115,7 +125,7 @@ public class HospitalController {
      * Deletes a hospital by its ID.
      *
      * @param hospitalId the ID of the hospital to delete
-     * @return a confirmation message of the deletion
+     * @return a confirmation message wrapped in a {@link ResponseEntity}
      */
     @DeleteMapping("hospital/delete/{id}")
     public ResponseEntity<String> deleteHospital(@PathVariable("id") Long hospitalId) {
@@ -128,7 +138,7 @@ public class HospitalController {
      *
      * @param hospitalId the ID of the hospital
      * @param pharmacyId the ID of the pharmacy to add as a partner
-     * @return the updated hospital details with the new partner pharmacy
+     * @return the updated hospital details with the new partner pharmacy wrapped in a {@link ResponseEntity}
      */
     @PostMapping("{hospitalId}/partners/{pharmacyId}")
     @ResponseStatus(HttpStatus.CREATED)
@@ -144,7 +154,7 @@ public class HospitalController {
      *
      * @param hospitalId the ID of the hospital
      * @param pharmacyId the ID of the pharmacy to remove as a partner
-     * @return the updated hospital details without the partner pharmacy
+     * @return the updated hospital details without the partner pharmacy wrapped in a {@link ResponseEntity}
      */
     @DeleteMapping("{hospitalId}/partners/{pharmacyId}")
     public ResponseEntity<HospitalDTO> removePartnerPharmacy(
@@ -159,7 +169,7 @@ public class HospitalController {
      *
      * @param hospitalId the ID of the hospital
      * @param doctorId the ID of the doctor to hire
-     * @return the updated hospital details with the new doctor
+     * @return the updated hospital details with the new doctor wrapped in a {@link ResponseEntity}
      */
     @PostMapping("{hospitalId}/doctors/{doctorId}")
     @ResponseStatus(HttpStatus.CREATED)
@@ -175,7 +185,7 @@ public class HospitalController {
      *
      * @param hospitalId the ID of the hospital
      * @param doctorId the ID of the doctor to fire
-     * @return the updated hospital details without the doctor
+     * @return the updated hospital details without the doctor wrapped in a {@link ResponseEntity}
      */
     @DeleteMapping("{hospitalId}/doctors/{doctorId}")
     public ResponseEntity<HospitalDTO> fireDoctor(

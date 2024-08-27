@@ -63,6 +63,7 @@ public class PatientServiceImpl
      * @return List of PatientDTOs.
      */
     @Override
+    @Transactional
     public List<PatientDTO> getAllPatients() {
         List<Patient> patients = patientRepo.findAll();
         return patients.stream().map(patient -> mapToDto(patient)).collect(Collectors.toList());
@@ -76,6 +77,7 @@ public class PatientServiceImpl
      * @throws InvalidArgumentsException if the user is already a patient.
      */
     @Override
+    @Transactional
     public PatientDTO createPatient(CreatePatientDTO createPatientDTO) {
         UserEntity user = userRepo.findById(createPatientDTO.getUserId())
                 .orElseThrow(() -> new ObjectNotFoundException("No user found."));
@@ -95,6 +97,7 @@ public class PatientServiceImpl
      * @throws ObjectNotFoundException if no patient is found with the given ID.
      */
     @Override
+    @Transactional
     public PatientDTO getPatientById(Long id) {
         Patient patient = patientRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(
@@ -113,6 +116,7 @@ public class PatientServiceImpl
      * @throws ObjectNotFoundException if no patient is found with the given ID.
      */
     @Override
+    @Transactional
     public PatientDTO updatePatient(UpdatePatientDTO updatePatientDTO, Long id) {
         Patient patient = patientRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(
@@ -138,6 +142,7 @@ public class PatientServiceImpl
      * @throws ObjectNotFoundException if no patient is found with the given ID.
      */
     @Override
+    @Transactional
     public void deletePatient(Long id) {
         Patient patient = patientRepo.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(
@@ -148,21 +153,51 @@ public class PatientServiceImpl
         patientRepo.delete(patient);
     }
 
+    /**
+     * Adds a new appointment for a patient.
+     *
+     * @param createAppointmentDTO DTO containing details to create a new appointment.
+     * @return The updated PatientDTO after adding the appointment.
+     */
     @Override
+    @Transactional
     public PatientDTO addAppointment(CreateAppointmentDTO createAppointmentDTO) {
         return null;
     }
 
+    /**
+     * Updates an existing appointment for a patient.
+     *
+     * @param createAppointmentDTO DTO containing updated appointment details.
+     * @param id The ID of the patient whose appointment is to be updated.
+     * @return The updated PatientDTO after modifying the appointment.
+     */
     @Override
+    @Transactional
     public PatientDTO updateAppointment(CreateAppointmentDTO createAppointmentDTO, Long id) {
         return null;
     }
 
+    /**
+     * Cancels an existing appointment for a patient.
+     *
+     * @param id The ID of the patient whose appointment is to be canceled.
+     * @return The updated PatientDTO after canceling the appointment.
+     */
     @Override
+    @Transactional
     public PatientDTO cancelAppointment(Long id) {
         return null;
     }
 
+    /**
+     * Changes the status of a patient to "staying".
+     *
+     * @param patientId The ID of the patient to update.
+     * @param changeToStayingPatientDTO DTO containing details for the transition to staying patient.
+     * @return A confirmation message indicating the patient's status has been updated.
+     * @throws ObjectNotFoundException if the patient, nurse, or ward cannot be found.
+     */
     @Override
     @Transactional
     public String changeToStayingPatient(Long patientId, ChangeToStayingPatientDTO changeToStayingPatientDTO) {
@@ -214,6 +249,14 @@ public class PatientServiceImpl
         }
     }
 
+    /**
+     * Changes the status of a patient to "left".
+     *
+     * @param patientId The ID of the patient to update.
+     * @param changeToLeftPatientDTO DTO containing details for the transition to left patient.
+     * @return A confirmation message indicating the patient has left.
+     * @throws ObjectNotFoundException if the patient cannot be found or if the conclusion is missing.
+     */
     @Override
     @Transactional
     public String changeToLeftPatient(Long patientId, ChangeToLeftPatientDTO changeToLeftPatientDTO) {
