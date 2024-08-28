@@ -66,13 +66,14 @@ public class AppointmentController {
      */
     @PostMapping("create")
     public String createAppointment(
-            @Valid @ModelAttribute CreateAppointmentDTO createAppointmentDTO,
+            CreateAppointmentDTO createAppointmentDTO,
             BindingResult result,
             Model model) {
 
         if (result.hasErrors()) {
             return "newAppointment";
         }
+
         appointmentService.createAppointment(createAppointmentDTO);
         return "redirect:/home";
     }

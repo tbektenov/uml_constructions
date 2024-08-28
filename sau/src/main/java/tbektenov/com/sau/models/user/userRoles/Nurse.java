@@ -38,7 +38,7 @@ public class Nurse{
     @EqualsAndHashCode.Exclude
     private UserEntity user;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "nurse_hospitalization",
             joinColumns = @JoinColumn(name = "nurse_id"),
@@ -58,6 +58,15 @@ public class Nurse{
             hospitalizations.add(hospitalization);
             if (!hospitalization.getNurses().contains(this)) {
                 hospitalization.addNurse(this);
+            }
+        }
+    }
+
+    public void removeHospitalization(Hospitalization hospitalization) {
+        if (hospitalization != null && hospitalizations.contains(hospitalization)) {
+            hospitalizations.remove(hospitalization);
+            if (hospitalization.getNurses().contains(this)) {
+                hospitalization.removeNurse(this);
             }
         }
     }

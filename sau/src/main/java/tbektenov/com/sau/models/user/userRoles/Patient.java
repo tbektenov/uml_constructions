@@ -35,10 +35,25 @@ import java.util.Set;
                 attributeNodes = {
                         @NamedAttributeNode("appointments"),
                         @NamedAttributeNode("leftPatient"),
-                        @NamedAttributeNode("stayingPatient")
+                        @NamedAttributeNode(value = "stayingPatient", subgraph = "sp.details")
+                },
+                subgraphs = {
+                        @NamedSubgraph(
+                                name = "sp.details",
+                                attributeNodes = {
+                                        @NamedAttributeNode("treatmentTracker"),
+                                        @NamedAttributeNode(value = "hospitalization", subgraph = "nurses")
+                                }
+                        ),
+                        @NamedSubgraph(
+                                name = "nurses",
+                                attributeNodes = {
+                                        @NamedAttributeNode("nurses")
+                                }
+                        )
                 })
 )
-public class Patient{
+public class Patient {
     @Id
     private Long id;
 

@@ -24,6 +24,14 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "HospitalWard.hospitalizations",
+                attributeNodes = {
+                        @NamedAttributeNode("hospitalizations")
+                }
+        )
+)
 public class HospitalWard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

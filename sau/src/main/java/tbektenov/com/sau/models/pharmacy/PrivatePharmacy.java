@@ -34,12 +34,7 @@ public class PrivatePharmacy
     private String pharmaCompany;
 
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "pharmacy_hospital_partners",
-            joinColumns = @JoinColumn(name = "pharmacy_id"),
-            inverseJoinColumns = @JoinColumn(name = "hospital_id")
-    )
+    @ManyToMany(mappedBy = "partnerPharmacies", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Hospital> partnerHospitals = new HashSet<>();
@@ -75,6 +70,15 @@ public class PrivatePharmacy
             this.partnerHospitals.add(hospital);
             if (!hospital.getPartnerPharmacies().contains(this)) {
                 hospital.addPartnerPharmacy(this);
+            }
+        }
+    }
+
+    public void removePartnerHospital(Hospital hospital) {
+        if (hospital != null && partnerHospitals.contains(hospital)) {
+            this.partnerHospitals.remove(hospital);
+            if (hospital.getPartnerPharmacies().contains(this)) {
+                hospital.removePartnerPharmacy(this);
             }
         }
     }

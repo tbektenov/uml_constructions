@@ -1,10 +1,12 @@
 package tbektenov.com.sau.repositories;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.HospitalWard;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for managing HospitalWard entities.
@@ -17,6 +19,14 @@ import java.util.List;
  */
 public interface HospitalWardRepo
     extends JpaRepository<HospitalWard, Long> {
+
+    @Override
+    @EntityGraph(value = "HospitalWard.hospitalizations", type = EntityGraph.EntityGraphType.FETCH)
+    Optional<HospitalWard> findById(Long aLong);
+
+    @EntityGraph(value = "HospitalWard.hospitalizations", type = EntityGraph.EntityGraphType.FETCH)
+    Optional<HospitalWard> findByWardNumAndHospitalId(String wardNum, Long hospitalId);
+
     /**
      * Finds all hospital wards associated with a specific hospital ID.
      *

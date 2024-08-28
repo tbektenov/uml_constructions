@@ -87,6 +87,7 @@ public class UserServiceImpl implements IUserService {
             Nurse nurse = new Nurse();
 
             nurse.setUser(user);
+            nurse.setHospitalizations(new HashSet<>());
             userRoles.add(UserRole.NURSE);
 
             user.setNurse(nurse);

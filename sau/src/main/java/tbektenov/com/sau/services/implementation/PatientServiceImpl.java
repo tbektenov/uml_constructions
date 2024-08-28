@@ -27,7 +27,9 @@ import tbektenov.com.sau.repositories.*;
 import tbektenov.com.sau.services.IPatientService;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
 public class PatientServiceImpl
         implements IPatientService {
     private final NurseRepo nurseRepo;
+    private final HospitalWardRepo hospitalWardRepo;
     private PatientRepo patientRepo;
     private UserRepo userRepo;
     private LeftPatientRepo leftPatientRepo;
@@ -48,13 +51,16 @@ public class PatientServiceImpl
                               UserRepo userRepo,
                               LeftPatientRepo leftPatientRepo,
                               StayingPatientRepo stayingPatientRepo,
-                              EntityManager entityManager, NurseRepo nurseRepo) {
+                              EntityManager entityManager,
+                              NurseRepo nurseRepo,
+                              HospitalWardRepo hospitalWardRepo) {
         this.patientRepo = patientRepo;
         this.userRepo = userRepo;
         this.leftPatientRepo = leftPatientRepo;
         this.stayingPatientRepo = stayingPatientRepo;
         this.entityManager = entityManager;
         this.nurseRepo = nurseRepo;
+        this.hospitalWardRepo = hospitalWardRepo;
     }
 
     /**
@@ -169,7 +175,7 @@ public class PatientServiceImpl
      * Updates an existing appointment for a patient.
      *
      * @param createAppointmentDTO DTO containing updated appointment details.
-     * @param id The ID of the patient whose appointment is to be updated.
+     * @param id                   The ID of the patient whose appointment is to be updated.
      * @return The updated PatientDTO after modifying the appointment.
      */
     @Override
@@ -193,7 +199,7 @@ public class PatientServiceImpl
     /**
      * Changes the status of a patient to "staying".
      *
-     * @param patientId The ID of the patient to update.
+     * @param patientId                 The ID of the patient to update.
      * @param changeToStayingPatientDTO DTO containing details for the transition to staying patient.
      * @return A confirmation message indicating the patient's status has been updated.
      * @throws ObjectNotFoundException if the patient, nurse, or ward cannot be found.
@@ -201,58 +207,51 @@ public class PatientServiceImpl
     @Override
     @Transactional
     public String changeToStayingPatient(Long patientId, ChangeToStayingPatientDTO changeToStayingPatientDTO) {
-        try {
-            Patient patient = patientRepo.findById(patientId)
-                    .orElseThrow(() -> new ObjectNotFoundException("Patient not found."));
+        Patient patient = patientRepo.findById(patientId)
+                .orElseThrow(() -> new ObjectNotFoundException("Patient not found."));
 
-            Nurse nurse = nurseRepo.findById(changeToStayingPatientDTO.getNurseId())
-                    .orElseThrow(() -> new ObjectNotFoundException("Nurse not found."));
+        Nurse nurse = nurseRepo.findById(changeToStayingPatientDTO.getNurseId())
+                .orElseThrow(() -> new ObjectNotFoundException("Nurse not found."));
 
-            if (patient.getLeftPatient() != null) {
-                leftPatientRepo.delete(patient.getLeftPatient());
-                patient.setLeftPatient(null);
-            }
+        HospitalWard hospitalWard = hospitalWardRepo.findByWardNumAndHospitalId(
+                changeToStayingPatientDTO.getWardNum(), changeToStayingPatientDTO.getHospitalId()
+        ).orElseThrow(() -> new ObjectNotFoundException("No such ward."));
 
-            Long hospitalWardId = (Long) entityManager.createNativeQuery(
-                            "select hw.hospital_ward_id " +
-                                    "from Hospital_ward hw " +
-                                    "where hw.ward_num = :wardNum " +
-                                    "and hw.hospital_id = :hospitalId"
-                    )
-                    .setParameter("wardNum", changeToStayingPatientDTO.getWardNum())
-                    .setParameter("hospitalId", changeToStayingPatientDTO.getHospitalId())
-                    .getSingleResult();
-
-            StayingPatient stayingPatient = new StayingPatient();
-            Hospitalization hospitalization = new Hospitalization();
-            TreatmentTracker treatmentTracker = new TreatmentTracker();
-
-            stayingPatient.setPatient(patient);
-
-            hospitalization.setStartDate(LocalDate.now());
-            hospitalization.setHospitalWard(entityManager.getReference(HospitalWard.class, hospitalWardId));
-            hospitalization.setPatient(stayingPatient);
-            stayingPatient.setHospitalization(hospitalization);
-
-            treatmentTracker.setDate(LocalDate.now());
-            treatmentTracker.setGotTreatmentToday(true);
-            treatmentTracker.setPatient(stayingPatient);
-            stayingPatient.setTreatmentTracker(treatmentTracker);
-
-            patient.setStayingPatient(stayingPatient);
-
-            stayingPatientRepo.save(stayingPatient);
-
-            return "Patient is now staying";
-        } catch (NoResultException e) {
-            throw new ObjectNotFoundException("No patient, ward, or hospital was found.");
+        if (patient.getLeftPatient() != null) {
+            leftPatientRepo.delete(patient.getLeftPatient());
+            patient.setLeftPatient(null);
         }
+
+        Set<Nurse> nurseSet = new HashSet<>();
+        nurseSet.add(nurse);
+
+        StayingPatient stayingPatient = new StayingPatient();
+        Hospitalization hospitalization = Hospitalization.builder()
+                .patient(stayingPatient)
+                .nurses(nurseSet)
+                .hospitalWard(hospitalWard)
+                .build();
+        TreatmentTracker treatmentTracker = new TreatmentTracker();
+
+        stayingPatient.setPatient(patient);
+
+        stayingPatient.setHospitalization(hospitalization);
+
+        treatmentTracker.setDate(LocalDate.now());
+        treatmentTracker.setGotTreatmentToday(true);
+        treatmentTracker.setPatient(stayingPatient);
+        stayingPatient.setTreatmentTracker(treatmentTracker);
+
+        patient.setStayingPatient(stayingPatient);
+
+        stayingPatientRepo.save(stayingPatient);
+        return "Patient is now staying";
     }
 
     /**
      * Changes the status of a patient to "left".
      *
-     * @param patientId The ID of the patient to update.
+     * @param patientId              The ID of the patient to update.
      * @param changeToLeftPatientDTO DTO containing details for the transition to left patient.
      * @return A confirmation message indicating the patient has left.
      * @throws ObjectNotFoundException if the patient cannot be found or if the conclusion is missing.
@@ -265,6 +264,11 @@ public class PatientServiceImpl
         }
         Patient patient = patientRepo.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        Hospitalization hospitalization = patient.getStayingPatient().getHospitalization();
+        Set<Nurse> nurseSet = hospitalization.getNurses();
+
+        nurseSet.forEach(nurse -> nurse.removeHospitalization(hospitalization));
 
         if (patient.getStayingPatient() != null) {
             stayingPatientRepo.delete(patient.getStayingPatient());

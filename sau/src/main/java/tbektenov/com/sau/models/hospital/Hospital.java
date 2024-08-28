@@ -28,6 +28,7 @@ import java.util.Set;
         @NamedEntityGraph(
                 name = "Hospital.withPharmaciesAndDoctors",
                 attributeNodes = {
+                        @NamedAttributeNode("partnerPharmacies"),
                         @NamedAttributeNode(value = "doctors", subgraph = "doctor.subgraph")
                 },
                 subgraphs = {
@@ -93,7 +94,6 @@ public class Hospital {
     @EqualsAndHashCode.Exclude
     private Set<HospitalWard> hospitalWards = new HashSet<>();
 
-    @Getter
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "pharmacy_hospital_partners",
@@ -120,6 +120,15 @@ public class Hospital {
             this.partnerPharmacies.add(pharmacy);
             if (!pharmacy.getPartnerHospitals().contains(this)) {
                 pharmacy.addPartnerHospital(this);
+            }
+        }
+    }
+
+    public void removePartnerPharmacy(PrivatePharmacy pharmacy) {
+        if (pharmacy != null && this.partnerPharmacies.contains(pharmacy)) {
+            this.partnerPharmacies.remove(pharmacy);
+            if (pharmacy.getPartnerHospitals().contains(this)) {
+                pharmacy.removePartnerHospital(this);
             }
         }
     }

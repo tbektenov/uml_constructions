@@ -8,24 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+import tbektenov.com.sau.dtos.left_patient.ChangeToLeftPatientDTO;
+import tbektenov.com.sau.dtos.staying_patient.ChangeToStayingPatientDTO;
 import tbektenov.com.sau.dtos.user.RegisterDTO;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.Appointment;
 import tbektenov.com.sau.models.AppointmentStatus;
-import tbektenov.com.sau.models.Hospitalization;
-import tbektenov.com.sau.models.TreatmentTracker;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.hospital.Laboratory;
 import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
 import tbektenov.com.sau.models.user.Sex;
-import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.userRoles.Nurse;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 import tbektenov.com.sau.models.user.userRoles.Specialization;
 import tbektenov.com.sau.repositories.*;
+import tbektenov.com.sau.services.implementation.PatientServiceImpl;
 import tbektenov.com.sau.services.implementation.PrivatePharmacyServiceImpl;
 import tbektenov.com.sau.services.implementation.UserServiceImpl;
 
@@ -46,6 +46,7 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     private final DoctorRepo doctorRepo;
     private final StayingPatientRepo stayingPatientRepo;
     private final NurseRepo nurseRepo;
+    private final LeftPatientRepo leftPatientRepo;
     private AppointmentRepo appointmentRepo;
     private HospitalizationRepo hospitalizationRepo;
     private HospitalPharmacyRepo hospitalPharmacyRepo;
@@ -57,6 +58,7 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     private UserServiceImpl userService;
     private PrivatePharmacyRepo privatePharmacyRepo;
     private PrivatePharmacyServiceImpl privatePharmacyService;
+    private PatientServiceImpl patientService;
 
     @Autowired
     public DataInitializer(AppointmentRepo appointmentRepo,
@@ -71,7 +73,10 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                            PrivatePharmacyServiceImpl privatePharmacyService,
                            PrivatePharmacyRepo privatePharmacyRepo,
                            PatientRepo patientRepo,
-                           DoctorRepo doctorRepo, StayingPatientRepo stayingPatientRepo, NurseRepo nurseRepo) {
+                           DoctorRepo doctorRepo,
+                           StayingPatientRepo stayingPatientRepo,
+                           NurseRepo nurseRepo,
+                           PatientServiceImpl patientService, LeftPatientRepo leftPatientRepo) {
         this.appointmentRepo = appointmentRepo;
         this.hospitalizationRepo = hospitalizationRepo;
         this.hospitalPharmacyRepo = hospitalPharmacyRepo;
@@ -87,6 +92,8 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         this.doctorRepo = doctorRepo;
         this.stayingPatientRepo = stayingPatientRepo;
         this.nurseRepo = nurseRepo;
+        this.patientService = patientService;
+        this.leftPatientRepo = leftPatientRepo;
     }
 
     /**
@@ -329,8 +336,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
             userService.registerUser(registerDTO4);
         }
 
-        // TODO: only one partner can be added
-
         String address = "123 Main St";
         String company = "PharmaCorp";
         if (!privatePharmacyRepo.existsByAddressAndPharmaCompany(address, company)) {
@@ -341,9 +346,8 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                     .pharmaCompany(company)
                     .build();
 
-            sau.addPartnerPharmacy(privatePharmacy);
-
             privatePharmacyRepo.save(privatePharmacy);
+            sau.addPartnerPharmacy(privatePharmacy);
         }
 
         String address1 = "234 Paper St";
@@ -355,24 +359,12 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                     .pharmaCompany(company)
                     .build();
 
+            privatePharmacyRepo.save(privatePharmacy);
             mau.addPartnerPharmacy(privatePharmacy);
-
-            privatePharmacyRepo.save(privatePharmacy);
         }
 
-        String address2 = "235 Paper St";
-        String company1 = "AmirMed";
-        if (!privatePharmacyRepo.existsByAddressAndPharmaCompany(address2, company1)) {
-            PrivatePharmacy privatePharmacy = PrivatePharmacy.builder()
-                    .name("AmirMed")
-                    .isCompoundPharmacy(false)
-                    .address(address2)
-                    .pharmaCompany(company1)
-                    .build();
-
-            sau.addPartnerPharmacy(privatePharmacy);
-            privatePharmacyRepo.save(privatePharmacy);
-        }
+        hospitalRepo.save(sau);
+        hospitalRepo.save(mau);
 
         String hpName = "hp1";
         if (!hospitalPharmacyRepo.existsByHospitalIdAndName(sau.getId(), hpName)) {
@@ -466,6 +458,24 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         createAppointments(patient, doctor);
         createAppointments(patient2, doctor1);
         createAppointments(patient1, doctor);
+
+        Nurse nurse = nurseRepo.findById(1L).orElseThrow(() -> new RuntimeException("Nurse not found"));
+        HospitalWard ward = hospitalWardRepo.findById(1L).orElseThrow(() -> new RuntimeException("Hospital ward not found"));
+        if (!stayingPatientRepo.existsById(patient.getId())) {
+            createHospitalization(patient, ward, nurse);
+        }
+
+        if (!stayingPatientRepo.existsById(patient1.getId())) {
+            createHospitalization(patient1, ward, nurse);
+        }
+
+        if (!leftPatientRepo.existsById(patient.getId())) {
+            ChangeToLeftPatientDTO changeToLeftPatientDTO = new ChangeToLeftPatientDTO();
+
+            changeToLeftPatientDTO.setConclusion("Is healthy");
+
+            patientService.changeToLeftPatient(patient.getId(), changeToLeftPatientDTO);
+        }
     }
 
     private void createAppointments(Patient patient, Doctor doctor) {
@@ -501,12 +511,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         } else {
             throw new InvalidArgumentsException("Patient and Doctor are the same person");
         }
-
-//        Nurse nurse = nurseRepo.findById(1L).orElseThrow(() -> new RuntimeException("Nurse not found"));
-//        HospitalWard ward = hospitalWardRepo.findById(1L).orElseThrow(() -> new RuntimeException("Hospital ward not found"));
-//        if (!stayingPatientRepo.existsById(patient.getId())) {
-//            createHospitalization(patient, ward, nurse);
-//        }
     }
 
     private void createHospitalWardIfNotExists(Hospital hospital, String wardNum, int capacity) {
@@ -525,19 +529,12 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     }
 
     private void createHospitalization(Patient patient, HospitalWard ward, Nurse nurse) {
-        StayingPatient stayingPatient = new StayingPatient();
+        ChangeToStayingPatientDTO changeToStayingPatientDTO = new ChangeToStayingPatientDTO();
 
-        Hospitalization hospitalization = new Hospitalization();
-        hospitalization.setHospitalWard(ward);
-        hospitalization.setPatient(stayingPatient);
-        hospitalization.addNurse(nurse);
-        stayingPatient.setPatient(patient);
+        changeToStayingPatientDTO.setHospitalId(ward.getHospital().getId());
+        changeToStayingPatientDTO.setWardNum(ward.getWardNum());
+        changeToStayingPatientDTO.setNurseId(nurse.getId());
 
-        TreatmentTracker treatmentTracker = new TreatmentTracker();
-        treatmentTracker.setGotTreatmentToday(true);
-        treatmentTracker.setPatient(stayingPatient);
-        stayingPatient.setTreatmentTracker(treatmentTracker);
-
-        stayingPatientRepo.save(stayingPatient);
+        patientService.changeToStayingPatient(patient.getId(), changeToStayingPatientDTO);
     }
 }

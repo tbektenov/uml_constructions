@@ -3,6 +3,7 @@ package tbektenov.com.sau.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import tbektenov.com.sau.models.config.validator.AtLeastOneNurse;
 import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 import tbektenov.com.sau.models.user.userRoles.Nurse;
@@ -18,6 +19,7 @@ import java.util.Set;
 @Entity
 @Table(name = "HOSPITALIZATION")
 @NoArgsConstructor
+@AtLeastOneNurse
 public class Hospitalization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,17 +41,12 @@ public class Hospitalization {
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "patient_id", updatable = false, nullable = false)
+    @JoinColumn(name = "patient_id", updatable = false, nullable = false, unique = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private StayingPatient patient;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "nurse_hospitalization",
-            joinColumns = @JoinColumn(name = "hospitalization_id"),
-            inverseJoinColumns = @JoinColumn(name = "nurse_id")
-    )
+    @ManyToMany(mappedBy = "hospitalizations", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Nurse> nurses = new HashSet<>();
@@ -59,15 +56,15 @@ public class Hospitalization {
      *
      * @param hospitalWard the hospital ward where the patient is staying
      * @param patient      the patient being hospitalized
-     * @param nurse        the nurse assigned to the patient
+     * @param nurses        the nurse(s) assigned to the patient
      */
     @Builder
     public Hospitalization(
             HospitalWard hospitalWard,
             StayingPatient patient,
-            @NotNull(message = "there should be at least 1 nurse.") Nurse nurse
+            Set<Nurse> nurses
     ) {
-        if (nurse == null) {
+        if (nurses == null) {
             throw new IllegalArgumentException("At least one nurse must be assigned.");
         }
 
@@ -76,8 +73,8 @@ public class Hospitalization {
         hospitalWard.addHospitalization(this);
         this.patient = patient;
         patient.setHospitalization(this);
-        this.nurses.add(nurse);
-        nurse.addHospitalization(this);
+        this.nurses = nurses;
+        nurses.forEach(nurse -> nurse.addHospitalization(this));
     }
 
     /**
@@ -90,6 +87,15 @@ public class Hospitalization {
             nurses.add(nurse);
             if (!nurse.getHospitalizations().contains(this)) {
                 nurse.addHospitalization(this);
+            }
+        }
+    }
+
+    public void removeNurse(Nurse nurse) {
+        if (nurse != null && nurses.contains(nurse)) {
+            this.nurses.remove(nurse);
+            if (nurse.getHospitalizations().contains(this)) {
+                nurse.removeHospitalization(this);
             }
         }
     }
