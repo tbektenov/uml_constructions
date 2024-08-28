@@ -40,24 +40,12 @@ public class DoctorServiceImpl
 
     private DoctorRepo doctorRepo;
     private UserRepo userRepo;
-    private HospitalRepo hospitalRepo;
-    private AppointmentRepo appointmentRepo;
-    private HospitalPharmacyRepo hospitalPharmacyRepo;
-    private OrderRepo orderRepo;
 
     @Autowired
     public DoctorServiceImpl(DoctorRepo doctorRepo,
-                             UserRepo userRepo,
-                             HospitalRepo hospitalRepo,
-                             AppointmentRepo appointmentRepo,
-                             HospitalPharmacyRepo hospitalPharmacyRepo,
-                             OrderRepo orderRepo) {
+                             UserRepo userRepo) {
         this.doctorRepo = doctorRepo;
         this.userRepo = userRepo;
-        this.hospitalRepo = hospitalRepo;
-        this.appointmentRepo = appointmentRepo;
-        this.hospitalPharmacyRepo = hospitalPharmacyRepo;
-        this.orderRepo = orderRepo;
     }
 
     @Override
@@ -65,206 +53,6 @@ public class DoctorServiceImpl
     public List<DoctorDTO> getAllDoctors() {
         List<Doctor> doctors = doctorRepo.findAll();
         return doctors.stream().map(doctor -> mapToDto(doctor)).collect(Collectors.toList());
-    }
-
-    /**
-     * Creates a new doctor from the provided DTO.
-     *
-     * @param createDoctorDTO The data transfer object containing doctor details.
-     * @return The created DoctorDTO with the doctor's details.
-     */
-    @Override
-    @Transactional
-    public String createDoctor(CreateDoctorDTO createDoctorDTO) {
-        validateCreateDoctorDTO(createDoctorDTO);
-
-        UserEntity user = userRepo.findById(createDoctorDTO.getUserId())
-                .orElseThrow(() -> new ObjectNotFoundException("No user found."));
-        Hospital hospital = hospitalRepo.findById(createDoctorDTO.getHospitalId())
-                .orElseThrow(() -> new ObjectNotFoundException("No hospital found."));
-
-        Doctor doctor = new Doctor();
-        doctor.setUser(user);
-        doctor.setSpecialization(createDoctorDTO.getSpecialization());
-        doctor.setHospital(hospital);
-
-        user.setDoctor(doctor);
-
-        doctorRepo.save(doctor);
-
-        return String.format("User: %d is now assigned as a Doctor with specialization: %s", createDoctorDTO.getUserId(), createDoctorDTO.getSpecialization());
-    }
-
-    /**
-     * Retrieves a doctor by their unique ID.
-     *
-     * @param id The unique identifier of the doctor.
-     * @return The DoctorDTO with the doctor's details.
-     */
-    @Override
-    @Transactional
-    public DoctorDTO getDoctorById(Long id) {
-        Doctor doctor = doctorRepo.findById(id).orElseThrow(
-                () -> new ObjectNotFoundException(
-                        String.format("No doctor with id: %d was found.", id)
-                )
-        );
-        return mapToDto(doctor);
-    }
-
-    /**
-     * Updates an existing doctor's details by their unique ID.
-     *
-     * @param updateDoctorDTO The data transfer object containing updated doctor details.
-     * @param id The unique identifier of the doctor to update.
-     * @return The updated DoctorDTO with the doctor's new details.
-     */
-    @Override
-    @Transactional
-    public DoctorDTO updateDoctor(UpdateDoctorDTO updateDoctorDTO, Long id) {
-        Doctor doctor = doctorRepo.findById(id).orElseThrow(
-                () -> new ObjectNotFoundException(
-                        String.format("No doctor with id: %d was found.", id)
-                )
-        );
-
-        if (!updateDoctorDTO.getSpecialization().toString().isEmpty()) {
-            doctor.setSpecialization(updateDoctorDTO.getSpecialization());
-        }
-
-        return mapToDto(doctorRepo.save(doctor));
-    }
-
-    /**
-     * Deletes a doctor identified by their unique ID.
-     *
-     * @param id The unique identifier of the doctor to be deleted.
-     */
-    @Override
-    @Transactional
-    public void deleteDoctor(Long id) {
-        Doctor doctor = doctorRepo.findById(id).orElseThrow(
-                () -> new ObjectNotFoundException(
-                        String.format("No doctor with id: %d was found.", id)
-                )
-        );
-
-        doctorRepo.delete(doctor);
-    }
-
-    /**
-     * Retrieves all doctors associated with a specific hospital by the hospital's ID.
-     *
-     * @param id The unique identifier of the hospital.
-     * @return A list of DoctorDTOs with the details of the doctors working at the hospital.
-     */
-    @Override
-    @Transactional
-    public List<DoctorDTO> getDoctorsFromHospitalById(Long id) {
-        List<Doctor> doctors = doctorRepo.findByHospitalId(id);
-        return doctors.stream().map(doctor -> mapToDto(doctor)).collect(Collectors.toList());
-    }
-
-    /**
-     * Adds a doctor to a hospital by their respective IDs.
-     *
-     * @param doctorId The unique identifier of the doctor.
-     * @param hospitalId The unique identifier of the hospital.
-     * @return The updated DoctorDTO with the doctor's details.
-     */
-    @Override
-    @Transactional
-    public DoctorDTO assignDoctorToAnotherHospital(Long doctorId, Long hospitalId) {
-        Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
-                () -> new ObjectNotFoundException("No doctor was found.")
-        );
-
-        Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(
-                () -> new ObjectNotFoundException("No hospital was found.")
-        );
-
-        if (!hospital.getDoctors().contains(doctor)) {
-            hospital.getDoctors().add(doctor);
-            doctor.setHospital(hospital);
-
-            doctorRepo.save(doctor);
-        } else {
-            throw new InvalidArgumentsException("Doctor already works in this hospital.");
-        }
-
-        return mapToDto(doctor);
-    }
-
-    /**
-     * Removes a doctor from a hospital by their respective IDs.
-     *
-     * @param doctorId The unique identifier of the doctor.
-     * @param hospitalId The unique identifier of the hospital.
-     */
-    @Override
-    @Transactional
-    public void removeDoctorFromHospital(Long doctorId, Long hospitalId) {
-        Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
-                () -> new ObjectNotFoundException("Doctor not found.")
-        );
-
-        Hospital hospital = hospitalRepo.findById(hospitalId).orElseThrow(
-                () -> new ObjectNotFoundException("Hospital not found.")
-        );
-
-        if (hospital.getDoctors().contains(doctor)) {
-            hospital.getDoctors().remove(doctor);
-            doctor.setHospital(null);
-            hospitalRepo.save(hospital);
-            doctorRepo.save(doctor);
-        } else {
-            throw new InvalidArgumentsException("Doctor does not work in this hospital.");
-        }
-    }
-
-    @Override
-    @Transactional
-    public void finishAppointment(Long doctorId, Long appointId) {
-        Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
-                () -> new ObjectNotFoundException("No such doctor.")
-        );
-
-        Appointment appointment = appointmentRepo.findById(appointId).orElseThrow(
-                () -> new ObjectNotFoundException("No such appointment.")
-        );
-
-        if (!appointment.getDoctor().equals(doctor)) {
-            throw new InvalidArgumentsException("Doctor is not assigned to appointment.");
-        }
-
-        appointment.setAppointmentStatus(AppointmentStatus.ARCHIVED);
-        appointmentRepo.save(appointment);
-    }
-
-    @Override
-    @Transactional
-    public void createOrder(Long doctorId, Long hospitalPharmacyId, CreateOrderDTO createOrderDTO) {
-        Doctor doctor = doctorRepo.findById(doctorId).orElseThrow(
-                () -> new ObjectNotFoundException("Doctor not found.")
-        );
-
-        HospitalPharmacy hospitalPharmacy = hospitalPharmacyRepo.findById(hospitalPharmacyId).orElseThrow(
-                () -> new ObjectNotFoundException("Hospital pharmacy not found.")
-        );
-
-        if (!doctor.getHospital().equals(hospitalPharmacy.getHospital())) {
-            throw new InvalidArgumentsException("Doctor and hospital pharmacy are in different hospitals");
-        }
-
-        OrderEntity order = OrderEntity.builder()
-                .dateTimeOfIssue(LocalDateTime.now())
-                .orderBody(createOrderDTO.getOrderBody())
-                .orderStatus(OrderStatus.ONGOING)
-                .doctor(doctor)
-                .hospitalPharmacy(hospitalPharmacy)
-                .build();
-
-        orderRepo.save(order);
     }
 
     /**
@@ -295,19 +83,5 @@ public class DoctorServiceImpl
         doctor.setSpecialization(createDoctorDTO.getSpecialization());
 
         return doctor;
-    }
-
-    /**
-     * Validates the CreateDoctorDTO.
-     *
-     * @param createDoctorDTO The data transfer object containing doctor details.
-     * @throws InvalidArgumentsException If the DTO contains invalid data.
-     */
-    private void validateCreateDoctorDTO(CreateDoctorDTO createDoctorDTO) {
-        if (createDoctorDTO.getUserId() == 0 ||
-                createDoctorDTO.getHospitalId() == 0 ||
-                createDoctorDTO.getSpecialization() == null) {
-            throw new InvalidArgumentsException("All fields (userId, hospitalId, and specialization) must be filled");
-        }
     }
 }

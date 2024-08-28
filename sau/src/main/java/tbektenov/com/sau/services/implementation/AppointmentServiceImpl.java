@@ -60,8 +60,6 @@ public class AppointmentServiceImpl
     @Override
     @Transactional
     public AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO) {
-        System.out.println("Received DTO: " + createAppointmentDTO);
-
         if (Objects.equals(createAppointmentDTO.getPatient_id(), createAppointmentDTO.getDoctor_id())) {
             throw new InvalidArgumentsException("Patient ID and Doctor ID cannot be the same");
         }
@@ -87,41 +85,6 @@ public class AppointmentServiceImpl
         Appointment newAppointment = appointmentRepo.save(appointment);
 
         return mapToDto(newAppointment);
-    }
-
-    /**
-     * Cancels an appointment identified by its ID.
-     *
-     * @param id The unique identifier of the appointment to be cancelled.
-     */
-    @Override
-    @Transactional
-    public void cancelAppointmentById(Long id) {
-        Appointment appointment = appointmentRepo.findById(id).orElseThrow(
-                () -> new ObjectNotFoundException("No such appointment.")
-        );
-
-        appointmentRepo.delete(appointment);
-    }
-
-    /**
-     * Archives an appointment identified by its ID.
-     *
-     * @param id The unique identifier of the appointment to be archived.
-     */
-    @Override
-    @Transactional
-    public void archiveAppointmentById(Long id) {
-        Appointment appointment = appointmentRepo.findById(id).orElseThrow(
-                () -> new ObjectNotFoundException("No such appointment.")
-        );
-
-        if (appointment.getAppointmentStatus().equals(AppointmentStatus.ARCHIVED)) {
-            throw new InvalidArgumentsException("Appointment is already archived");
-        }
-
-        appointment.setAppointmentStatus(AppointmentStatus.ARCHIVED);
-        appointmentRepo.save(appointment);
     }
 
     /**

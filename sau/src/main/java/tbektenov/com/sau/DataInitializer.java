@@ -26,7 +26,6 @@ import tbektenov.com.sau.models.user.userRoles.Patient;
 import tbektenov.com.sau.models.user.userRoles.Specialization;
 import tbektenov.com.sau.repositories.*;
 import tbektenov.com.sau.services.implementation.PatientServiceImpl;
-import tbektenov.com.sau.services.implementation.PrivatePharmacyServiceImpl;
 import tbektenov.com.sau.services.implementation.UserServiceImpl;
 
 import java.time.LocalDate;
@@ -57,7 +56,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     private UserRepo userRepo;
     private UserServiceImpl userService;
     private PrivatePharmacyRepo privatePharmacyRepo;
-    private PrivatePharmacyServiceImpl privatePharmacyService;
     private PatientServiceImpl patientService;
 
     @Autowired
@@ -70,7 +68,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                            OrderRepo orderRepo,
                            UserRepo userRepo,
                            UserServiceImpl userService,
-                           PrivatePharmacyServiceImpl privatePharmacyService,
                            PrivatePharmacyRepo privatePharmacyRepo,
                            PatientRepo patientRepo,
                            DoctorRepo doctorRepo,
@@ -86,7 +83,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         this.orderRepo = orderRepo;
         this.userRepo = userRepo;
         this.userService = userService;
-        this.privatePharmacyService = privatePharmacyService;
         this.privatePharmacyRepo = privatePharmacyRepo;
         this.patientRepo = patientRepo;
         this.doctorRepo = doctorRepo;

@@ -2,10 +2,6 @@ $(document).ready(() => {
 
     /**
      * Applies filters to the doctor table based on the selected hospital and specialization.
-     *
-     * <p>This function retrieves the current values of the hospital and specialization filters,
-     * then iterates through each row of the doctor table to check if it matches the selected
-     * filter criteria. Rows that match both filter conditions are shown, while others are hidden.</p>
      */
     applyFilters = () => {
         var selectedHospital = $('#hospitalFilter').val().toLowerCase();

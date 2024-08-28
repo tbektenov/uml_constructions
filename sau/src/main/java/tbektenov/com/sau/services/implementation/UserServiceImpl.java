@@ -13,7 +13,6 @@ import tbektenov.com.sau.models.user.UserRole;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.userRoles.Nurse;
 import tbektenov.com.sau.models.user.userRoles.Patient;
-import tbektenov.com.sau.repositories.DoctorRepo;
 import tbektenov.com.sau.repositories.HospitalRepo;
 import tbektenov.com.sau.repositories.UserRepo;
 import tbektenov.com.sau.services.IUserService;
@@ -30,8 +29,6 @@ public class UserServiceImpl implements IUserService {
 
     private UserRepo userRepo;
     private HospitalRepo hospitalRepo;
-    private DoctorRepo doctorRepo;
-    private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
 
     /**
@@ -39,20 +36,14 @@ public class UserServiceImpl implements IUserService {
      *
      * @param userRepo             The repository for user entities.
      * @param hospitalRepo         The repository for hospital entities.
-     * @param doctorRepo           The repository for doctor entities.
-     * @param authenticationManager The authentication manager for user authentication.
      * @param passwordEncoder      The password encoder for encoding user passwords.
      */
     @Autowired
     public UserServiceImpl(UserRepo userRepo,
                            HospitalRepo hospitalRepo,
-                           DoctorRepo doctorRepo,
-                           AuthenticationManager authenticationManager,
                            PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.hospitalRepo = hospitalRepo;
-        this.doctorRepo = doctorRepo;
-        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -96,24 +87,6 @@ public class UserServiceImpl implements IUserService {
         user.setRoles(userRoles);
 
         userRepo.save(user);
-    }
-
-    /**
-     * Deletes a user by their ID.
-     *
-     * @param id The ID of the user to delete.
-     * @return A message indicating the result of the deletion operation.
-     * @throws ObjectNotFoundException if no user with the specified ID is found.
-     */
-    @Override
-    @Transactional
-    public String deleteUserById(Long id) {
-        UserEntity user = userRepo.findById(id).orElseThrow(
-                () -> new ObjectNotFoundException("No such user.")
-        );
-
-        userRepo.delete(user);
-        return String.format("User with id: %d was deleted", id);
     }
 
     /**

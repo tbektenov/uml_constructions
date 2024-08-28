@@ -10,9 +10,6 @@
 </head>
 <body>
 <h2>Make an Appointment</h2>
-
-<p id="error" th:if="${error}" th:text="${error}" style="color:red;"></p>
-
 <div th:if="${doctors.empty}">
     <h2>Error loading doctors</h2>
 </div>

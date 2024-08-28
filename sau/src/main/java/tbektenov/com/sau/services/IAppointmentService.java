@@ -19,12 +19,5 @@ public interface IAppointmentService {
      */
     AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO);
 
-    /**
-     * Cancels an appointment identified by its unique ID.
-     *
-     * @param id The unique identifier of the appointment to be canceled.
-     */
-    void cancelAppointmentById(Long id);
-    void archiveAppointmentById(Long id);
     List<AppointmentDTO> getUpcomingAppointmentsByPatientId(Long patient_id);
 }

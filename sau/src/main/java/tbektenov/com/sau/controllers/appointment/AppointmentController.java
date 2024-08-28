@@ -1,15 +1,14 @@
 package tbektenov.com.sau.controllers.appointment;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import tbektenov.com.sau.config.CustomUserDetailsService;
-import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
 import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.models.user.UserEntity;
@@ -61,14 +60,12 @@ public class AppointmentController {
      *
      * @param createAppointmentDTO the data transfer object containing appointment details
      * @param result the binding result for handling validation errors
-     * @param model the model to add attributes used in the view
      * @return a string indicating the next view to render
      */
     @PostMapping("create")
     public String createAppointment(
             CreateAppointmentDTO createAppointmentDTO,
-            BindingResult result,
-            Model model) {
+            BindingResult result) {
 
         if (result.hasErrors()) {
             return "newAppointment";
@@ -114,46 +111,5 @@ public class AppointmentController {
         model.addAttribute("hospitals", hospitals);
         model.addAttribute("specializations", specializations);
         return "newAppointment";
-    }
-
-    /**
-     * Cancels the appointment with the specified ID.
-     *
-     * @param appointId the ID of the appointment to cancel
-     * @return a {@link ResponseEntity} with a confirmation message
-     */
-    @DeleteMapping("delete/{appointId}")
-    public ResponseEntity<String> cancelAppointment(
-            @PathVariable Long appointId
-    ) {
-        appointmentService.cancelAppointmentById(appointId);
-        return ResponseEntity.ok("Appointment was canceled.");
-    }
-
-    /**
-     * Marks the appointment with the specified ID as finished.
-     *
-     * @param appointId the ID of the appointment to finish
-     * @return a {@link ResponseEntity} with a confirmation message
-     */
-    @PutMapping("/finish/{appointId}")
-    public ResponseEntity<String> finishAppointment(
-            @PathVariable Long appointId
-    ) {
-        appointmentService.archiveAppointmentById(appointId);
-        return ResponseEntity.ok("Appointment was finished.");
-    }
-
-    /**
-     * Retrieves upcoming appointments for the patient with the specified ID.
-     *
-     * @param patientId the ID of the patient whose appointments are to be retrieved
-     * @return a {@link ResponseEntity} containing a list of upcoming appointments
-     */
-    @GetMapping("patient/getUpcoming/{patientId}")
-    public ResponseEntity<List<AppointmentDTO>> getUpcomingUserAppointmentsByPatientId(
-            @PathVariable Long patientId
-    ) {
-        return ResponseEntity.ok(appointmentService.getUpcomingAppointmentsByPatientId(patientId));
     }
 }
