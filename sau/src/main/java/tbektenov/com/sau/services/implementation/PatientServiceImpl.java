@@ -1,24 +1,18 @@
 package tbektenov.com.sau.services.implementation;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
-import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
 import tbektenov.com.sau.dtos.left_patient.ChangeToLeftPatientDTO;
-import tbektenov.com.sau.dtos.patient.CreatePatientDTO;
 import tbektenov.com.sau.dtos.patient.PatientDTO;
-import tbektenov.com.sau.dtos.patient.UpdatePatientDTO;
 import tbektenov.com.sau.dtos.staying_patient.ChangeToStayingPatientDTO;
 import tbektenov.com.sau.dtos.user.UserDTO;
-import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
 import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.TreatmentTracker;
 import tbektenov.com.sau.models.hospital.HospitalWard;
-import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 import tbektenov.com.sau.models.user.userRoles.Nurse;
@@ -28,9 +22,7 @@ import tbektenov.com.sau.services.IPatientService;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Service implementation for managing Patient operations.
@@ -41,24 +33,18 @@ public class PatientServiceImpl
     private final NurseRepo nurseRepo;
     private final HospitalWardRepo hospitalWardRepo;
     private PatientRepo patientRepo;
-    private UserRepo userRepo;
     private LeftPatientRepo leftPatientRepo;
     private StayingPatientRepo stayingPatientRepo;
-    private EntityManager entityManager;
 
     @Autowired
     public PatientServiceImpl(PatientRepo patientRepo,
-                              UserRepo userRepo,
                               LeftPatientRepo leftPatientRepo,
                               StayingPatientRepo stayingPatientRepo,
-                              EntityManager entityManager,
                               NurseRepo nurseRepo,
                               HospitalWardRepo hospitalWardRepo) {
         this.patientRepo = patientRepo;
-        this.userRepo = userRepo;
         this.leftPatientRepo = leftPatientRepo;
         this.stayingPatientRepo = stayingPatientRepo;
-        this.entityManager = entityManager;
         this.nurseRepo = nurseRepo;
         this.hospitalWardRepo = hospitalWardRepo;
     }
@@ -152,50 +138,5 @@ public class PatientServiceImpl
         leftPatientRepo.save(leftPatient);
 
         return "Patient has left";
-    }
-
-
-    /**
-     * Converts a Patient entity to a PatientDTO.
-     *
-     * @param patient The Patient entity.
-     * @return The corresponding PatientDTO.
-     */
-    private PatientDTO mapToDto(Patient patient) {
-        PatientDTO patientDTO = new PatientDTO();
-        patientDTO.setId(patient.getId());
-        patientDTO.setRhFactor(patient.getRhFactor());
-        patientDTO.setBloodGroup(patient.getBloodGroup());
-        patientDTO.setAppointments(patient.getAppointments().stream()
-                .map(appointment -> {
-                    AppointmentDTO appointmentDTO = new AppointmentDTO();
-                    appointmentDTO.setId(appointment.getId());
-                    appointmentDTO.setSpecialization(appointment.getDoctor().getSpecialization());
-                    appointmentDTO.setHospital(appointment.getDoctor().getHospital().getName());
-                    appointmentDTO.setHospitalAddress(appointment.getDoctor().getHospital().getAddress());
-                    appointmentDTO.setDate(appointment.getDate());
-                    appointmentDTO.setAppointmentStatus(appointment.getAppointmentStatus());
-                    return appointmentDTO;
-                }).collect(Collectors.toSet()));
-
-        UserDTO userDTO = new UserDTO();
-
-        patientDTO.setUser(userDTO);
-        return patientDTO;
-    }
-
-    /**
-     * Converts a CreatePatientDTO to a Patient entity.
-     *
-     * @param createPatientDTO The DTO with patient details.
-     * @return The mapped Patient entity.
-     */
-    private Patient mapToEntity(CreatePatientDTO createPatientDTO) {
-        Patient patient = new Patient();
-        UserEntity user = userRepo.findById(createPatientDTO.getUserId()).orElseThrow(() -> new ObjectNotFoundException("No such user."));
-        patient.setBloodGroup(createPatientDTO.getBloodGroup());
-        patient.setRhFactor(createPatientDTO.getRhFactor());
-
-        return patient;
     }
 }

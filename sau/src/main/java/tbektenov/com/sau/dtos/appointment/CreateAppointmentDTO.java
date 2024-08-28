@@ -1,10 +1,10 @@
 package tbektenov.com.sau.dtos.appointment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import tbektenov.com.sau.models.AppointmentStatus;
 
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**

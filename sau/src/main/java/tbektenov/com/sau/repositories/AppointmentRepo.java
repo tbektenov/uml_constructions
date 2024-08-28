@@ -19,14 +19,6 @@ import java.util.List;
 public interface AppointmentRepo extends JpaRepository<Appointment, Long> {
 
     /**
-     * Find appointments by doctor ID.
-     *
-     * @param doctorId the doctor's ID
-     * @return a list of appointments associated with the given doctor
-     */
-    List<Appointment> findByDoctorId(Long doctorId);
-
-    /**
      * Find appointments by patient ID and status, fetching related entities.
      *
      * @param patientId the patient's ID

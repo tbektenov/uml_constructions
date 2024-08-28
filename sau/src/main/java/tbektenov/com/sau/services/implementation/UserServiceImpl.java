@@ -2,7 +2,6 @@ package tbektenov.com.sau.services.implementation;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.user.RegisterDTO;

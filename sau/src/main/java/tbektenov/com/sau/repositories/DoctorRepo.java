@@ -1,11 +1,8 @@
 package tbektenov.com.sau.repositories;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
-import tbektenov.com.sau.models.user.userRoles.Specialization;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,13 +36,4 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
     @Override
     @EntityGraph(value = "Doctor.detailsHospitalAndLaboratory", type = EntityGraph.EntityGraphType.LOAD)
     Optional<Doctor> findById(Long id);
-
-    /**
-     * Finds doctors associated with a specific hospital ID, including their hospital and laboratory details.
-     *
-     * @param hospitalId the ID of the hospital
-     * @return a list of doctors associated with the specified hospital
-     */
-    @EntityGraph(value = "Doctor.detailsHospitalAndLaboratory", type = EntityGraph.EntityGraphType.LOAD)
-    List<Doctor> findByHospitalId(Long hospitalId);
 }

@@ -18,14 +18,6 @@ import java.util.List;
 public interface LaboratoryRepo extends JpaRepository<Laboratory, Long> {
 
     /**
-     * Finds all laboratories associated with a specific hospital ID.
-     *
-     * @param hospitalId the ID of the hospital
-     * @return a list of laboratories associated with the specified hospital
-     */
-    List<Laboratory> findByHospitalId(Long hospitalId);
-
-    /**
      * Checks if a laboratory exists by its hospital ID and floor.
      *
      * @param hospitalId the ID of the hospital

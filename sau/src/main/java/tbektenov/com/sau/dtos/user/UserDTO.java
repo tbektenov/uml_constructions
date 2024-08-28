@@ -2,8 +2,6 @@ package tbektenov.com.sau.dtos.user;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * Data Transfer Object (DTO) for User.
  *

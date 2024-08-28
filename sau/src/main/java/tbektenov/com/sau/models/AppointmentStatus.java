@@ -3,7 +3,6 @@ package tbektenov.com.sau.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
-import tbektenov.com.sau.models.user.userRoles.Specialization;
 
 /**
  * Enum representing the status of an appointment.

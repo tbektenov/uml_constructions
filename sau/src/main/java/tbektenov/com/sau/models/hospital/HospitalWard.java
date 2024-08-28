@@ -1,11 +1,10 @@
 package tbektenov.com.sau.models.hospital;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import tbektenov.com.sau.models.Hospitalization;
 
 import java.util.HashSet;

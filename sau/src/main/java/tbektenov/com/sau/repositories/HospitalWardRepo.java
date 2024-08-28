@@ -28,14 +28,6 @@ public interface HospitalWardRepo
     Optional<HospitalWard> findByWardNumAndHospitalId(String wardNum, Long hospitalId);
 
     /**
-     * Finds all hospital wards associated with a specific hospital ID.
-     *
-     * @param hospitalId the ID of the hospital
-     * @return a list of hospital wards associated with the specified hospital
-     */
-    List<HospitalWard> findByHospitalId(Long hospitalId);
-
-    /**
      * Checks if a ward exists by its number and hospital.
      *
      * @param wardNum the ward number

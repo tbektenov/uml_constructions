@@ -2,6 +2,10 @@ package tbektenov.com.sau.models.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
@@ -10,11 +14,6 @@ import tbektenov.com.sau.models.config.converter.UserRoleSetConverter;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.userRoles.Nurse;
 import tbektenov.com.sau.models.user.userRoles.Patient;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 import java.util.HashSet;

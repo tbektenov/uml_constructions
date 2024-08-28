@@ -1,11 +1,11 @@
 package tbektenov.com.sau.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 
-import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**

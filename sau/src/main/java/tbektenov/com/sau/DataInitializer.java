@@ -47,7 +47,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     private final NurseRepo nurseRepo;
     private final LeftPatientRepo leftPatientRepo;
     private AppointmentRepo appointmentRepo;
-    private HospitalizationRepo hospitalizationRepo;
     private HospitalPharmacyRepo hospitalPharmacyRepo;
     private HospitalRepo hospitalRepo;
     private HospitalWardRepo hospitalWardRepo;
@@ -60,7 +59,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
 
     @Autowired
     public DataInitializer(AppointmentRepo appointmentRepo,
-                           HospitalizationRepo hospitalizationRepo,
                            HospitalPharmacyRepo hospitalPharmacyRepo,
                            HospitalRepo hospitalRepo,
                            HospitalWardRepo hospitalWardRepo,
@@ -75,7 +73,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                            NurseRepo nurseRepo,
                            PatientServiceImpl patientService, LeftPatientRepo leftPatientRepo) {
         this.appointmentRepo = appointmentRepo;
-        this.hospitalizationRepo = hospitalizationRepo;
         this.hospitalPharmacyRepo = hospitalPharmacyRepo;
         this.hospitalRepo = hospitalRepo;
         this.hospitalWardRepo = hospitalWardRepo;

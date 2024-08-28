@@ -1,7 +1,6 @@
 package tbektenov.com.sau.dtos.appointment;
 
 import lombok.Data;
-import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.models.AppointmentStatus;
 import tbektenov.com.sau.models.user.userRoles.Specialization;
 

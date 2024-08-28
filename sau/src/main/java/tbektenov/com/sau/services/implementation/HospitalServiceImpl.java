@@ -7,13 +7,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.doctor.DoctorDTO;
-import tbektenov.com.sau.dtos.hospital.*;
-import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyDTO;
-import tbektenov.com.sau.exceptions.InvalidArgumentsException;
-import tbektenov.com.sau.exceptions.ObjectNotFoundException;
+import tbektenov.com.sau.dtos.hospital.HospitalDTO;
+import tbektenov.com.sau.dtos.hospital.HospitalResponse;
 import tbektenov.com.sau.models.hospital.Hospital;
-import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
-import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.repositories.DoctorRepo;
 import tbektenov.com.sau.repositories.HospitalRepo;
 import tbektenov.com.sau.repositories.PrivatePharmacyRepo;
@@ -30,21 +26,15 @@ public class HospitalServiceImpl
         implements IHospitalService {
 
     private HospitalRepo hospitalRepo;
-    private PrivatePharmacyRepo privatePharmacyRepo;
-    private DoctorRepo doctorRepo;
 
     /**
      * Initializes the service with required repositories.
      *
      * @param hospitalRepo repository for hospital data
-     * @param privatePharmacyRepo repository for private pharmacy data
-     * @param doctorRepo repository for doctor data
      */
     @Autowired
-    public HospitalServiceImpl(HospitalRepo hospitalRepo, PrivatePharmacyRepo privatePharmacyRepo, DoctorRepo doctorRepo) {
+    public HospitalServiceImpl(HospitalRepo hospitalRepo) {
         this.hospitalRepo = hospitalRepo;
-        this.privatePharmacyRepo = privatePharmacyRepo;
-        this.doctorRepo = doctorRepo;
     }
 
     /**
@@ -96,18 +86,5 @@ public class HospitalServiceImpl
                 }).collect(Collectors.toSet()));
 
         return hospitalDTO;
-    }
-
-    /**
-     * Maps a CreateUpdateHospitalDTO to a Hospital entity.
-     *
-     * @param hospitalDTO the CreateUpdateHospitalDTO
-     * @return the corresponding Hospital entity
-     */
-    private Hospital mapToEntity(CreateUpdateHospitalDTO hospitalDTO) {
-        Hospital hospital = new Hospital();
-        hospital.setName(hospitalDTO.getName());
-        hospital.setAddress(hospitalDTO.getAddress());
-        return hospital;
     }
 }

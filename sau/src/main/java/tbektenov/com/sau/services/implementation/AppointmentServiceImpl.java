@@ -1,7 +1,5 @@
 package tbektenov.com.sau.services.implementation;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -119,18 +117,5 @@ public class AppointmentServiceImpl
         appointmentDTO.setAppointmentStatus(appointment.getAppointmentStatus());
 
         return appointmentDTO;
-    }
-
-    /**
-     * Maps a CreateAppointmentDTO to an Appointment entity.
-     *
-     * @param createAppointmentDTO The data transfer object containing appointment details.
-     * @return The mapped Appointment entity with the details from the DTO.
-     */
-    private Appointment mapToEntity(CreateAppointmentDTO createAppointmentDTO) {
-        Appointment appointment = new Appointment();
-        appointment.setDate(createAppointmentDTO.getDate());
-        appointment.setAppointmentStatus(createAppointmentDTO.getAppointmentStatus());
-        return appointment;
     }
 }

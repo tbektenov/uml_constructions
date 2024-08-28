@@ -1,10 +1,6 @@
 package tbektenov.com.sau.services;
 
-import tbektenov.com.sau.dtos.hospital.*;
-import tbektenov.com.sau.dtos.pharmacy.privatePharmacy.PrivatePharmacyDTO;
-
-import javax.print.Doc;
-import java.util.List;
+import tbektenov.com.sau.dtos.hospital.HospitalResponse;
 
 /**
  * Service interface for managing hospitals.
