@@ -23,10 +23,12 @@ button {
     background-color: #f44336;
     color: white;
     border: none;
+    border-radius: 40px;
 }
 
 .submit-button {
     background-color: #4CAF50;
     color: white;
     border: none;
+    border-radius: 40px;
 }

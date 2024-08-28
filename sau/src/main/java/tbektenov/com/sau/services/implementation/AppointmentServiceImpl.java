@@ -60,6 +60,8 @@ public class AppointmentServiceImpl
     @Override
     @Transactional
     public AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO) {
+        System.out.println("Received DTO: " + createAppointmentDTO);
+
         if (Objects.equals(createAppointmentDTO.getPatient_id(), createAppointmentDTO.getDoctor_id())) {
             throw new InvalidArgumentsException("Patient ID and Doctor ID cannot be the same");
         }

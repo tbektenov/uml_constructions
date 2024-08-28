@@ -16,26 +16,26 @@
 </div>
 
 <div th:if="${!doctors.empty}">
-    <div>
-        <label for="date">Choose Date:</label>
-        <input type="date" id="date" name="date" required>
-    </div>
-
-    <div>
-        <label for="hospitalFilter">Filter by Hospital:</label>
-        <select id="hospitalFilter">
-            <option value="">All Hospitals</option>
-            <option th:each="hospital : ${hospitals}" th:value="${hospital}" th:text="${hospital}"></option>
-        </select>
-
-        <label for="specializationFilter">Filter by Specialization:</label>
-        <select id="specializationFilter">
-            <option value="">All Specializations</option>
-            <option th:each="specialization : ${specializations}" th:value="${specialization}" th:text="${specialization}"></option>
-        </select>
-    </div>
-
     <form th:action="@{/appointments/create}" method="post">
+        <div>
+            <label for="date">Choose Date:</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+
+        <div>
+            <label for="hospitalFilter">Filter by Hospital:</label>
+            <select id="hospitalFilter">
+                <option value="">All Hospitals</option>
+                <option th:each="hospital : ${hospitals}" th:value="${hospital}" th:text="${hospital}"></option>
+            </select>
+
+            <label for="specializationFilter">Filter by Specialization:</label>
+            <select id="specializationFilter">
+                <option value="">All Specializations</option>
+                <option th:each="specialization : ${specializations}" th:value="${specialization}" th:text="${specialization}"></option>
+            </select>
+        </div>
+
         <input type="hidden" name="patient_id" th:value="${user.id}">
 
         <div class="table-container">
