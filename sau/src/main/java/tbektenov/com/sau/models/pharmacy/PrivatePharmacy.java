@@ -3,7 +3,6 @@ package tbektenov.com.sau.models.pharmacy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.hospital.Hospital;
 
 import java.util.HashSet;
@@ -12,6 +11,7 @@ import java.util.Set;
 /**
  * Entity representing a Private Pharmacy.
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "PRIVATE_PHARMACY", uniqueConstraints = {
@@ -24,18 +24,19 @@ public class PrivatePharmacy
 
     @NotBlank(message = "address cannot be blank.")
     @Column(name = "Address", updatable = false, nullable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private String address;
 
     @NotBlank(message = "company cannot be blank")
     @Column(name = "Company", updatable = false, nullable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private String pharmaCompany;
 
 
-    @ManyToMany(mappedBy = "partnerPharmacies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "pharmacy_hospital_partners",
+            joinColumns = @JoinColumn(name = "pharmacy_id"),
+            inverseJoinColumns = @JoinColumn(name = "hospital_id")
+    )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Hospital> partnerHospitals = new HashSet<>();

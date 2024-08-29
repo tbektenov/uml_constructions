@@ -323,7 +323,7 @@ class SauApplicationTests {
 				() -> new ObjectNotFoundException("No such hospital")
 		);
 
-		Hospital hospital1 = hospitalRepo.findById(2L).orElseThrow(
+		Hospital hospital1 = hospitalRepo.findById(3L).orElseThrow(
 				() -> new ObjectNotFoundException("No such hospital")
 		);
 
@@ -334,8 +334,8 @@ class SauApplicationTests {
 		privatePharmacy.addPartnerHospital(hospital);
 		privatePharmacy.addPartnerHospital(hospital1);
 
-		assertEquals(2, privatePharmacy.getPartnerHospitals().size());
-		assertEquals(1, hospital.getPartnerPharmacies().size());
+		assertEquals(3, privatePharmacy.getPartnerHospitals().size());
+		assertEquals(2, hospital.getPartnerPharmacies().size());
 		assertEquals(1, hospital1.getPartnerPharmacies().size());
 	}
 

@@ -94,12 +94,7 @@ public class Hospital {
     @EqualsAndHashCode.Exclude
     private Set<HospitalWard> hospitalWards = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "pharmacy_hospital_partners",
-            joinColumns = @JoinColumn(name = "hospital_id"),
-            inverseJoinColumns = @JoinColumn(name = "pharmacy_id")
-    )
+    @ManyToMany(mappedBy = "partnerHospitals", fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<PrivatePharmacy> partnerPharmacies = new HashSet<>();

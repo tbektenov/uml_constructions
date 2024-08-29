@@ -359,7 +359,10 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                     .name("xyz")
                     .build();
 
-            privatePharmacyRepo.save(privatePharmacy);
+
+            PrivatePharmacy res = privatePharmacyRepo.save(privatePharmacy);
+            res.addPartnerHospital(mau);
+            privatePharmacyRepo.save(res);
         }
 
         String address1 = "Paper Str 321";
@@ -371,7 +374,10 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                     .name("xyz")
                     .build();
 
-            privatePharmacyRepo.save(privatePharmacy);
+            PrivatePharmacy res = privatePharmacyRepo.save(privatePharmacy);
+            res.addPartnerHospital(mau);
+            res.addPartnerHospital(sau);
+            privatePharmacyRepo.save(res);
         }
 
         String hpName = "hp1";
@@ -484,6 +490,8 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
 
             patientService.changeToLeftPatient(patient.getId(), changeToLeftPatientDTO);
         }
+
+
     }
 
     private void createAppointments(Patient patient, Doctor doctor) {
