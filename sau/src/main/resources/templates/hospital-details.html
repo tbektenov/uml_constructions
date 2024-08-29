@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hospital Details</title>
-    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/page.css}">
 </head>
 <body>
 <div class="sidebar">
@@ -28,11 +28,13 @@
 
 <div class="content">
     <h2>Doctors in this Hospital</h2>
+
     <div th:if="${doctors.empty}">
         <p>No doctors available for this hospital.</p>
     </div>
-    <div th:if="${!doctors.empty}">
-        <table border="1" cellpadding="5" cellspacing="0">
+
+    <div class="table-container" th:if="${!doctors.empty}">
+        <table>
             <thead>
             <tr>
                 <th>ID</th>

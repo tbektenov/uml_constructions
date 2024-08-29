@@ -75,7 +75,7 @@ class SauApplicationTests {
 
 	@Test
 	@Transactional
-	void assignSeveralNursesToHospitalization() {
+	void assignSeveralNursesToHospitalizationAndRemoveOne() {
 		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(
 				() -> new ObjectNotFoundException("No such ward.")
 		);
@@ -127,5 +127,10 @@ class SauApplicationTests {
 		Hospitalization result = hospitalizationRepo.save(hospitalization);
 
 		assertEquals(2, result.getNurses().size());
+
+		nurse1.removeHospitalization(hospitalization);
+		hospitalizationRepo.save(hospitalization);
+
+		assertEquals(1, result.getNurses().size());
 	}
 }

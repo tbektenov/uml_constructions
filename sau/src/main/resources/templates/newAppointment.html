@@ -6,7 +6,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/filter.js"></script>
     <script src="/js/minDate.js"></script>
-    <link rel="stylesheet" th:href="@{/css/makeAppointment.css}">
+    <link rel="stylesheet" th:href="@{/css/newAppointment.css}">
 </head>
 <body>
 <h2>Make an Appointment</h2>
@@ -14,22 +14,22 @@
     <h2>Error loading doctors</h2>
 </div>
 
-<div th:if="${!doctors.empty}">
+<div class="container" th:if="${!doctors.empty}">
     <form th:action="@{/appointments/create}" method="post">
-        <div>
+        <div class="parameter">
             <label for="date">Choose Date:</label>
             <input type="date" id="date" name="date" required>
         </div>
 
-        <div>
+        <div class="parameter">
             <label for="hospitalFilter">Filter by Hospital:</label>
             <select id="hospitalFilter">
                 <option value="">All Hospitals</option>
                 <option th:each="hospital : ${hospitals}" th:value="${hospital}" th:text="${hospital}"></option>
             </select>
 
-            <label for="specializationFilter">Filter by Specialization:</label>
-            <select id="specializationFilter">
+            <label for="specFilter">Filter by Specialization:</label>
+            <select id="specFilter">
                 <option value="">All Specializations</option>
                 <option th:each="specialization : ${specializations}" th:value="${specialization}" th:text="${specialization}"></option>
             </select>
@@ -37,9 +37,9 @@
 
         <input type="hidden" name="patient_id" th:value="${user.id}">
 
+        <label id="table-label">Choose Doctor:</label>
         <div class="table-container">
-            <label>Choose Doctor:</label>
-            <table border="1" cellpadding="5" cellspacing="0">
+            <table>
                 <thead>
                 <tr>
                     <th>Id</th>

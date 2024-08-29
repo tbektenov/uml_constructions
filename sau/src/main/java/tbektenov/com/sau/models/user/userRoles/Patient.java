@@ -83,13 +83,11 @@ public class Patient {
     Set<Appointment> appointments = new HashSet<>();
 
     @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private StayingPatient stayingPatient;
 
     @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private LeftPatient leftPatient;
@@ -102,6 +100,18 @@ public class Patient {
     public void addAppointment(Appointment appointment) {
         if (appointment != null && !appointments.contains(appointment)) {
             this.appointments.add(appointment);
+        }
+    }
+
+    public void setBloodGroup(BloodGroup bloodGroup) {
+        if (bloodGroup != null) {
+            this.bloodGroup = bloodGroup;
+        }
+    }
+
+    public void setRhFactor(RhFactor rhFactor) {
+        if (rhFactor != null) {
+            this.rhFactor = rhFactor;
         }
     }
 }

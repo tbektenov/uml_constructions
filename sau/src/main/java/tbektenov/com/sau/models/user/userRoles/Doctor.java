@@ -68,7 +68,6 @@ public class Doctor{
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false, updatable = false)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private UserEntity user;

@@ -110,19 +110,16 @@ public class UserEntity {
     private Set<UserRole> roles = new HashSet<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Doctor doctor;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Patient patient;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Nurse nurse;

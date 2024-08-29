@@ -5,7 +5,7 @@ $(document).ready(() => {
      */
     applyFilters = () => {
         var selectedHospital = $('#hospitalFilter').val().toLowerCase();
-        var selectedSpecialization = $('#specializationFilter').val().toLowerCase();
+        var selectedSpecialization = $('#specFilter').val().toLowerCase();
 
         $('#doctorTable tr').each(function () {
             var hospitalMatch = $(this).find('td:eq(3)')
@@ -23,5 +23,5 @@ $(document).ready(() => {
     }
 
     $('#hospitalFilter').change(applyFilters);
-    $('#specializationFilter').change(applyFilters);
+    $('#specFilter').change(applyFilters);
 });
