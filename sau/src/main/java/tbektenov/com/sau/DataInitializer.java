@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import tbektenov.com.sau.dtos.left_patient.ChangeToLeftPatientDTO;
 import tbektenov.com.sau.dtos.staying_patient.ChangeToStayingPatientDTO;
 import tbektenov.com.sau.dtos.user.RegisterDTO;
@@ -41,11 +40,11 @@ import java.util.Objects;
 public class DataInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataInitializer.class);
-    private final PatientRepo patientRepo;
-    private final DoctorRepo doctorRepo;
-    private final StayingPatientRepo stayingPatientRepo;
-    private final NurseRepo nurseRepo;
-    private final LeftPatientRepo leftPatientRepo;
+    private PatientRepo patientRepo;
+    private DoctorRepo doctorRepo;
+    private StayingPatientRepo stayingPatientRepo;
+    private NurseRepo nurseRepo;
+    private LeftPatientRepo leftPatientRepo;
     private AppointmentRepo appointmentRepo;
     private HospitalPharmacyRepo hospitalPharmacyRepo;
     private HospitalRepo hospitalRepo;
@@ -105,7 +104,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
      * Initializes the data in the database by creating and saving default values for hospitals,
      * hospital wards, users, private pharmacies, and other related entities.
      */
-    @Transactional
     protected void initData() {
         LOG.info("Starting data initialization");
 

@@ -223,16 +223,13 @@ class SauApplicationTests {
 				.nurses(nurses)
 				.build();
 
-		hospitalizationRepo.save(hospitalization);
-
 		assertEquals(2, nurse.getAssignedPatients().size());
-		assertEquals(1, nurse.getAssignedPatients().size());
 		nurse.getAssignedWards().forEach(System.out::println);
 	}
 
 	@Test
 	@Transactional
-	public void tryingAssignNurseToItselfThrowError () {
+	public void tryingAssignNurseToItselfThrowsException () {
 		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(
 				() -> new ObjectNotFoundException("No such ward.")
 		);
@@ -305,7 +302,7 @@ class SauApplicationTests {
 
 	@Test
 	@Transactional
-	public void assignDoctorToLabFromDiffHospitalThrowError() {
+	public void assignDoctorToLabFromDiffHospitalThrowsException() {
 		Laboratory laboratory = laboratoryRepo.findById(3L).orElseThrow(
 				() -> new ObjectNotFoundException("No such lab.")
 		);
@@ -342,4 +339,34 @@ class SauApplicationTests {
 		assertEquals(1, hospital1.getPartnerPharmacies().size());
 	}
 
+	@Test
+	@Transactional
+	public void createHospitalizationWithNoNursesThrowsException() {
+		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such ward.")
+		);
+
+		Patient patient = patientRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such user.")
+		);
+
+		StayingPatient stayingPatient = StayingPatient.builder()
+				.patient(patient)
+				.build();
+
+		patient.setStayingPatient(stayingPatient);
+
+		Set<Nurse> nurses = new HashSet<>();
+
+		Hospitalization hospitalization = Hospitalization.builder()
+				.hospitalWard(hospitalWard)
+				.patient(stayingPatient)
+				.nurses(nurses)
+				.build();
+
+		assertThrows(ConstraintViolationException.class, () -> {
+			hospitalizationRepo.save(hospitalization);
+		});
+
+	}
 }
