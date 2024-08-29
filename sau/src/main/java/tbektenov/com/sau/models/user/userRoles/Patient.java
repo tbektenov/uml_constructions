@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 import tbektenov.com.sau.models.Appointment;
+import tbektenov.com.sau.models.Hospitalization;
+import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
@@ -103,15 +103,41 @@ public class Patient {
         }
     }
 
-    public void setBloodGroup(BloodGroup bloodGroup) {
-        if (bloodGroup != null) {
-            this.bloodGroup = bloodGroup;
+    /**
+     * Creates a StayingPatient with a mandatory Hospitalization and assigns it to this Patient.
+     *
+     * @param hospitalWard the hospital ward where the patient will be staying
+     * @param nurses       the nurses assigned to the patient during hospitalization
+     */
+    public void createAndAssignStayingPatient(HospitalWard hospitalWard, Set<Nurse> nurses) {
+        if (hospitalWard == null || nurses == null || nurses.isEmpty()) {
+            throw new IllegalArgumentException("Hospital ward and at least one nurse must be provided.");
         }
+
+        if (this.leftPatient != null) {
+            this.leftPatient = null;
+        }
+
+        StayingPatient newStayingPatient = new StayingPatient();
+        newStayingPatient.setPatient(this);
+
+        Hospitalization hospitalization = new Hospitalization(hospitalWard, newStayingPatient, nurses);
+        newStayingPatient.setHospitalization(hospitalization);
+
+        this.stayingPatient = newStayingPatient;
     }
 
-    public void setRhFactor(RhFactor rhFactor) {
-        if (rhFactor != null) {
-            this.rhFactor = rhFactor;
+    /**
+     * Assigns the patient as a left patient.
+     * Removes the staying patient role if it exists.
+     *
+     * @param leftPatient The LeftPatient role to assign.
+     */
+    public void setLeftPatientRole(LeftPatient leftPatient) {
+        if (this.stayingPatient != null) {
+            this.stayingPatient = null;
         }
+        this.leftPatient = leftPatient;
+        leftPatient.setPatient(this);
     }
 }

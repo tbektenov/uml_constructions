@@ -3,8 +3,6 @@ package tbektenov.com.sau.models.user.userRoles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.Appointment;
 import tbektenov.com.sau.models.Hospitalization;
@@ -134,6 +132,14 @@ public class Doctor{
     public void addAppointment(Appointment appointment) {
         this.appointments.add(appointment);
     }
+
+    /**
+     * Sets the doctor's laboratory. Removes the doctor from the current lab if different.
+     * Throws an exception if the lab is from a different hospital.
+     *
+     * @param laboratory The new lab to associate with. If null, clears the current lab.
+     * @throws InvalidArgumentsException if the lab is from a different hospital.
+     */
 
     public void setLaboratory(Laboratory laboratory) {
         if (this.laboratory != null && !this.laboratory.equals(laboratory)) {

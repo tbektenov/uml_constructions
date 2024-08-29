@@ -28,7 +28,6 @@ import java.util.Set;
         @NamedEntityGraph(
                 name = "Hospital.withPharmaciesAndDoctors",
                 attributeNodes = {
-                        @NamedAttributeNode("partnerPharmacies"),
                         @NamedAttributeNode(value = "doctors", subgraph = "doctor.subgraph")
                 },
                 subgraphs = {
@@ -119,6 +118,12 @@ public class Hospital {
         }
     }
 
+    /**
+     * Removes the given pharmacy from the list of partner pharmacies.
+     * Also removes this hospital from the pharmacy's list of partner hospitals.
+     *
+     * @param pharmacy The pharmacy to remove. If null or not a partner, nothing happens.
+     */
     public void removePartnerPharmacy(PrivatePharmacy pharmacy) {
         if (pharmacy != null && this.partnerPharmacies.contains(pharmacy)) {
             this.partnerPharmacies.remove(pharmacy);

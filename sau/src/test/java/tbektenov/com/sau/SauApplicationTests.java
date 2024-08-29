@@ -367,6 +367,61 @@ class SauApplicationTests {
 		assertThrows(ConstraintViolationException.class, () -> {
 			hospitalizationRepo.save(hospitalization);
 		});
-
 	}
+
+	@Test
+	@Transactional
+	public void assignStayingPatientRole() {
+		Patient patient = patientRepo.findById(3L).orElseThrow(
+				() -> new ObjectNotFoundException("No such patient.")
+		);
+
+		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such hospital ward.")
+		);
+
+		Set<Nurse> nurses = new HashSet<>(nurseRepo.findAll());
+		if (nurses.isEmpty()) {
+			throw new IllegalArgumentException("No nurses available.");
+		}
+
+		patient.createAndAssignStayingPatient(hospitalWard, nurses);
+
+		assertNotNull(patient.getStayingPatient());
+		assertNull(patient.getLeftPatient());
+		assertNotNull(patient.getStayingPatient().getHospitalization());
+		assertEquals(hospitalWard, patient.getStayingPatient().getHospitalization().getHospitalWard());
+		assertEquals(nurses, patient.getStayingPatient().getHospitalization().getNurses());
+	}
+
+	@Test
+	@Transactional
+	public void assignLeftPatientRole() {
+		Patient patient = patientRepo.findById(3L).orElseThrow(
+				() -> new ObjectNotFoundException("No such patient.")
+		);
+
+		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such hospital ward.")
+		);
+
+		Set<Nurse> nurses = new HashSet<>(nurseRepo.findAll());
+		if (nurses.isEmpty()) {
+			throw new IllegalArgumentException("No nurses available.");
+		}
+
+		patient.createAndAssignStayingPatient(hospitalWard, nurses);
+
+		LeftPatient leftPatient = new LeftPatient();
+		leftPatient.setPatient(patient);
+		leftPatient.setConclusion("Patient has recovered.");
+
+		patient.setLeftPatientRole(leftPatient);
+
+		assertNotNull(patient.getLeftPatient());
+		assertNull(patient.getStayingPatient());
+		assertEquals(leftPatient, patient.getLeftPatient());
+		assertEquals("Patient has recovered.", patient.getLeftPatient().getConclusion());
+	}
+
 }

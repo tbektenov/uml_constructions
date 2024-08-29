@@ -11,7 +11,6 @@ import java.util.Set;
 /**
  * Entity representing a Private Pharmacy.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "PRIVATE_PHARMACY", uniqueConstraints = {
@@ -19,6 +18,7 @@ import java.util.Set;
 })
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class PrivatePharmacy
         extends Pharmacy {
 
@@ -29,7 +29,6 @@ public class PrivatePharmacy
     @NotBlank(message = "company cannot be blank")
     @Column(name = "Company", updatable = false, nullable = false)
     private String pharmaCompany;
-
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
@@ -77,6 +76,13 @@ public class PrivatePharmacy
             }
         }
     }
+
+    /**
+     * Removes the given hospital from the list of partner hospitals.
+     * Also removes this pharmacy from the hospital's list of partner pharmacies.
+     *
+     * @param hospital The hospital to remove. If null or not a partner, nothing happens.
+     */
 
     public void removePartnerHospital(Hospital hospital) {
         if (hospital != null && partnerHospitals.contains(hospital)) {

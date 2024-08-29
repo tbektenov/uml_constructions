@@ -1,6 +1,7 @@
 package tbektenov.com.sau.models.user.patientRoles;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.TreatmentTracker;
@@ -26,6 +27,7 @@ public class StayingPatient {
     @EqualsAndHashCode.Exclude
     private Patient patient;
 
+    @NotNull(message = "Hospitalization cannot be null.")
     @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

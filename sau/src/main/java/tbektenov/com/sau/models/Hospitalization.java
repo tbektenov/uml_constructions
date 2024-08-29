@@ -47,14 +47,14 @@ public class Hospitalization {
     @EqualsAndHashCode.Exclude
     private HospitalWard hospitalWard;
 
-    @NotNull
+    @NotNull(message = "Patient cannot be null.")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "patient_id", updatable = false, nullable = false, unique = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private StayingPatient patient;
 
-    @ManyToMany(mappedBy = "hospitalizations", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(mappedBy = "hospitalizations", fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Nurse> nurses = new HashSet<>();

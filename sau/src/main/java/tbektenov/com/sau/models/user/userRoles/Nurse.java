@@ -71,6 +71,12 @@ public class Nurse{
         }
     }
 
+    /**
+     * Removes the given hospitalization from this nurse's list.
+     * Also removes the nurse from the hospitalization's list of nurses.
+     *
+     * @param hospitalization The hospitalization to remove. If null or not found, nothing happens.
+     */
     public void removeHospitalization(Hospitalization hospitalization) {
         if (hospitalization != null && hospitalizations.contains(hospitalization)) {
             hospitalizations.remove(hospitalization);
@@ -80,6 +86,11 @@ public class Nurse{
         }
     }
 
+    /**
+     * Returns a set of patients assigned to this nurse through their hospitalizations.
+     *
+     * @return A set of assigned patients.
+     */
     public Set<UserEntity> getAssignedPatients() {
         Set<UserEntity> assignedPatients = new HashSet<>();
         for (Hospitalization hospitalization : hospitalizations) {
@@ -89,6 +100,11 @@ public class Nurse{
         return assignedPatients;
     }
 
+    /**
+     * Returns a set of hospital wards assigned to this nurse through their hospitalizations.
+     *
+     * @return A set of assigned hospital wards.
+     */
     public Set<HospitalWard> getAssignedWards() {
         Set<HospitalWard> hospitalWards = new HashSet<>();
         for (Hospitalization hospitalization : hospitalizations) {
