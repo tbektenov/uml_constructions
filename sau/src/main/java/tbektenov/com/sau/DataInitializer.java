@@ -495,37 +495,33 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     }
 
     private void createAppointments(Patient patient, Doctor doctor) {
-        if (checkPatientAndDoctorNotSamePerson(patient, doctor)) {
-            if (!appointmentRepo.existsByPatientIdAndDoctorId(patient.getId(), doctor.getId())) {
-                Appointment appointment = Appointment.builder()
-                        .date(LocalDate.now())
-                        .appointmentStatus(AppointmentStatus.UPCOMING)
-                        .patient(patient)
-                        .doctor(doctor)
-                        .build();
+        if (!appointmentRepo.existsByPatientIdAndDoctorId(patient.getId(), doctor.getId())) {
+            Appointment appointment = Appointment.builder()
+                    .date(LocalDate.now())
+                    .appointmentStatus(AppointmentStatus.UPCOMING)
+                    .patient(patient)
+                    .doctor(doctor)
+                    .build();
 
-                appointmentRepo.save(appointment);
+            appointmentRepo.save(appointment);
 
-                Appointment appointment1 = Appointment.builder()
-                        .date(LocalDate.now())
-                        .appointmentStatus(AppointmentStatus.ARCHIVED)
-                        .patient(patient)
-                        .doctor(doctor)
-                        .build();
+            Appointment appointment1 = Appointment.builder()
+                    .date(LocalDate.now())
+                    .appointmentStatus(AppointmentStatus.ARCHIVED)
+                    .patient(patient)
+                    .doctor(doctor)
+                    .build();
 
-                appointmentRepo.save(appointment1);
+            appointmentRepo.save(appointment1);
 
-                Appointment appointment2 = Appointment.builder()
-                        .date(LocalDate.now())
-                        .appointmentStatus(AppointmentStatus.UPCOMING)
-                        .patient(patient)
-                        .doctor(doctor)
-                        .build();
+            Appointment appointment2 = Appointment.builder()
+                    .date(LocalDate.now())
+                    .appointmentStatus(AppointmentStatus.UPCOMING)
+                    .patient(patient)
+                    .doctor(doctor)
+                    .build();
 
-                appointmentRepo.save(appointment2);
-            }
-        } else {
-            throw new InvalidArgumentsException("Patient and Doctor are the same person");
+            appointmentRepo.save(appointment2);
         }
     }
 
@@ -538,10 +534,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                     .build();
             hospitalWardRepo.save(hospitalWard);
         }
-    }
-
-    private boolean checkPatientAndDoctorNotSamePerson(Patient patient, Doctor doctor) {
-        return !Objects.equals(patient.getId(), doctor.getId());
     }
 
     private void createHospitalization(Patient patient, HospitalWard ward, Nurse nurse) {
