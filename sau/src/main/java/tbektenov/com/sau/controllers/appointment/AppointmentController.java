@@ -30,28 +30,20 @@ public class AppointmentController {
     private final DoctorServiceImpl doctorServiceImpl;
     private final IAppointmentService appointmentService;
     private final CustomUserDetailsService customUserDetailsService;
-    private final PatientRepo patientRepo;
-    private final DoctorRepo doctorRepo;
 
     /**
      * Constructs an {@code AppointmentController} with the required dependencies.
      *
      * @param appointmentService the service handling appointment logic
-     * @param patientRepo the repository for managing patient data
-     * @param doctorRepo the repository for managing doctor data
      * @param customUserDetailsService the service for managing user details
      * @param doctorServiceImpl the service for managing doctor-related operations
      */
     @Autowired
     public AppointmentController(IAppointmentService appointmentService,
-                                 PatientRepo patientRepo,
-                                 DoctorRepo doctorRepo,
                                  CustomUserDetailsService customUserDetailsService,
                                  DoctorServiceImpl doctorServiceImpl) {
         this.appointmentService = appointmentService;
         this.customUserDetailsService = customUserDetailsService;
-        this.patientRepo = patientRepo;
-        this.doctorRepo = doctorRepo;
         this.doctorServiceImpl = doctorServiceImpl;
     }
 
@@ -94,6 +86,7 @@ public class AppointmentController {
         } else {
             user = (UserEntity) session.getAttribute("user");
         }
+
         List<DoctorDTO> doctors = doctorServiceImpl.getAllDoctors();
 
         List<String> hospitals = doctors.stream()

@@ -2,10 +2,13 @@ package tbektenov.com.sau.models.user.userRoles;
 
 import jakarta.persistence.*;
 import lombok.*;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.user.UserEntity;
+import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -55,6 +58,11 @@ public class Nurse{
      */
     public void addHospitalization(Hospitalization hospitalization) {
         if (hospitalization != null && !hospitalizations.contains(hospitalization)) {
+
+            if (Objects.equals(hospitalization.getPatient().getId(), this.user.getId())) {
+                throw new InvalidArgumentsException("Nurse and patient are the same person.");
+            }
+
             hospitalizations.add(hospitalization);
             if (!hospitalization.getNurses().contains(this)) {
                 hospitalization.addNurse(this);
@@ -69,5 +77,16 @@ public class Nurse{
                 hospitalization.removeNurse(this);
             }
         }
+    }
+
+    public Set<UserEntity> getAssignedPatients() {
+        Set<UserEntity> assignedPatients = new HashSet<>();
+        for (Hospitalization hospitalization : hospitalizations) {
+            StayingPatient stayingPatient = hospitalization.getPatient();
+            if (stayingPatient != null && stayingPatient.getPatient() != null) {
+                assignedPatients.add(stayingPatient.getPatient().getUser());
+            }
+        }
+        return assignedPatients;
     }
 }

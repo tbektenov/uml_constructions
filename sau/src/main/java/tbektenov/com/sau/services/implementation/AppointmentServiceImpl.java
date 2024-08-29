@@ -58,10 +58,6 @@ public class AppointmentServiceImpl
     @Override
     @Transactional
     public AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO) {
-        if (Objects.equals(createAppointmentDTO.getPatient_id(), createAppointmentDTO.getDoctor_id())) {
-            throw new InvalidArgumentsException("Patient ID and Doctor ID cannot be the same");
-        }
-
         if (createAppointmentDTO.getDate() == null) {
             throw new InvalidArgumentsException("Date cannot be null");
         }

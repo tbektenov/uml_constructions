@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import tbektenov.com.sau.config.CustomUserDetailsService;
 import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.models.user.UserEntity;
-import tbektenov.com.sau.services.IUserService;
 import tbektenov.com.sau.services.implementation.AppointmentServiceImpl;
 
 import java.util.List;
@@ -21,22 +20,18 @@ import java.util.List;
 public class AuthController {
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final IUserService userService;
     private final AppointmentServiceImpl appointmentService;
 
     /**
      * Constructs an {@code AuthController} with the specified dependencies.
      *
-     * @param userService the service for managing user-related operations
      * @param appointmentService the service for managing appointment-related operations
      * @param customUserDetailsService the service for loading user-specific details
      */
     @Autowired
     public AuthController(
-                          IUserService userService,
                           AppointmentServiceImpl appointmentService,
                           CustomUserDetailsService customUserDetailsService) {
-        this.userService = userService;
         this.appointmentService = appointmentService;
         this.customUserDetailsService = customUserDetailsService;
     }
@@ -81,13 +76,8 @@ public class AuthController {
             Model model,
             HttpSession session
     ) {
-        UserEntity user;
-        if (session.getAttribute("user") == null) {
-            user = customUserDetailsService.getLoggedUser();
-            session.setAttribute("user", user);
-        } else {
-            user = (UserEntity) session.getAttribute("user");
-        }
+        UserEntity user = customUserDetailsService.getLoggedUser();
+        session.setAttribute("user", user);
 
         List<AppointmentDTO> appointments = appointmentService.getUpcomingAppointmentsByPatientId(user.getId());
 

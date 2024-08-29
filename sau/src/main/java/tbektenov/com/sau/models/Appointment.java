@@ -3,6 +3,7 @@ package tbektenov.com.sau.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import tbektenov.com.sau.models.config.validator.DoctorAndPatientAreNotSame;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@DoctorAndPatientAreNotSame
 @NamedEntityGraphs(
         @NamedEntityGraph(
                 name = "Appointment.details",

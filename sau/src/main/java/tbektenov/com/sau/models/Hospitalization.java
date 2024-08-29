@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import tbektenov.com.sau.models.config.validator.AtLeastOneNurse;
+import tbektenov.com.sau.models.config.validator.NurseAndPatientAreNotSame;
 import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 import tbektenov.com.sau.models.user.userRoles.Nurse;
@@ -20,6 +21,7 @@ import java.util.Set;
 @Table(name = "HOSPITALIZATION")
 @NoArgsConstructor
 @AtLeastOneNurse
+@NurseAndPatientAreNotSame
 @NamedEntityGraphs(
         @NamedEntityGraph(
                 name = "Hospitalization.details",

@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
 import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
+import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.userRoles.Nurse;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 import tbektenov.com.sau.models.user.Sex;
@@ -36,6 +38,10 @@ class SauApplicationTests {
     private HospitalWardRepo hospitalWardRepo;
     @Autowired
     private NurseRepo nurseRepo;
+    @Autowired
+    private DoctorRepo doctorRepo;
+    @Autowired
+    private StayingPatientRepo stayingPatientRepo;
 
 
 	@Test
@@ -51,8 +57,6 @@ class SauApplicationTests {
 		user.setBirthdate(LocalDate.of(1985, 5, 15));
 		user.setPesel("94111315129");
 		user.setSex(Sex.MALE);
-
-		userRepo.save(user);
 
 		Patient patient = new Patient();
 		patient.setUser(user);
@@ -90,8 +94,6 @@ class SauApplicationTests {
 		user.setBirthdate(LocalDate.of(1985, 5, 15));
 		user.setPesel("94111315129");
 		user.setSex(Sex.MALE);
-
-		userRepo.save(user);
 
 		Patient patient = new Patient();
 		patient.setUser(user);
@@ -132,5 +134,126 @@ class SauApplicationTests {
 		hospitalizationRepo.save(hospitalization);
 
 		assertEquals(1, result.getNurses().size());
+	}
+
+	@Test
+	@Transactional
+	public void doctorAssignNurseToHospitalization() {
+		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such ward.")
+		);
+
+		Patient patient = patientRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such user.")
+		);
+
+		StayingPatient stayingPatient = StayingPatient.builder()
+				.patient(patient)
+				.build();
+
+		patient.setStayingPatient(stayingPatient);
+
+		Nurse nurse = nurseRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such nurse.")
+		);
+
+		Set<Nurse> nurses = new HashSet<>();
+		nurses.add(nurse);
+
+		Hospitalization hospitalization = Hospitalization.builder()
+				.hospitalWard(hospitalWard)
+				.patient(stayingPatient)
+				.nurses(nurses)
+				.build();
+
+		assertThrows(ConstraintViolationException.class, () -> {
+			hospitalizationRepo.save(hospitalization);
+		});
+
+		Doctor doctor = doctorRepo.findById(1L).orElseThrow(
+				()	-> new ObjectNotFoundException("No such doctor.")
+		);
+
+		Nurse nurse1 = nurseRepo.findById(3L).orElseThrow(
+				() -> new ObjectNotFoundException("No such nurse.")
+		);
+
+		doctor.assignNurseToHospitalization(nurse1, hospitalization);
+
+		assertEquals(1, nurse1.getHospitalizations().size());
+
+		assertThrows(InvalidArgumentsException.class, () -> {
+			doctor.assignNurseToHospitalization(nurse1, hospitalization);
+		});
+	}
+
+	@Test
+	@Transactional
+	public void getAssignedPatients () {
+		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such ward.")
+		);
+
+		Patient patient = patientRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such user.")
+		);
+
+		StayingPatient stayingPatient = StayingPatient.builder()
+				.patient(patient)
+				.build();
+
+		patient.setStayingPatient(stayingPatient);
+
+		Nurse nurse = nurseRepo.findById(3L).orElseThrow(
+				() -> new ObjectNotFoundException("No such nurse.")
+		);
+
+		Set<Nurse> nurses = new HashSet<>();
+		nurses.add(nurse);
+
+		Hospitalization hospitalization = Hospitalization.builder()
+				.hospitalWard(hospitalWard)
+				.patient(stayingPatient)
+				.nurses(nurses)
+				.build();
+
+		hospitalizationRepo.save(hospitalization);
+
+		assertEquals(2, nurse.getAssignedPatients().size());
+	}
+
+	@Test
+	@Transactional
+	public void tryingAssignNurseToItselfThrowError () {
+		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such ward.")
+		);
+
+		Patient patient = patientRepo.findById(3L).orElseThrow(
+				() -> new ObjectNotFoundException("No such user.")
+		);
+
+		StayingPatient stayingPatient = StayingPatient.builder()
+				.patient(patient)
+				.build();
+
+		patient.setStayingPatient(stayingPatient);
+
+		Nurse nurse = nurseRepo.findById(3L).orElseThrow(
+				() -> new ObjectNotFoundException("No such nurse.")
+		);
+
+		Set<Nurse> nurses = new HashSet<>();
+		nurses.add(nurse);
+
+		Hospitalization hospitalization = Hospitalization.builder()
+				.hospitalWard(hospitalWard)
+				.patient(stayingPatient)
+				.nurses(nurses)
+				.build();
+
+		assertThrows(ConstraintViolationException.class, () -> {
+			hospitalizationRepo.save(hospitalization);
+		});
 	}
 }

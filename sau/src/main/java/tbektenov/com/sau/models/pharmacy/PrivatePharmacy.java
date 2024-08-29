@@ -3,6 +3,7 @@ package tbektenov.com.sau.models.pharmacy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.hospital.Hospital;
 
 import java.util.HashSet;
@@ -49,6 +50,8 @@ public class PrivatePharmacy
         this.address = address;
         this.pharmaCompany = pharmaCompany;
     }
+
+
 
     /**
      * Checks if a given hospital is a partner.

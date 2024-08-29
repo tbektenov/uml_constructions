@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.Appointment;
 import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.OrderEntity;
@@ -13,6 +14,7 @@ import tbektenov.com.sau.models.hospital.Laboratory;
 import tbektenov.com.sau.models.user.UserEntity;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -108,7 +110,19 @@ public class Doctor{
     public void assignNurseToHospitalization(Nurse nurse,
                                              Hospitalization hospitalization) {
         if (nurse != null && hospitalization != null) {
+
+            if (Objects.equals(nurse.getId(), hospitalization.getPatient().getId())) {
+                throw new InvalidArgumentsException("Nurse and patient are the same person.");
+            }
+
+            if (nurse.getHospitalizations().contains(hospitalization)) {
+                throw new InvalidArgumentsException("Nurse is already assigned to this hospitalization.");
+            }
+
             nurse.addHospitalization(hospitalization);
+            if (!nurse.getHospitalizations().contains(hospitalization)) {
+                hospitalization.addNurse(nurse);
+            }
         }
     }
 

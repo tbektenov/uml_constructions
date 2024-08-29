@@ -468,14 +468,14 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         createAppointments(patient2, doctor1);
         createAppointments(patient1, doctor);
 
-        Nurse nurse = nurseRepo.findById(1L).orElseThrow(() -> new RuntimeException("Nurse not found"));
+        Nurse nurse = nurseRepo.findById(3L).orElseThrow(() -> new RuntimeException("Nurse not found"));
         HospitalWard ward = hospitalWardRepo.findById(1L).orElseThrow(() -> new RuntimeException("Hospital ward not found"));
         if (!stayingPatientRepo.existsById(patient.getId())) {
             createHospitalization(patient, ward, nurse);
         }
 
         if (!stayingPatientRepo.existsById(patient1.getId())) {
-            createHospitalization(patient1, ward, nurse);
+            createHospitalization(patient2, ward, nurse);
         }
 
         if (!leftPatientRepo.existsById(patient.getId())) {
