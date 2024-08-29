@@ -4,6 +4,11 @@
     font-family: "Poppins", sans-serif;
 }
 
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 .sidebar {
     background: #0053ec;
     position: fixed;
@@ -47,27 +52,16 @@
     padding: 0;
 }
 
-.appointment-button {
+.button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #0053ec;
-    color: #fff;
-    padding: 15px 30px;
-    font-size: 18px;
-    border-radius: 50px;
-    text-decoration: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
-    cursor: pointer;
-}
-
-.appointment-button:hover {
-    background-color: #004ada;
 }
 
 .appointment-button {
-    display: inline-block;
     padding: 10px 20px;
     font-size: 16px;
     color: white;
@@ -75,13 +69,20 @@
     text-align: center;
     text-decoration: none;
     border-radius: 40px;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
     transition: background-color 0.3s;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .appointment-button:hover {
     background-color: #004ada;
+}
+
+.back-button {
+    background-color: #f44336; /* Different color for the back button */
+}
+
+.back-button:hover {
+    background-color: #d32f2f; /* Hover color for back button */
 }
 

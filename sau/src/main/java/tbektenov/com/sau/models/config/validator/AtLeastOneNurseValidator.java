@@ -4,7 +4,8 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import tbektenov.com.sau.models.Hospitalization;
 
-public class AtLeastOneNurseValidator implements ConstraintValidator<AtLeastOneNurse, Hospitalization> {
+public class AtLeastOneNurseValidator
+        implements ConstraintValidator<AtLeastOneNurse, Hospitalization> {
     @Override
     public void initialize(AtLeastOneNurse constraintAnnotation) {
     }

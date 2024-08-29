@@ -20,6 +20,15 @@ import java.util.Set;
 @Table(name = "HOSPITALIZATION")
 @NoArgsConstructor
 @AtLeastOneNurse
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "Hospitalization.details",
+                attributeNodes = {
+                        @NamedAttributeNode("nurses"),
+                        @NamedAttributeNode("patient")
+                }
+        )
+)
 public class Hospitalization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

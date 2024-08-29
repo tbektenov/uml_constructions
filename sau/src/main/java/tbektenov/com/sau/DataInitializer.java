@@ -105,7 +105,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
      * Initializes the data in the database by creating and saving default values for hospitals,
      * hospital wards, users, private pharmacies, and other related entities.
      */
-    @Transactional
     protected void initData() {
         LOG.info("Starting data initialization");
 
@@ -329,35 +328,52 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
             userService.registerUser(registerDTO4);
         }
 
-        String address = "123 Main St";
-        String company = "PharmaCorp";
+        String username5 = "s26223";
+        if (!userRepo.existsByUsername(username5)) {
+            RegisterDTO registerDTO4 = new RegisterDTO();
+            registerDTO4.setName("David");
+            registerDTO4.setSurname("Brown");
+            registerDTO4.setUsername(username5);
+            registerDTO4.setPassword("david123");
+            registerDTO4.setEmail("david.brown@example.com");
+            registerDTO4.setPhoneNumber("456-789-0123");
+            registerDTO4.setBirthdate(LocalDate.of(1979, 12, 25));
+            registerDTO4.setPesel("94111315124");
+            registerDTO4.setSex(Sex.MALE);
+
+            registerDTO4.setSsn("789123655");
+            registerDTO4.setHospitalId(3L);
+            registerDTO4.setSpecialization(Specialization.VETERINARIAN);
+            registerDTO4.setIsNurse(false);
+
+            userService.registerUser(registerDTO4);
+        }
+
+        String address = "Paper Str 123";
+        String company = "Med4Life";
+
         if (!privatePharmacyRepo.existsByAddressAndPharmaCompany(address, company)) {
             PrivatePharmacy privatePharmacy = PrivatePharmacy.builder()
-                    .name("CityHealth")
                     .isCompoundPharmacy(true)
                     .address(address)
                     .pharmaCompany(company)
+                    .name("xyz")
                     .build();
 
             privatePharmacyRepo.save(privatePharmacy);
-            sau.addPartnerPharmacy(privatePharmacy);
         }
 
-        String address1 = "234 Paper St";
+        String address1 = "Paper Str 321";
         if (!privatePharmacyRepo.existsByAddressAndPharmaCompany(address1, company)) {
             PrivatePharmacy privatePharmacy = PrivatePharmacy.builder()
-                    .name("MedLife")
                     .isCompoundPharmacy(false)
                     .address(address1)
                     .pharmaCompany(company)
+                    .name("xyz")
                     .build();
 
             privatePharmacyRepo.save(privatePharmacy);
-            mau.addPartnerPharmacy(privatePharmacy);
         }
-
-        hospitalRepo.save(sau);
-        hospitalRepo.save(mau);
 
         String hpName = "hp1";
         if (!hospitalPharmacyRepo.existsByHospitalIdAndName(sau.getId(), hpName)) {

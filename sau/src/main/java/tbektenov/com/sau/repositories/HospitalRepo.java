@@ -49,4 +49,8 @@ public interface HospitalRepo
      */
     @EntityGraph(value = "Hospital.withPharmaciesAndDoctors", type = EntityGraph.EntityGraphType.FETCH)
     Optional<Hospital> findByName(String name);
+
+    @Override
+    @EntityGraph(value = "Hospital.withPharmaciesAndDoctors", type = EntityGraph.EntityGraphType.FETCH)
+    Optional<Hospital> findById(Long aLong);
 }

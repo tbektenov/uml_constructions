@@ -34,7 +34,7 @@ public class PrivatePharmacy
     private String pharmaCompany;
 
 
-    @ManyToMany(mappedBy = "partnerPharmacies", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(mappedBy = "partnerPharmacies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Hospital> partnerHospitals = new HashSet<>();
