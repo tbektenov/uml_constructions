@@ -3,9 +3,11 @@ package tbektenov.com.sau.models.hospital;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -40,4 +42,46 @@ public class Laboratory {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Doctor> doctors = new HashSet<>();
+
+    public void addDoctor(Doctor doctor) {
+        if (doctor == null) {
+            throw new InvalidArgumentsException("Doctor cannot be null");
+        }
+
+        if (!Objects.equals(this.hospital.getId(), doctor.getHospital().getId())) {
+            throw new InvalidArgumentsException("Doctor and lab are from different hospitals");
+        }
+
+        if (doctor.getLaboratory() != null && !doctor.getLaboratory().equals(this)) {
+            doctor.getLaboratory().removeDoctor(doctor);
+        }
+
+        if (doctors.contains(doctor)) {
+            throw new InvalidArgumentsException("Doctor already assigned to this laboratory");
+        }
+
+        doctors.add(doctor);
+        if (doctor.getLaboratory() != this) {
+            doctor.setLaboratory(this);
+        }
+    }
+
+    public void removeDoctor(Doctor doctor) {
+        if (doctor == null) {
+            throw new InvalidArgumentsException("Doctor cannot be null");
+        }
+
+        if (!Objects.equals(this.hospital.getId(), doctor.getHospital().getId())) {
+            throw new InvalidArgumentsException("Doctor and lab are from different hospital");
+        }
+
+        if (!doctors.contains(doctor)) {
+            throw new InvalidArgumentsException("Doctor is not assigned");
+        }
+
+        doctors.remove(doctor);
+        if (doctor.getLaboratory() == this) {
+            doctor.setLaboratory(null);
+        }
+    }
 }

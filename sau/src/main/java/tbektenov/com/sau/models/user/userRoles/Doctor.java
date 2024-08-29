@@ -134,4 +134,26 @@ public class Doctor{
     public void addAppointment(Appointment appointment) {
         this.appointments.add(appointment);
     }
+
+    public void setLaboratory(Laboratory laboratory) {
+        if (this.laboratory != null && !this.laboratory.equals(laboratory)) {
+            if (this.laboratory.getDoctors().contains(this)) {
+                this.laboratory.removeDoctor(this);
+            }
+        }
+
+        if (laboratory == null) {
+            this.laboratory = null;
+            return;
+        }
+
+        if (!Objects.equals(this.hospital.getId(), laboratory.getHospital().getId())) {
+            throw new InvalidArgumentsException("Doctor and lab are from different hospitals");
+        }
+
+        this.laboratory = laboratory;
+        if (!laboratory.getDoctors().contains(this)) {
+            laboratory.addDoctor(this);
+        }
+    }
 }

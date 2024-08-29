@@ -36,4 +36,6 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
     @Override
     @EntityGraph(value = "Doctor.detailsHospitalAndLaboratory", type = EntityGraph.EntityGraphType.LOAD)
     Optional<Doctor> findById(Long id);
+
+
 }

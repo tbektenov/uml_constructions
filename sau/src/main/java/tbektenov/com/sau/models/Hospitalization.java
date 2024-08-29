@@ -40,9 +40,6 @@ public class Hospitalization {
     @Column(name = "start_date", updatable = false, nullable = false)
     private LocalDate startDate = LocalDate.now();
 
-    @Column(name = "endDate")
-    private LocalDate endDate;
-
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hospital_ward_id", nullable = false)

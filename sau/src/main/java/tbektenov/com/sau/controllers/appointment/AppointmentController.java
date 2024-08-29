@@ -19,6 +19,8 @@ import tbektenov.com.sau.services.IAppointmentService;
 import tbektenov.com.sau.services.implementation.DoctorServiceImpl;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Controller class that handles requests related to appointments.
@@ -89,15 +91,13 @@ public class AppointmentController {
 
         List<DoctorDTO> doctors = doctorServiceImpl.getAllDoctors();
 
-        List<String> hospitals = doctors.stream()
+        Set<String> hospitals = doctors.stream()
                 .map(DoctorDTO::getHospitalName)
-                .distinct()
-                .toList();
+                .collect(Collectors.toSet());
 
-        List<Specialization> specializations = doctors.stream()
+        Set<Specialization> specializations = doctors.stream()
                 .map(DoctorDTO::getSpecialization)
-                .distinct()
-                .toList();
+                .collect(Collectors.toSet());
 
         model.addAttribute("user", user);
         model.addAttribute("doctors", doctors);

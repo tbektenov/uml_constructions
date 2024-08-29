@@ -21,4 +21,6 @@ public interface HospitalPharmacyRepo extends JpaRepository<HospitalPharmacy, Lo
      * @return true if the pharmacy exists, false otherwise
      */
     Boolean existsByHospitalIdAndName(Long hospitalId, String name);
+
+
 }

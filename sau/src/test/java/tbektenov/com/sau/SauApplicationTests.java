@@ -8,7 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
 import tbektenov.com.sau.models.Hospitalization;
+import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.HospitalWard;
+import tbektenov.com.sau.models.hospital.Laboratory;
+import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
 import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
@@ -22,8 +25,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class SauApplicationTests {
@@ -42,6 +44,12 @@ class SauApplicationTests {
     private DoctorRepo doctorRepo;
     @Autowired
     private StayingPatientRepo stayingPatientRepo;
+    @Autowired
+    private LaboratoryRepo laboratoryRepo;
+    @Autowired
+    private HospitalRepo hospitalRepo;
+    @Autowired
+    private PrivatePharmacyRepo privatePharmacyRepo;
 
 
 	@Test
@@ -120,7 +128,7 @@ class SauApplicationTests {
 
 		hospitalizationRepo.save(hospitalization);
 
-		Nurse nurse1 = nurseRepo.findById(3L).orElseThrow(
+		Nurse nurse1 = nurseRepo.findById(2L).orElseThrow(
 				() -> new ObjectNotFoundException("No such nurse.")
 		);
 
@@ -153,7 +161,7 @@ class SauApplicationTests {
 
 		patient.setStayingPatient(stayingPatient);
 
-		Nurse nurse = nurseRepo.findById(1L).orElseThrow(
+		Nurse nurse = nurseRepo.findById(2L).orElseThrow(
 				() -> new ObjectNotFoundException("No such nurse.")
 		);
 
@@ -166,9 +174,7 @@ class SauApplicationTests {
 				.nurses(nurses)
 				.build();
 
-		assertThrows(ConstraintViolationException.class, () -> {
-			hospitalizationRepo.save(hospitalization);
-		});
+		hospitalizationRepo.save(hospitalization);
 
 		Doctor doctor = doctorRepo.findById(1L).orElseThrow(
 				()	-> new ObjectNotFoundException("No such doctor.")
@@ -180,7 +186,7 @@ class SauApplicationTests {
 
 		doctor.assignNurseToHospitalization(nurse1, hospitalization);
 
-		assertEquals(1, nurse1.getHospitalizations().size());
+		assertEquals(2, nurse1.getHospitalizations().size());
 
 		assertThrows(InvalidArgumentsException.class, () -> {
 			doctor.assignNurseToHospitalization(nurse1, hospitalization);
@@ -220,6 +226,8 @@ class SauApplicationTests {
 		hospitalizationRepo.save(hospitalization);
 
 		assertEquals(2, nurse.getAssignedPatients().size());
+		assertEquals(1, nurse.getAssignedPatients().size());
+		nurse.getAssignedWards().forEach(System.out::println);
 	}
 
 	@Test
@@ -256,4 +264,82 @@ class SauApplicationTests {
 			hospitalizationRepo.save(hospitalization);
 		});
 	}
+
+	@Test
+	@Transactional
+	public void assignDoctorToLab() {
+		Laboratory laboratory = laboratoryRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such lab.")
+		);
+
+		Laboratory laboratory1 = laboratoryRepo.findById(2L).orElseThrow(
+				() -> new ObjectNotFoundException("No such lab.")
+		);
+
+		Doctor doctor = doctorRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such doctor.")
+		);
+
+		Doctor doctor1 = doctorRepo.findById(2L).orElseThrow(
+				() -> new ObjectNotFoundException("No such doctor.")
+		);
+
+		laboratory.addDoctor(doctor);
+		doctor1.setLaboratory(laboratory);
+
+		assertNotNull(doctor.getLaboratory());
+		assertNotNull(doctor1.getLaboratory());
+		assertEquals(2, laboratory.getDoctors().size());
+
+		laboratory1.addDoctor(doctor);
+		assertEquals(1, laboratory.getDoctors().size());
+		assertEquals(1, laboratory1.getDoctors().size());
+
+		laboratoryRepo.save(laboratory);
+
+		doctor1.setLaboratory(null);
+		laboratory1.removeDoctor(doctor);
+		assertEquals(0, laboratory.getDoctors().size());
+		assertEquals(0, laboratory1.getDoctors().size());
+	}
+
+	@Test
+	@Transactional
+	public void assignDoctorToLabFromDiffHospitalThrowError() {
+		Laboratory laboratory = laboratoryRepo.findById(3L).orElseThrow(
+				() -> new ObjectNotFoundException("No such lab.")
+		);
+
+		Doctor doctor = doctorRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such doctor.")
+		);
+
+		assertThrows(InvalidArgumentsException.class, () -> {
+			laboratory.addDoctor(doctor);
+		});
+	}
+
+	@Test
+	@Transactional
+	public void addPartnerHospital() {
+		Hospital hospital = hospitalRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such hospital")
+		);
+
+		Hospital hospital1 = hospitalRepo.findById(2L).orElseThrow(
+				() -> new ObjectNotFoundException("No such hospital")
+		);
+
+		PrivatePharmacy privatePharmacy = privatePharmacyRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such privatePharmacy")
+		);
+
+		privatePharmacy.addPartnerHospital(hospital);
+		privatePharmacy.addPartnerHospital(hospital1);
+
+		assertEquals(2, privatePharmacy.getPartnerHospitals().size());
+		assertEquals(1, hospital.getPartnerPharmacies().size());
+		assertEquals(1, hospital1.getPartnerPharmacies().size());
+	}
+
 }

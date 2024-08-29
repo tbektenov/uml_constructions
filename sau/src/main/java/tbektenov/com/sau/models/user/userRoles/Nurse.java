@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.Hospitalization;
+import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 
@@ -83,10 +84,17 @@ public class Nurse{
         Set<UserEntity> assignedPatients = new HashSet<>();
         for (Hospitalization hospitalization : hospitalizations) {
             StayingPatient stayingPatient = hospitalization.getPatient();
-            if (stayingPatient != null && stayingPatient.getPatient() != null) {
-                assignedPatients.add(stayingPatient.getPatient().getUser());
-            }
+            assignedPatients.add(stayingPatient.getPatient().getUser());
         }
         return assignedPatients;
+    }
+
+    public Set<HospitalWard> getAssignedWards() {
+        Set<HospitalWard> hospitalWards = new HashSet<>();
+        for (Hospitalization hospitalization : hospitalizations) {
+            HospitalWard hospitalWard = hospitalization.getHospitalWard();
+            hospitalWards.add(hospitalWard);
+        }
+        return hospitalWards;
     }
 }

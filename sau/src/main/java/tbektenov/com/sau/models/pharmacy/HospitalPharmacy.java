@@ -45,4 +45,8 @@ public class HospitalPharmacy
         this.isCompoundPharmacy = isCompoundPharmacy;
         this.hospital = hospital;
     }
+
+    public String getAddress() {
+        return hospital.getAddress();
+    }
 }
