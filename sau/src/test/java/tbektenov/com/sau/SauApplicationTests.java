@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
+import tbektenov.com.sau.models.Appointment;
 import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.HospitalWard;
@@ -50,6 +51,8 @@ class SauApplicationTests {
     private HospitalRepo hospitalRepo;
     @Autowired
     private PrivatePharmacyRepo privatePharmacyRepo;
+    @Autowired
+    private AppointmentRepo appointmentRepo;
 
 
 	@Test
@@ -371,73 +374,69 @@ class SauApplicationTests {
 
 	@Test
 	@Transactional
-	public void assignStayingPatientRole() {
-		Patient patient = patientRepo.findById(3L).orElseThrow(
-				() -> new ObjectNotFoundException("No such patient.")
-		);
+	public void finishAppointment() {
+		Appointment appointment = appointmentRepo.findById(1L).orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(
-				() -> new ObjectNotFoundException("No such hospital ward.")
-		);
-
-		Nurse nurse = nurseRepo.findById(1L).orElseThrow(
-				() -> new ObjectNotFoundException("No such nurse")
-		);
-
-		Set<Nurse> nurses = new HashSet<>();
-		nurses.add(nurse);
-
-		Hospitalization hospitalization = new Hospitalization();
-		hospitalization.setNurses(nurses);
-		hospitalization.setHospitalWard(hospitalWard);
-
-		patient.changeToStayingPatient(hospitalization);
-
-		hospitalizationRepo.save(hospitalization);
-
-		assertNotNull(patient.getStayingPatient());
-		assertNull(patient.getLeftPatient());
-		assertNotNull(patient.getStayingPatient().getHospitalization());
-		assertEquals(hospitalWard, patient.getStayingPatient().getHospitalization().getHospitalWard());
-		assertEquals(nurses, patient.getStayingPatient().getHospitalization().getNurses());
-
-		patientRepo.save(patient);
+		appointmentRepo.save(Appointment.finishAppointment(appointment));
 	}
 
 	@Test
 	@Transactional
-	public void assignLeftPatientRole() {
-		Patient patient = patientRepo.findById(3L).orElseThrow(
-				() -> new ObjectNotFoundException("No such patient.")
-		);
+	public void assignDoctor() {
+		Hospital hospital = hospitalRepo.findById(1L).orElseThrow(() -> new RuntimeException("Hospital not found"));
 
-		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(
-				() -> new ObjectNotFoundException("No such hospital ward.")
-		);
+		Doctor doctor = doctorRepo.findById(3L).orElseThrow(() -> new ObjectNotFoundException("No such doctor."));
+		Doctor doctor1 = doctorRepo.findById(4L).orElseThrow(() -> new ObjectNotFoundException("No such doctor."));
 
-		Nurse nurse = nurseRepo.findById(1L).orElseThrow(
-				() -> new ObjectNotFoundException("No such nurse")
-		);
+		hospital.addDoctor(doctor);
+		doctor1.setHospital(hospital);
+		hospitalRepo.save(hospital);
 
-		Set<Nurse> nurses = new HashSet<>();
-		nurses.add(nurse);
-
-		Hospitalization hospitalization = new Hospitalization();
-		hospitalization.setNurses(nurses);
-		hospitalization.setHospitalWard(hospitalWard);
-
-		patient.changeToStayingPatient(hospitalization);
-
-		hospitalizationRepo.save(hospitalization);
-		patientRepo.save(patient);
-
-		patient.changeToLeftPatient("Is healthy");
-
-		assertNotNull(patient.getLeftPatient());
-		assertNull(patient.getStayingPatient());
-		assertEquals("Is healthy", patient.getLeftPatient().getConclusion());
-
-		patientRepo.save(patient);
+		assertEquals(4, hospital.getDoctors().size());
 	}
 
+	@Test
+	@Transactional
+	public void checkPartnerHospital() {
+		Hospital hospital = hospitalRepo.findById(1L).orElseThrow(() -> new RuntimeException("Hospital not found"));
+
+		PrivatePharmacy privatePharmacy = privatePharmacyRepo.findById(1L).orElseThrow();
+
+		assertFalse(privatePharmacy.checkIfHospitalIsPartner(hospital));
+	}
+
+	@Test
+	@Transactional
+	public void createLab() {
+		Hospital hospital = hospitalRepo.findById(1L).orElseThrow(() -> new ObjectNotFoundException("Hospital not found"));
+
+		hospital.createLaboratory(3);
+
+		hospitalRepo.save(hospital);
+
+		assertEquals(3, hospital.getLaboratories().size());
+
+		Laboratory laboratory = laboratoryRepo.findById(1L).orElseThrow(() -> new ObjectNotFoundException("No such laboratory"));
+		hospital.removeLaboratory(laboratory);
+		laboratoryRepo.save(laboratory);
+		hospitalRepo.save(hospital);
+		assertEquals(2, hospital.getLaboratories().size());
+	}
+
+	@Test
+	@Transactional
+	public void createWard() {
+		Hospital hospital = hospitalRepo.findById(1L).orElseThrow(() -> new RuntimeException("Hospital not found"));
+
+		hospital.createHospitalWard("3A", 4);
+
+		hospitalRepo.save(hospital);
+
+		assertEquals(4, hospital.getHospitalWards().size());
+
+		HospitalWard hospitalWard = hospitalWardRepo.findById(1L).orElseThrow(() -> new ObjectNotFoundException("No such hospitalWard"));
+		hospital.removeWard(hospitalWard);
+		hospitalRepo.save(hospital);
+		assertEquals(3, hospital.getHospitalWards().size());
+	}
 }

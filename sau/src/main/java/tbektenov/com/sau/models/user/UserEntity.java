@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.Appointment;
 import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.OrderEntity;
@@ -137,6 +138,12 @@ public class UserEntity
         this.pesel = pesel;
     }
 
+    /**
+     * Assigns a nurse to a specific hospitalization.
+     *
+     * @param nurse the nurse to be assigned
+     * @param hospitalization the hospitalization to which the nurse is assigned
+     */
     @Override
     public void assignNurseToHospitalization(Nurse nurse, Hospitalization hospitalization) {
         if (this.doctor != null) {
@@ -144,6 +151,11 @@ public class UserEntity
         }
     }
 
+    /**
+     * Adds an appointment to the doctor's list of appointments.
+     *
+     * @param appointment the appointment to add
+     */
     @Override
     public void addAppointmentToDoctor(Appointment appointment) {
         if (this.doctor != null) {
@@ -151,6 +163,13 @@ public class UserEntity
         }
     }
 
+    /**
+     * Sets the doctor's laboratory. Removes the doctor from the current lab if different.
+     * Throws an exception if the lab is from a different hospital.
+     *
+     * @param laboratory The new lab to associate with. If null, clears the current lab.
+     * @throws InvalidArgumentsException if the lab is from a different hospital.
+     */
     @Override
     public void setLaboratory(Laboratory laboratory) {
         if (this.doctor != null) {
@@ -158,6 +177,12 @@ public class UserEntity
         }
     }
 
+
+    /**
+     * Adds an appointment to the patient's list of appointments.
+     *
+     * @param appointment the appointment to add
+     */
     @Override
     public void addAppointmentToPatient(Appointment appointment) {
         if (patient != null) {
@@ -165,6 +190,11 @@ public class UserEntity
         }
     }
 
+    /**
+     * Adds a hospitalization to the nurse's list of hospitalizations.
+     *
+     * @param hospitalization the hospitalization to add
+     */
     @Override
     public void addHospitalization(Hospitalization hospitalization) {
         if (this.nurse != null) {
@@ -172,6 +202,12 @@ public class UserEntity
         }
     }
 
+    /**
+     * Removes the given hospitalization from this nurse's list.
+     * Also removes the nurse from the hospitalization's list of nurses.
+     *
+     * @param hospitalization The hospitalization to remove. If null or not found, nothing happens.
+     */
     @Override
     public void removeHospitalization(Hospitalization hospitalization) {
         if (this.nurse != null) {
@@ -179,6 +215,11 @@ public class UserEntity
         }
     }
 
+    /**
+     * Returns a set of patients assigned to this nurse through their hospitalizations.
+     *
+     * @return A set of assigned patients.
+     */
     @Override
     public Set<UserEntity> getAssignedPatients() {
         try {
@@ -188,6 +229,11 @@ public class UserEntity
         }
     }
 
+    /**
+     * Returns a set of hospital wards assigned to this nurse through their hospitalizations.
+     *
+     * @return A set of assigned hospital wards.
+     */
     @Override
     public Set<HospitalWard> getAssignedWards() {
         try {
@@ -197,6 +243,15 @@ public class UserEntity
         }
     }
 
+    /**
+     * Sends an order from this doctor to the specified hospital pharmacy.
+     *
+     * @param pharmacy the hospital pharmacy to which the order is sent
+     * @param order    the content of the order
+     * @return the created order entity
+     * @throws InvalidArgumentsException if the pharmacy is null, the order content is null or empty,
+     *                                   or the doctor is from a different hospital
+     */
     @Override
     public OrderEntity sendOrderToHospPharmacy(HospitalPharmacy pharmacy, String order) {
         try {

@@ -3,6 +3,7 @@ package tbektenov.com.sau.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 
@@ -47,4 +48,20 @@ public class OrderEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private HospitalPharmacy hospitalPharmacy;
+
+    /**
+     * Completes the given order by setting its status to COMPLETED.
+     *
+     * @param order the order to be completed
+     * @return the updated order with its status set to COMPLETED
+     * @throws InvalidArgumentsException if the order is null
+     */
+    public static OrderEntity finishOrder(OrderEntity order) {
+        if (order != null) {
+            order.setOrderStatus(OrderStatus.COMPLETED);
+            return order;
+        } else {
+            throw new InvalidArgumentsException("order is null.");
+        }
+    }
 }

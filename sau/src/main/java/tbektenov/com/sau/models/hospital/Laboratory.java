@@ -38,11 +38,19 @@ public class Laboratory {
     @EqualsAndHashCode.Exclude
     private Hospital hospital;
 
-    @OneToMany(mappedBy = "laboratory", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "laboratory", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Doctor> doctors = new HashSet<>();
 
+    /**
+     * Adds a doctor to this laboratory. Ensures that the doctor belongs to the same hospital
+     * as the laboratory and handles the bidirectional relationship between the doctor and the laboratory.
+     *
+     * @param doctor the doctor to be added to this laboratory
+     * @throws InvalidArgumentsException if the doctor is null, from a different hospital,
+     *                                   already assigned to this laboratory, or assigned to another laboratory.
+     */
     public void addDoctor(Doctor doctor) {
         if (doctor == null) {
             throw new InvalidArgumentsException("Doctor cannot be null");
@@ -66,6 +74,14 @@ public class Laboratory {
         }
     }
 
+    /**
+     * Removes a doctor from this laboratory. Ensures that the doctor belongs to the same hospital
+     * as the laboratory and handles the bidirectional relationship between the doctor and the laboratory.
+     *
+     * @param doctor the doctor to be removed from this laboratory
+     * @throws InvalidArgumentsException if the doctor is null, from a different hospital,
+     *                                   or not assigned to this laboratory.
+     */
     public void removeDoctor(Doctor doctor) {
         if (doctor == null) {
             throw new InvalidArgumentsException("Doctor cannot be null");

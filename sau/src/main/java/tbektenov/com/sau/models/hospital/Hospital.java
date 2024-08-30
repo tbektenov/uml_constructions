@@ -26,9 +26,11 @@ import java.util.Set;
 @AllArgsConstructor
 @NamedEntityGraphs(
         @NamedEntityGraph(
-                name = "Hospital.withPharmaciesAndDoctors",
+                name = "Hospital.details",
                 attributeNodes = {
-                        @NamedAttributeNode(value = "doctors", subgraph = "doctor.subgraph")
+                        @NamedAttributeNode("partnerPharmacies"),
+                        @NamedAttributeNode(value = "doctors", subgraph = "doctor.subgraph"),
+                        @NamedAttributeNode("laboratories")
                 },
                 subgraphs = {
                         @NamedSubgraph(
@@ -128,6 +130,85 @@ public class Hospital {
             this.partnerPharmacies.remove(pharmacy);
             if (pharmacy.getPartnerHospitals().contains(this)) {
                 pharmacy.removePartnerHospital(this);
+            }
+        }
+    }
+
+    /**
+     * Adds a doctor to the hospital's list of doctors if not already present
+     * and sets the hospital for the doctor.
+     *
+     * @param doctor the doctor to be added
+     */
+    public void addDoctor(Doctor doctor) {
+        if (doctor != null && !this.doctors.contains(doctor)) {
+            this.doctors.add(doctor);
+            if (doctor.getHospital() != this) {
+                doctor.setHospital(this);
+            }
+        }
+    }
+
+    /**
+     * Creates a new laboratory associated with this hospital on the specified floor.
+     *
+     * @param floor the floor number where the laboratory will be located
+     */
+    public void createLaboratory(Integer floor) {
+        if (floor != null) {
+            Laboratory newLab = Laboratory.builder()
+                    .floor(floor)
+                    .hospital(this)
+                    .build();
+
+            this.laboratories.add(newLab);
+        }
+    }
+
+    /**
+     * Removes a laboratory from the hospital's list of laboratories.
+     * Also disassociates the laboratory from the hospital.
+     *
+     * @param lab The laboratory to be removed.
+     */
+    public void removeLaboratory(Laboratory lab) {
+        if (lab != null && this.laboratories.contains(lab)) {
+            this.laboratories.remove(lab);
+            if (lab.getHospital() != null) {
+                lab.setHospital(null);
+            }
+        }
+    }
+
+    /**
+     * Creates a new hospital ward associated with this hospital and adds it to the list of hospital wards.
+     *
+     * @param wardNum  the ward number or name
+     * @param capacity the capacity of the ward
+     */
+    public void createHospitalWard(String wardNum, Integer capacity) {
+        if (wardNum != null && !wardNum.isEmpty() && capacity != null) {
+            HospitalWard newWard = HospitalWard.builder()
+                    .wardNum(wardNum)
+                    .capacity(capacity)
+                    .hospital(this)
+                    .build();
+
+            this.hospitalWards.add(newWard);
+        }
+    }
+
+    /**
+     * Removes a hospital ward from the hospital's list of wards.
+     * Also disassociates the ward from the hospital.
+     *
+     * @param ward The hospital ward to be removed.
+     */
+    public void removeWard(HospitalWard ward) {
+        if (ward != null && this.hospitalWards.contains(ward)) {
+            this.hospitalWards.remove(ward);
+            if (ward.getHospital() != null) {
+                ward.setHospital(null);
             }
         }
     }

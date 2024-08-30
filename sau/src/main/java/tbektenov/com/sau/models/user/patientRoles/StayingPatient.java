@@ -27,7 +27,7 @@ public class StayingPatient {
     private Patient patient;
 
     @NotNull(message = "Hospitalization cannot be null.")
-    @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Hospitalization hospitalization;

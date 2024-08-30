@@ -39,7 +39,7 @@ public class HospitalPharmacy
     @EqualsAndHashCode.Exclude
     private Hospital hospital;
 
-    @OneToMany(mappedBy = "hospitalPharmacy", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "hospitalPharmacy", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<OrderEntity> orders = new ArrayList<>();
@@ -75,6 +75,13 @@ public class HospitalPharmacy
         }
     }
 
+    /**
+     * Marks the specified order as completed if it is assigned to this hospital pharmacy.
+     *
+     * @param order the order to be marked as completed
+     * @return the updated order with a status of 'COMPLETED'
+     * @throws InvalidArgumentsException if the order is null or not assigned to this hospital pharmacy
+     */
     public OrderEntity finishOrder(OrderEntity order) {
         if (order == null) {
             throw new InvalidArgumentsException("order is null");

@@ -7,6 +7,12 @@ import tbektenov.com.sau.models.user.UserEntity;
 import java.util.Set;
 
 public interface INurse {
+
+    /**
+     * Adds a hospitalization to the nurse's list of hospitalizations.
+     *
+     * @param hospitalization the hospitalization to add
+     */
     void addHospitalization(Hospitalization hospitalization);
 
     /**

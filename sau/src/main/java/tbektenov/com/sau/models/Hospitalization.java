@@ -48,7 +48,7 @@ public class Hospitalization {
     private HospitalWard hospitalWard;
 
     @NotNull(message = "Patient cannot be null.")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "patient_id", updatable = false, nullable = false, unique = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

@@ -138,6 +138,15 @@ public class Doctor
         this.appointments.add(appointment);
     }
 
+    /**
+     * Sends an order from this doctor to the specified hospital pharmacy.
+     *
+     * @param pharmacy the hospital pharmacy to which the order is sent
+     * @param order    the content of the order
+     * @return the created order entity
+     * @throws InvalidArgumentsException if the pharmacy is null, the order content is null or empty,
+     *                                   or the doctor is from a different hospital
+     */
     @Override
     public OrderEntity sendOrderToHospPharmacy(HospitalPharmacy pharmacy, String order) {
         if (pharmacy == null) {
@@ -194,6 +203,20 @@ public class Doctor
         this.laboratory = laboratory;
         if (!laboratory.getDoctors().contains(this)) {
             laboratory.addDoctor(this);
+        }
+    }
+
+    /**
+     * Sets the hospital for the current doctor and ensures the doctor is added to the hospital's list of doctors.
+     *
+     * @param hospital the hospital to be assigned to the doctor
+     */
+    public void setHospital(Hospital hospital) {
+        if (hospital != null) {
+            this.hospital = hospital;
+            if (!hospital.getDoctors().contains(this)) {
+                hospital.addDoctor(this);
+            }
         }
     }
 }

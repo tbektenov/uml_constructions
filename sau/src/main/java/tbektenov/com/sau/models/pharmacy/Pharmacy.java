@@ -29,7 +29,9 @@ public abstract class Pharmacy {
      *
      * @param isCompoundPharmacy true if the pharmacy is a compound pharmacy, false otherwise
      */
-    public void setCompoundPharmacy(boolean isCompoundPharmacy) {
-        this.isCompoundPharmacy = isCompoundPharmacy;
+    public void setCompoundPharmacy(Boolean isCompoundPharmacy) {
+        if (isCompoundPharmacy != null) {
+            this.isCompoundPharmacy = isCompoundPharmacy;
+        }
     }
 }

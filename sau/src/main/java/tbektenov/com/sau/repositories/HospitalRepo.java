@@ -47,10 +47,10 @@ public interface HospitalRepo
      * @param name the name of the hospital
      * @return an optional containing the hospital if found, or empty if not
      */
-    @EntityGraph(value = "Hospital.withPharmaciesAndDoctors", type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(value = "Hospital.details", type = EntityGraph.EntityGraphType.FETCH)
     Optional<Hospital> findByName(String name);
 
     @Override
-    @EntityGraph(value = "Hospital.withPharmaciesAndDoctors", type = EntityGraph.EntityGraphType.FETCH)
-    Optional<Hospital> findById(Long aLong);
+    @EntityGraph(value = "Hospital.details", type = EntityGraph.EntityGraphType.FETCH)
+    Optional<Hospital> findById(Long hospitalId);
 }

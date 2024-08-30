@@ -103,38 +103,4 @@ public class Patient
             this.appointments.add(appointment);
         }
     }
-
-    /**
-     * Creates a StayingPatient with a mandatory Hospitalization and assigns it to this Patient.
-     */
-    public void changeToStayingPatient(Hospitalization hospitalization) {
-        if (this.leftPatient != null) {
-            this.leftPatient = null;
-        }
-
-        StayingPatient stayingPatient = new StayingPatient();
-        stayingPatient.setPatient(this);
-        stayingPatient.setHospitalization(hospitalization);
-        hospitalization.setPatient(stayingPatient);
-
-        this.stayingPatient = stayingPatient;
-    }
-
-    /**
-     * Assigns the patient as a left patient.
-     * Removes the staying patient role if it exists.
-     *
-     * @param conclusion conclusion
-     */
-    public void changeToLeftPatient(String conclusion) {
-        if (this.stayingPatient != null) {
-            this.stayingPatient = null;
-        }
-
-        this.leftPatient = LeftPatient.builder()
-                .patient(this)
-                .conclusion(conclusion)
-                .dateOfLeave(LocalDate.now())
-                .build();
-    }
 }

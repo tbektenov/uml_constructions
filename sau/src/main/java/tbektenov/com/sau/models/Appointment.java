@@ -3,7 +3,9 @@ package tbektenov.com.sau.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.config.validator.DoctorAndPatientAreNotSame;
+import tbektenov.com.sau.models.hospital.Laboratory;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 
@@ -64,4 +66,20 @@ public class Appointment {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Patient patient;
+
+    /**
+     * Marks the given appointment as finished by setting its status to archived.
+     *
+     * @param appointment the appointment to be finished
+     * @return the updated appointment with its status set to archived
+     * @throws InvalidArgumentsException if the appointment is null
+     */
+    public static Appointment finishAppointment(Appointment appointment) {
+        if (appointment != null) {
+            appointment.setAppointmentStatus(AppointmentStatus.ARCHIVED);
+            return appointment;
+        } else {
+            throw new InvalidArgumentsException("appointment is null.");
+        }
+    }
 }

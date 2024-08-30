@@ -1,6 +1,7 @@
 package tbektenov.com.sau;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -503,9 +504,10 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
             hospitalPharmacyRepo.save(hp2);
 
             OrderEntity finishedOrder = hp1.finishOrder(order1);
+            OrderEntity finishedOrder1 = OrderEntity.finishOrder(order2);
             orderRepo.save(finishedOrder);
+            orderRepo.save(finishedOrder1);
         }
-
     }
 
     private void createAppointments(Patient patient, Doctor doctor) {
