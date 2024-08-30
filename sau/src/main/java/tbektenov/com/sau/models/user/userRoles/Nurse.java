@@ -31,7 +31,8 @@ import java.util.Set;
                 }
         )
 )
-public class Nurse{
+public class Nurse
+    implements INurse{
     @Id
     private Long id;
 

@@ -1,17 +1,12 @@
 package tbektenov.com.sau.services.implementation;
 
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tbektenov.com.sau.dtos.appointment.AppointmentDTO;
 import tbektenov.com.sau.dtos.left_patient.ChangeToLeftPatientDTO;
-import tbektenov.com.sau.dtos.patient.PatientDTO;
 import tbektenov.com.sau.dtos.staying_patient.ChangeToStayingPatientDTO;
-import tbektenov.com.sau.dtos.user.UserDTO;
 import tbektenov.com.sau.exceptions.ObjectNotFoundException;
 import tbektenov.com.sau.models.Hospitalization;
-import tbektenov.com.sau.models.TreatmentTracker;
 import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
@@ -84,16 +79,10 @@ public class PatientServiceImpl
                 .nurses(nurseSet)
                 .hospitalWard(hospitalWard)
                 .build();
-        TreatmentTracker treatmentTracker = new TreatmentTracker();
 
         stayingPatient.setPatient(patient);
 
         stayingPatient.setHospitalization(hospitalization);
-
-        treatmentTracker.setDate(LocalDate.now());
-        treatmentTracker.setGotTreatmentToday(true);
-        treatmentTracker.setPatient(stayingPatient);
-        stayingPatient.setTreatmentTracker(treatmentTracker);
 
         patient.setStayingPatient(stayingPatient);
 

@@ -7,13 +7,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 import org.springframework.format.annotation.DateTimeFormat;
+import tbektenov.com.sau.models.Appointment;
+import tbektenov.com.sau.models.Hospitalization;
+import tbektenov.com.sau.models.OrderEntity;
 import tbektenov.com.sau.models.config.converter.UserRoleSetConverter;
-import tbektenov.com.sau.models.user.userRoles.Doctor;
-import tbektenov.com.sau.models.user.userRoles.Nurse;
-import tbektenov.com.sau.models.user.userRoles.Patient;
+import tbektenov.com.sau.models.hospital.HospitalWard;
+import tbektenov.com.sau.models.hospital.Laboratory;
+import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
+import tbektenov.com.sau.models.user.userRoles.*;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -51,13 +53,13 @@ import java.util.Set;
                         @NamedSubgraph(
                                 name = "stayingPatient.subgraph",
                                 attributeNodes = {
-                                        @NamedAttributeNode("hospitalization"),
-                                        @NamedAttributeNode("treatmentTracker")
+                                        @NamedAttributeNode("hospitalization")
                                 }
                         )
                 })
 )
-public class UserEntity {
+public class UserEntity
+    implements IDoctor, IPatient, INurse{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -133,6 +135,75 @@ public class UserEntity {
         this.phoneNumber = phoneNumber;
         this.birthdate = birthdate;
         this.pesel = pesel;
+    }
+
+    @Override
+    public void assignNurseToHospitalization(Nurse nurse, Hospitalization hospitalization) {
+        if (this.doctor != null) {
+            this.doctor.assignNurseToHospitalization(nurse, hospitalization);
+        }
+    }
+
+    @Override
+    public void addAppointmentToDoctor(Appointment appointment) {
+        if (this.doctor != null) {
+            this.doctor.addAppointmentToDoctor(appointment);
+        }
+    }
+
+    @Override
+    public void setLaboratory(Laboratory laboratory) {
+        if (this.doctor != null) {
+            this.doctor.setLaboratory(laboratory);
+        }
+    }
+
+    @Override
+    public void addAppointmentToPatient(Appointment appointment) {
+        if (patient != null) {
+            this.patient.addAppointmentToPatient(appointment);
+        }
+    }
+
+    @Override
+    public void addHospitalization(Hospitalization hospitalization) {
+        if (this.nurse != null) {
+            this.nurse.addHospitalization(hospitalization);
+        }
+    }
+
+    @Override
+    public void removeHospitalization(Hospitalization hospitalization) {
+        if (this.nurse != null) {
+            this.nurse.removeHospitalization(hospitalization);
+        }
+    }
+
+    @Override
+    public Set<UserEntity> getAssignedPatients() {
+        try {
+            return this.nurse.getAssignedPatients();
+        } catch (NullPointerException e) {
+            throw new NullPointerException("User does not have nurse role");
+        }
+    }
+
+    @Override
+    public Set<HospitalWard> getAssignedWards() {
+        try {
+            return this.nurse.getAssignedWards();
+        } catch (NullPointerException e) {
+            throw new NullPointerException("User does not have nurse role");
+        }
+    }
+
+    @Override
+    public OrderEntity sendOrderToHospPharmacy(HospitalPharmacy pharmacy, String order) {
+        try {
+            return this.doctor.sendOrderToHospPharmacy(pharmacy, order);
+        } catch (NullPointerException e) {
+            throw new NullPointerException("User does not have doctor role");
+        }
     }
 }
 

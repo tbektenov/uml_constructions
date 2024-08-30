@@ -13,8 +13,6 @@ import tbektenov.com.sau.dtos.appointment.CreateAppointmentDTO;
 import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.userRoles.Specialization;
-import tbektenov.com.sau.repositories.DoctorRepo;
-import tbektenov.com.sau.repositories.PatientRepo;
 import tbektenov.com.sau.services.IAppointmentService;
 import tbektenov.com.sau.services.implementation.DoctorServiceImpl;
 

@@ -4,8 +4,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbektenov.com.sau.dtos.doctor.DoctorDTO;
-import tbektenov.com.sau.exceptions.ObjectNotFoundException;
-import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.repositories.DoctorRepo;
 import tbektenov.com.sau.repositories.UserRepo;

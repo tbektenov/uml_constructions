@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 /**
  * Represents an order made by a doctor to a hospital pharmacy.
  */
+@Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,14 +23,17 @@ public class OrderEntity {
     private Long id;
 
     @Column(name = "issue_time", nullable = false, updatable = false)
+    @EqualsAndHashCode.Exclude
     private LocalDateTime dateTimeOfIssue = LocalDateTime.now();
 
     @NotBlank(message = "Order cannot be blank.")
     @Column(name = "order_body", nullable = false, updatable = false)
+    @EqualsAndHashCode.Exclude
     private String orderBody;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
+    @EqualsAndHashCode.Exclude
     private OrderStatus orderStatus = OrderStatus.ONGOING;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -6,12 +6,12 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import tbektenov.com.sau.models.Appointment;
 import tbektenov.com.sau.models.Hospitalization;
-import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 import tbektenov.com.sau.models.user.patientRoles.validator.OnePatientCheck;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,7 +41,6 @@ import java.util.Set;
                         @NamedSubgraph(
                                 name = "sp.details",
                                 attributeNodes = {
-                                        @NamedAttributeNode("treatmentTracker"),
                                         @NamedAttributeNode(value = "hospitalization", subgraph = "nurses")
                                 }
                         ),
@@ -53,7 +52,8 @@ import java.util.Set;
                         )
                 })
 )
-public class Patient {
+public class Patient
+    implements IPatient{
     @Id
     private Long id;
 
@@ -97,7 +97,8 @@ public class Patient {
      *
      * @param appointment the appointment to add
      */
-    public void addAppointment(Appointment appointment) {
+    @Override
+    public void addAppointmentToPatient(Appointment appointment) {
         if (appointment != null && !appointments.contains(appointment)) {
             this.appointments.add(appointment);
         }
@@ -105,39 +106,35 @@ public class Patient {
 
     /**
      * Creates a StayingPatient with a mandatory Hospitalization and assigns it to this Patient.
-     *
-     * @param hospitalWard the hospital ward where the patient will be staying
-     * @param nurses       the nurses assigned to the patient during hospitalization
      */
-    public void createAndAssignStayingPatient(HospitalWard hospitalWard, Set<Nurse> nurses) {
-        if (hospitalWard == null || nurses == null || nurses.isEmpty()) {
-            throw new IllegalArgumentException("Hospital ward and at least one nurse must be provided.");
-        }
-
+    public void changeToStayingPatient(Hospitalization hospitalization) {
         if (this.leftPatient != null) {
             this.leftPatient = null;
         }
 
-        StayingPatient newStayingPatient = new StayingPatient();
-        newStayingPatient.setPatient(this);
+        StayingPatient stayingPatient = new StayingPatient();
+        stayingPatient.setPatient(this);
+        stayingPatient.setHospitalization(hospitalization);
+        hospitalization.setPatient(stayingPatient);
 
-        Hospitalization hospitalization = new Hospitalization(hospitalWard, newStayingPatient, nurses);
-        newStayingPatient.setHospitalization(hospitalization);
-
-        this.stayingPatient = newStayingPatient;
+        this.stayingPatient = stayingPatient;
     }
 
     /**
      * Assigns the patient as a left patient.
      * Removes the staying patient role if it exists.
      *
-     * @param leftPatient The LeftPatient role to assign.
+     * @param conclusion conclusion
      */
-    public void setLeftPatientRole(LeftPatient leftPatient) {
+    public void changeToLeftPatient(String conclusion) {
         if (this.stayingPatient != null) {
             this.stayingPatient = null;
         }
-        this.leftPatient = leftPatient;
-        leftPatient.setPatient(this);
+
+        this.leftPatient = LeftPatient.builder()
+                .patient(this)
+                .conclusion(conclusion)
+                .dateOfLeave(LocalDate.now())
+                .build();
     }
 }

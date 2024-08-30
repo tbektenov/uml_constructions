@@ -1,7 +1,10 @@
 package tbektenov.com.sau.repositories;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
+
+import java.util.Optional;
 
 /**
  * Repository interface for managing {@link HospitalPharmacy} entities.
@@ -22,5 +25,7 @@ public interface HospitalPharmacyRepo extends JpaRepository<HospitalPharmacy, Lo
      */
     Boolean existsByHospitalIdAndName(Long hospitalId, String name);
 
+    @EntityGraph(value = "HP.orderDetails", type = EntityGraph.EntityGraphType.FETCH)
+    Optional<HospitalPharmacy> findByNameAndHospitalId(String name, Long hospitalId);
 
 }

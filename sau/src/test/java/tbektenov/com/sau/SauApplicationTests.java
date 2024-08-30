@@ -380,18 +380,28 @@ class SauApplicationTests {
 				() -> new ObjectNotFoundException("No such hospital ward.")
 		);
 
-		Set<Nurse> nurses = new HashSet<>(nurseRepo.findAll());
-		if (nurses.isEmpty()) {
-			throw new IllegalArgumentException("No nurses available.");
-		}
+		Nurse nurse = nurseRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such nurse")
+		);
 
-		patient.createAndAssignStayingPatient(hospitalWard, nurses);
+		Set<Nurse> nurses = new HashSet<>();
+		nurses.add(nurse);
+
+		Hospitalization hospitalization = new Hospitalization();
+		hospitalization.setNurses(nurses);
+		hospitalization.setHospitalWard(hospitalWard);
+
+		patient.changeToStayingPatient(hospitalization);
+
+		hospitalizationRepo.save(hospitalization);
 
 		assertNotNull(patient.getStayingPatient());
 		assertNull(patient.getLeftPatient());
 		assertNotNull(patient.getStayingPatient().getHospitalization());
 		assertEquals(hospitalWard, patient.getStayingPatient().getHospitalization().getHospitalWard());
 		assertEquals(nurses, patient.getStayingPatient().getHospitalization().getNurses());
+
+		patientRepo.save(patient);
 	}
 
 	@Test
@@ -405,23 +415,29 @@ class SauApplicationTests {
 				() -> new ObjectNotFoundException("No such hospital ward.")
 		);
 
-		Set<Nurse> nurses = new HashSet<>(nurseRepo.findAll());
-		if (nurses.isEmpty()) {
-			throw new IllegalArgumentException("No nurses available.");
-		}
+		Nurse nurse = nurseRepo.findById(1L).orElseThrow(
+				() -> new ObjectNotFoundException("No such nurse")
+		);
 
-		patient.createAndAssignStayingPatient(hospitalWard, nurses);
+		Set<Nurse> nurses = new HashSet<>();
+		nurses.add(nurse);
 
-		LeftPatient leftPatient = new LeftPatient();
-		leftPatient.setPatient(patient);
-		leftPatient.setConclusion("Patient has recovered.");
+		Hospitalization hospitalization = new Hospitalization();
+		hospitalization.setNurses(nurses);
+		hospitalization.setHospitalWard(hospitalWard);
 
-		patient.setLeftPatientRole(leftPatient);
+		patient.changeToStayingPatient(hospitalization);
+
+		hospitalizationRepo.save(hospitalization);
+		patientRepo.save(patient);
+
+		patient.changeToLeftPatient("Is healthy");
 
 		assertNotNull(patient.getLeftPatient());
 		assertNull(patient.getStayingPatient());
-		assertEquals(leftPatient, patient.getLeftPatient());
-		assertEquals("Patient has recovered.", patient.getLeftPatient().getConclusion());
+		assertEquals("Is healthy", patient.getLeftPatient().getConclusion());
+
+		patientRepo.save(patient);
 	}
 
 }

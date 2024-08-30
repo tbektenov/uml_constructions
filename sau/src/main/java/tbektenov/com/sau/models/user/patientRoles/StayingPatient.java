@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import tbektenov.com.sau.models.Hospitalization;
-import tbektenov.com.sau.models.TreatmentTracker;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 
 /**
@@ -32,9 +31,4 @@ public class StayingPatient {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Hospitalization hospitalization;
-
-    @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private TreatmentTracker treatmentTracker;
 }

@@ -10,15 +10,17 @@ import org.springframework.stereotype.Component;
 import tbektenov.com.sau.dtos.left_patient.ChangeToLeftPatientDTO;
 import tbektenov.com.sau.dtos.staying_patient.ChangeToStayingPatientDTO;
 import tbektenov.com.sau.dtos.user.RegisterDTO;
-import tbektenov.com.sau.exceptions.InvalidArgumentsException;
+import tbektenov.com.sau.exceptions.ObjectNotFoundException;
 import tbektenov.com.sau.models.Appointment;
 import tbektenov.com.sau.models.AppointmentStatus;
+import tbektenov.com.sau.models.OrderEntity;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.HospitalWard;
 import tbektenov.com.sau.models.hospital.Laboratory;
 import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 import tbektenov.com.sau.models.pharmacy.PrivatePharmacy;
 import tbektenov.com.sau.models.user.Sex;
+import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.userRoles.Nurse;
 import tbektenov.com.sau.models.user.userRoles.Patient;
@@ -29,7 +31,6 @@ import tbektenov.com.sau.services.implementation.UserServiceImpl;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Objects;
 
 /**
  * Initializes the application data by populating the database with initial values.
@@ -40,53 +41,38 @@ import java.util.Objects;
 public class DataInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataInitializer.class);
-    private PatientRepo patientRepo;
-    private DoctorRepo doctorRepo;
-    private StayingPatientRepo stayingPatientRepo;
-    private NurseRepo nurseRepo;
-    private LeftPatientRepo leftPatientRepo;
-    private AppointmentRepo appointmentRepo;
-    private HospitalPharmacyRepo hospitalPharmacyRepo;
-    private HospitalRepo hospitalRepo;
-    private HospitalWardRepo hospitalWardRepo;
-    private LaboratoryRepo laboratoryRepo;
-    private OrderRepo orderRepo;
-    private UserRepo userRepo;
-    private UserServiceImpl userService;
-    private PrivatePharmacyRepo privatePharmacyRepo;
-    private PatientServiceImpl patientService;
-
     @Autowired
-    public DataInitializer(AppointmentRepo appointmentRepo,
-                           HospitalPharmacyRepo hospitalPharmacyRepo,
-                           HospitalRepo hospitalRepo,
-                           HospitalWardRepo hospitalWardRepo,
-                           LaboratoryRepo laboratoryRepo,
-                           OrderRepo orderRepo,
-                           UserRepo userRepo,
-                           UserServiceImpl userService,
-                           PrivatePharmacyRepo privatePharmacyRepo,
-                           PatientRepo patientRepo,
-                           DoctorRepo doctorRepo,
-                           StayingPatientRepo stayingPatientRepo,
-                           NurseRepo nurseRepo,
-                           PatientServiceImpl patientService, LeftPatientRepo leftPatientRepo) {
-        this.appointmentRepo = appointmentRepo;
-        this.hospitalPharmacyRepo = hospitalPharmacyRepo;
-        this.hospitalRepo = hospitalRepo;
-        this.hospitalWardRepo = hospitalWardRepo;
-        this.laboratoryRepo = laboratoryRepo;
-        this.orderRepo = orderRepo;
-        this.userRepo = userRepo;
-        this.userService = userService;
-        this.privatePharmacyRepo = privatePharmacyRepo;
-        this.patientRepo = patientRepo;
-        this.doctorRepo = doctorRepo;
-        this.stayingPatientRepo = stayingPatientRepo;
-        this.nurseRepo = nurseRepo;
-        this.patientService = patientService;
-        this.leftPatientRepo = leftPatientRepo;
-    }
+    private PatientRepo patientRepo;
+    @Autowired
+    private DoctorRepo doctorRepo;
+    @Autowired
+    private StayingPatientRepo stayingPatientRepo;
+    @Autowired
+    private NurseRepo nurseRepo;
+    @Autowired
+    private LeftPatientRepo leftPatientRepo;
+    @Autowired
+    private AppointmentRepo appointmentRepo;
+    @Autowired
+    private HospitalPharmacyRepo hospitalPharmacyRepo;
+    @Autowired
+    private HospitalRepo hospitalRepo;
+    @Autowired
+    private HospitalWardRepo hospitalWardRepo;
+    @Autowired
+    private LaboratoryRepo laboratoryRepo;
+    @Autowired
+    private OrderRepo orderRepo;
+    @Autowired
+    private UserRepo userRepo;
+    @Autowired
+    private UserServiceImpl userService;
+    @Autowired
+    private PrivatePharmacyRepo privatePharmacyRepo;
+    @Autowired
+    private PatientServiceImpl patientService;
+    @Autowired
+    private HospitalizationRepo hospitalizationRepo;
 
     /**
      * Event handler that initializes data when the application context is refreshed.
@@ -475,6 +461,7 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
 
         Nurse nurse = nurseRepo.findById(3L).orElseThrow(() -> new RuntimeException("Nurse not found"));
         HospitalWard ward = hospitalWardRepo.findById(1L).orElseThrow(() -> new RuntimeException("Hospital ward not found"));
+
         if (!stayingPatientRepo.existsById(patient.getId())) {
             createHospitalization(patient, ward, nurse);
         }
@@ -491,6 +478,33 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
             patientService.changeToLeftPatient(patient.getId(), changeToLeftPatientDTO);
         }
 
+        HospitalPharmacy hp1 = hospitalPharmacyRepo.findByNameAndHospitalId("hp1", sau.getId())
+                .orElseThrow(
+                        () -> new ObjectNotFoundException("Hospital pharmacy not found")
+                );
+
+        HospitalPharmacy hp2 = hospitalPharmacyRepo.findByNameAndHospitalId("hp2", sau.getId())
+                .orElseThrow(
+                        () -> new ObjectNotFoundException("Hospital pharmacy not found")
+                );
+
+        if (!orderRepo.existsByDoctorId(doctor.getId())) {
+            OrderEntity order1 = doctor.sendOrderToHospPharmacy(hp1, "Something");
+            OrderEntity order2 = doctor.sendOrderToHospPharmacy(hp1, "Something1");
+            OrderEntity order3 = doctor.sendOrderToHospPharmacy(hp1, "Something2");
+            OrderEntity order4 = doctor.sendOrderToHospPharmacy(hp2, "Something");
+
+            orderRepo.save(order1);
+            orderRepo.save(order2);
+            orderRepo.save(order3);
+            orderRepo.save(order4);
+
+            hospitalPharmacyRepo.save(hp1);
+            hospitalPharmacyRepo.save(hp2);
+
+            OrderEntity finishedOrder = hp1.finishOrder(order1);
+            orderRepo.save(finishedOrder);
+        }
 
     }
 

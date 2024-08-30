@@ -11,4 +11,5 @@ import tbektenov.com.sau.models.OrderEntity;
  */
 public interface OrderRepo
     extends JpaRepository<OrderEntity, Long> {
+    Boolean existsByDoctorId(Long doctorId);
 }

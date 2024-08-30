@@ -10,9 +10,7 @@ import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.dtos.hospital.HospitalDTO;
 import tbektenov.com.sau.dtos.hospital.HospitalResponse;
 import tbektenov.com.sau.models.hospital.Hospital;
-import tbektenov.com.sau.repositories.DoctorRepo;
 import tbektenov.com.sau.repositories.HospitalRepo;
-import tbektenov.com.sau.repositories.PrivatePharmacyRepo;
 import tbektenov.com.sau.services.IHospitalService;
 
 import java.util.List;

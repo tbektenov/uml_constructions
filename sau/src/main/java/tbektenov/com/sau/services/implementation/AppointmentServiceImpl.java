@@ -17,7 +17,6 @@ import tbektenov.com.sau.repositories.PatientRepo;
 import tbektenov.com.sau.services.IAppointmentService;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

@@ -2,10 +2,15 @@ package tbektenov.com.sau.models.pharmacy;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.query.Order;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.OrderEntity;
+import tbektenov.com.sau.models.OrderStatus;
 import tbektenov.com.sau.models.hospital.Hospital;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,6 +21,15 @@ import java.util.Set;
 @Table(name = "HOSPITAL_PHARMACY")
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "HP.orderDetails",
+                attributeNodes = {
+                        @NamedAttributeNode("hospital"),
+                        @NamedAttributeNode("orders")
+                }
+        )
+)
 public class HospitalPharmacy
         extends Pharmacy {
 
@@ -25,10 +39,10 @@ public class HospitalPharmacy
     @EqualsAndHashCode.Exclude
     private Hospital hospital;
 
-    @OneToMany(mappedBy = "hospitalPharmacy", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "hospitalPharmacy", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<OrderEntity> orders = new HashSet<>();
+    private List<OrderEntity> orders = new ArrayList<>();
 
     /**
      * Constructs a new HospitalPharmacy with the specified name, type, and associated hospital.
@@ -48,5 +62,30 @@ public class HospitalPharmacy
 
     public String getAddress() {
         return hospital.getAddress();
+    }
+
+    public void addOrder(OrderEntity order) {
+        if (order == null) {
+            throw new InvalidArgumentsException("Order cannot be null.");
+        }
+
+        if (!orders.contains(order)) {
+            orders.add(order);
+            order.setHospitalPharmacy(this);
+        }
+    }
+
+    public OrderEntity finishOrder(OrderEntity order) {
+        if (order == null) {
+            throw new InvalidArgumentsException("order is null");
+        }
+
+        if (this.orders.contains(order)) {
+            order.setOrderStatus(OrderStatus.COMPLETED);
+
+            return order;
+        } else {
+            throw new InvalidArgumentsException("Order is not assigned to this hospital pharmacy");
+        }
     }
 }

@@ -7,10 +7,13 @@ import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.Appointment;
 import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.OrderEntity;
+import tbektenov.com.sau.models.OrderStatus;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.Laboratory;
+import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 import tbektenov.com.sau.models.user.UserEntity;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -53,14 +56,14 @@ import java.util.Set;
                         @NamedSubgraph(
                                 name = "stayingPatient.subgraph",
                                 attributeNodes = {
-                                        @NamedAttributeNode("hospitalization"),
-                                        @NamedAttributeNode("treatmentTracker")
+                                        @NamedAttributeNode("hospitalization")
                                 }
                         )
                 }
         )
 })
-public class Doctor{
+public class Doctor
+    implements IDoctor{
 
     @Id
     private Long id;
@@ -94,7 +97,7 @@ public class Doctor{
     @EqualsAndHashCode.Exclude
     Set<Appointment> appointments = new HashSet<>();
 
-    @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<OrderEntity> orders = new HashSet<>();
@@ -105,6 +108,7 @@ public class Doctor{
      * @param nurse the nurse to be assigned
      * @param hospitalization the hospitalization to which the nurse is assigned
      */
+    @Override
     public void assignNurseToHospitalization(Nurse nurse,
                                              Hospitalization hospitalization) {
         if (nurse != null && hospitalization != null) {
@@ -129,8 +133,38 @@ public class Doctor{
      *
      * @param appointment the appointment to add
      */
-    public void addAppointment(Appointment appointment) {
+    @Override
+    public void addAppointmentToDoctor(Appointment appointment) {
         this.appointments.add(appointment);
+    }
+
+    @Override
+    public OrderEntity sendOrderToHospPharmacy(HospitalPharmacy pharmacy, String order) {
+        if (pharmacy == null) {
+            throw new InvalidArgumentsException("pharmacy is null.");
+        }
+
+        if (order == null || order.isEmpty()) {
+            throw new InvalidArgumentsException("order is null or empty.");
+        }
+
+        if (!pharmacy.getHospital().getId().equals(this.hospital.getId())) {
+            throw new InvalidArgumentsException("doctor is from another hospital.");
+        }
+
+        OrderEntity newOrder = OrderEntity.builder()
+                .doctor(this)
+                .orderBody(order)
+                .hospitalPharmacy(pharmacy)
+                .orderStatus(OrderStatus.ONGOING)
+                .dateTimeOfIssue(LocalDateTime.now())
+                .build();
+
+        if (!pharmacy.getOrders().contains(newOrder)) {
+            pharmacy.addOrder(newOrder);
+        }
+
+        return newOrder;
     }
 
     /**
@@ -140,7 +174,7 @@ public class Doctor{
      * @param laboratory The new lab to associate with. If null, clears the current lab.
      * @throws InvalidArgumentsException if the lab is from a different hospital.
      */
-
+    @Override
     public void setLaboratory(Laboratory laboratory) {
         if (this.laboratory != null && !this.laboratory.equals(laboratory)) {
             if (this.laboratory.getDoctors().contains(this)) {
