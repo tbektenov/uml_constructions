@@ -4,13 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import tbektenov.com.sau.dtos.doctor.DoctorDTO;
 import tbektenov.com.sau.models.hospital.Hospital;
-import tbektenov.com.sau.models.user.userRoles.Doctor;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -30,7 +25,7 @@ public interface HospitalRepo
      * @param pageable pagination details
      * @return a paginated list of hospitals
      */
-    @EntityGraph(value = "Hospital.withPharmaciesAndDoctors", type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(value = "Hospital.details", type = EntityGraph.EntityGraphType.FETCH)
     Page<Hospital> findAll(Pageable pageable);
 
     /**
