@@ -98,6 +98,13 @@ public class Doctor
     @EqualsAndHashCode.Exclude
     private Set<OrderEntity> orders = new HashSet<>();
 
+    /**
+     * Marks the given appointment as finished by setting its status to `ARCHIVED`.
+     *
+     * @param appointment The appointment to mark as finished.
+     * @return The updated appointment.
+     * @throws InvalidArgumentsException If the appointment is not assigned to this doctor.
+     */
     @Override
     public Appointment finishAppointment(Appointment appointment) {
         if (appointment != null && this.appointments.contains(appointment)) {
@@ -108,6 +115,12 @@ public class Doctor
         }
     }
 
+    /**
+     * Cancels the given appointment by removing it from the doctor's list.
+     *
+     * @param appointment The appointment to cancel.
+     * @throws InvalidArgumentsException If the appointment is not assigned to this doctor.
+     */
     @Override
     public void cancelAppointmentForDoctor(Appointment appointment) {
         if (appointment != null && this.appointments.contains(appointment)) {

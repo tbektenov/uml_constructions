@@ -91,6 +91,12 @@ public class Patient
     @EqualsAndHashCode.Exclude
     private LeftPatient leftPatient;
 
+    /**
+     * Cancels the given appointment for the patient by removing it from the list.
+     *
+     * @param appointment The appointment to cancel.
+     * @throws InvalidArgumentsException If the appointment is not assigned to this patient.
+     */
     @Override
     public void cancelAppointmentForPatient(Appointment appointment) {
         if (appointment != null && this.appointments.contains(appointment)) {

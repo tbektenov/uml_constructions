@@ -138,6 +138,13 @@ public class UserEntity
         this.pesel = pesel;
     }
 
+    /**
+     * Marks the given appointment as finished by setting its status to `ARCHIVED`.
+     *
+     * @param appointment The appointment to mark as finished.
+     * @return The updated appointment.
+     * @throws InvalidArgumentsException If the appointment is not assigned to this doctor.
+     */
     @Override
     public Appointment finishAppointment(Appointment appointment) {
         try {
@@ -147,6 +154,11 @@ public class UserEntity
         }
     }
 
+    /**
+     * Cancels the given appointment by removing it from the doctor's list.
+     *
+     * @param appointment The appointment to cancel.
+     */
     @Override
     public void cancelAppointmentForDoctor(Appointment appointment) {
         try {
@@ -156,6 +168,11 @@ public class UserEntity
         }
     }
 
+    /**
+     * Cancels the given appointment for the patient by removing it from the list.
+     *
+     * @param appointment The appointment to cancel.
+     */
     @Override
     public void cancelAppointmentForPatient(Appointment appointment) {
         try {

@@ -9,8 +9,19 @@ import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 
 public interface IDoctor {
 
+    /**
+     * Marks the given appointment as finished by setting its status to `ARCHIVED`.
+     *
+     * @param appointment The appointment to mark as finished.
+     * @return The updated appointment.
+     */
     Appointment finishAppointment(Appointment appointment);
 
+    /**
+     * Cancels the given appointment by removing it from the doctor's list.
+     *
+     * @param appointment The appointment to cancel.
+     */
     void cancelAppointmentForDoctor(Appointment appointment);
 
     /**
