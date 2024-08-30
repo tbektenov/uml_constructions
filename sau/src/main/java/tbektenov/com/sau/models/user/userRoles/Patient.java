@@ -4,16 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import tbektenov.com.sau.exceptions.InvalidArgumentsException;
 import tbektenov.com.sau.models.Appointment;
-import tbektenov.com.sau.models.Hospitalization;
 import tbektenov.com.sau.models.user.UserEntity;
 import tbektenov.com.sau.models.user.patientRoles.LeftPatient;
 import tbektenov.com.sau.models.user.patientRoles.StayingPatient;
 import tbektenov.com.sau.models.user.patientRoles.validator.OnePatientCheck;
 
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a patient entity with related attributes and relationships.
@@ -77,10 +76,10 @@ public class Patient
     @Column(name = "blood_group")
     private BloodGroup bloodGroup;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    Set<Appointment> appointments = new HashSet<>();
+    private List<Appointment> appointments = new ArrayList<>();
 
     @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
@@ -92,15 +91,12 @@ public class Patient
     @EqualsAndHashCode.Exclude
     private LeftPatient leftPatient;
 
-    /**
-     * Adds an appointment to the patient's list of appointments.
-     *
-     * @param appointment the appointment to add
-     */
     @Override
-    public void addAppointmentToPatient(Appointment appointment) {
-        if (appointment != null && !appointments.contains(appointment)) {
-            this.appointments.add(appointment);
+    public void cancelAppointmentForPatient(Appointment appointment) {
+        if (appointment != null && this.appointments.contains(appointment)) {
+            appointments.remove(appointment);
+        } else {
+            throw new InvalidArgumentsException("appointment is not assigned to this doctor.");
         }
     }
 }

@@ -1,11 +1,7 @@
 package tbektenov.com.sau.repositories;
 
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import tbektenov.com.sau.models.hospital.Laboratory;
-
-import java.util.List;
-import java.util.Optional;
 
 
 /**

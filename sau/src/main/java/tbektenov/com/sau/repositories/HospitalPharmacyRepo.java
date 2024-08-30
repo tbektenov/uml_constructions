@@ -25,6 +25,17 @@ public interface HospitalPharmacyRepo extends JpaRepository<HospitalPharmacy, Lo
      */
     Boolean existsByHospitalIdAndName(Long hospitalId, String name);
 
+    /**
+     * Retrieves a HospitalPharmacy by its name and associated hospital ID,
+     * using an entity graph to fetch related order details.
+     * <p>
+     * The entity graph "HP.orderDetails" is used to optimize the fetch
+     * of related entities.
+     *
+     * @param name The name of the hospital pharmacy.
+     * @param hospitalId The ID of the associated hospital.
+     * @return An Optional containing the HospitalPharmacy if found, otherwise empty.
+     */
     @EntityGraph(value = "HP.orderDetails", type = EntityGraph.EntityGraphType.FETCH)
     Optional<HospitalPharmacy> findByNameAndHospitalId(String name, Long hospitalId);
 

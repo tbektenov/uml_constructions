@@ -19,5 +19,11 @@ public interface IAppointmentService {
      */
     AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO);
 
+    /**
+     * Retrieves a list of upcoming appointments for a specific patient.
+     *
+     * @param patient_id The ID of the patient.
+     * @return A list of upcoming AppointmentDTOs.
+     */
     List<AppointmentDTO> getUpcomingAppointmentsByPatientId(Long patient_id);
 }

@@ -11,5 +11,11 @@ import java.util.List;
  * deleting, and managing their association with hospitals.
  */
 public interface IDoctorService {
+
+    /**
+     * Retrieves all doctors from the repository and maps them to DoctorDTO objects.
+     *
+     * @return A list of DoctorDTO representing all doctors.
+     */
     List<DoctorDTO> getAllDoctors();
 }

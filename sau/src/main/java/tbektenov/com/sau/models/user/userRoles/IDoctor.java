@@ -9,6 +9,10 @@ import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 
 public interface IDoctor {
 
+    Appointment finishAppointment(Appointment appointment);
+
+    void cancelAppointmentForDoctor(Appointment appointment);
+
     /**
      * Assigns a nurse to a specific hospitalization.
      *
@@ -16,13 +20,6 @@ public interface IDoctor {
      * @param hospitalization the hospitalization to which the nurse is assigned
      */
     void assignNurseToHospitalization(Nurse nurse, Hospitalization hospitalization);
-
-    /**
-     * Adds an appointment to the doctor's list of appointments.
-     *
-     * @param appointment the appointment to add
-     */
-    void addAppointmentToDoctor(Appointment appointment);
 
     /**
      * Sets the doctor's laboratory. Removes the doctor from the current lab if different.

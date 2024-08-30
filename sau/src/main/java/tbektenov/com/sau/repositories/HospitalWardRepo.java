@@ -20,10 +20,29 @@ import java.util.Optional;
 public interface HospitalWardRepo
     extends JpaRepository<HospitalWard, Long> {
 
+    /**
+     * Retrieves a HospitalWard by its ID, using an entity graph to fetch related hospitalizations.
+     *
+     * The entity graph "HospitalWard.hospitalizations" is used to optimize the fetch of related
+     * hospitalizations associated with the ward.
+     *
+     * @param aLong The ID of the HospitalWard.
+     * @return An Optional containing the HospitalWard if found, otherwise empty.
+     */
     @Override
     @EntityGraph(value = "HospitalWard.hospitalizations", type = EntityGraph.EntityGraphType.FETCH)
     Optional<HospitalWard> findById(Long aLong);
 
+    /**
+     * Retrieves a HospitalWard by its ward number and hospital ID, using an entity graph to fetch related hospitalizations.
+     *
+     * The entity graph "HospitalWard.hospitalizations" is used to optimize the fetch of related
+     * hospitalizations associated with the ward.
+     *
+     * @param wardNum The ward number of the HospitalWard.
+     * @param hospitalId The ID of the hospital.
+     * @return An Optional containing the HospitalWard if found, otherwise empty.
+     */
     @EntityGraph(value = "HospitalWard.hospitalizations", type = EntityGraph.EntityGraphType.FETCH)
     Optional<HospitalWard> findByWardNumAndHospitalId(String wardNum, Long hospitalId);
 

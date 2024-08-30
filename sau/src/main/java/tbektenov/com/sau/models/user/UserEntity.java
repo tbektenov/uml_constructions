@@ -138,6 +138,33 @@ public class UserEntity
         this.pesel = pesel;
     }
 
+    @Override
+    public Appointment finishAppointment(Appointment appointment) {
+        try {
+            return this.doctor.finishAppointment(appointment);
+        } catch (NullPointerException e) {
+            throw new NullPointerException("doctor is null");
+        }
+    }
+
+    @Override
+    public void cancelAppointmentForDoctor(Appointment appointment) {
+        try {
+            this.doctor.cancelAppointmentForDoctor(appointment);
+        } catch (NullPointerException e) {
+            throw new NullPointerException("doctor is null");
+        }
+    }
+
+    @Override
+    public void cancelAppointmentForPatient(Appointment appointment) {
+        try {
+            this.patient.cancelAppointmentForPatient(appointment);
+        } catch (NullPointerException e) {
+            throw new NullPointerException("doctor is null");
+        }
+    }
+
     /**
      * Assigns a nurse to a specific hospitalization.
      *
@@ -150,19 +177,6 @@ public class UserEntity
             this.doctor.assignNurseToHospitalization(nurse, hospitalization);
         }
     }
-
-    /**
-     * Adds an appointment to the doctor's list of appointments.
-     *
-     * @param appointment the appointment to add
-     */
-    @Override
-    public void addAppointmentToDoctor(Appointment appointment) {
-        if (this.doctor != null) {
-            this.doctor.addAppointmentToDoctor(appointment);
-        }
-    }
-
     /**
      * Sets the doctor's laboratory. Removes the doctor from the current lab if different.
      * Throws an exception if the lab is from a different hospital.
@@ -174,19 +188,6 @@ public class UserEntity
     public void setLaboratory(Laboratory laboratory) {
         if (this.doctor != null) {
             this.doctor.setLaboratory(laboratory);
-        }
-    }
-
-
-    /**
-     * Adds an appointment to the patient's list of appointments.
-     *
-     * @param appointment the appointment to add
-     */
-    @Override
-    public void addAppointmentToPatient(Appointment appointment) {
-        if (patient != null) {
-            this.patient.addAppointmentToPatient(appointment);
         }
     }
 

@@ -10,6 +10,7 @@ import tbektenov.com.sau.models.user.userRoles.Doctor;
 import tbektenov.com.sau.models.user.userRoles.Patient;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Represents an appointment between a doctor and a patient.
@@ -46,11 +47,15 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "appointment_id", nullable = false, updatable = false)
     private Long id;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private LocalDate date = LocalDate.now();
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
+    @EqualsAndHashCode.Exclude
     private AppointmentStatus appointmentStatus = AppointmentStatus.UPCOMING;
 
     @NotNull

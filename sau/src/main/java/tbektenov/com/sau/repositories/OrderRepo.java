@@ -11,5 +11,12 @@ import tbektenov.com.sau.models.OrderEntity;
  */
 public interface OrderRepo
     extends JpaRepository<OrderEntity, Long> {
+
+    /**
+     * Checks if any OrderEntity exists for a given doctor's ID.
+     *
+     * @param doctorId The ID of the doctor to check.
+     * @return True if an order exists for the given doctor ID, otherwise false.
+     */
     Boolean existsByDoctorId(Long doctorId);
 }

@@ -49,12 +49,11 @@ public class PatientServiceImpl
      *
      * @param patientId                 The ID of the patient to update.
      * @param changeToStayingPatientDTO DTO containing details for the transition to staying patient.
-     * @return A confirmation message indicating the patient's status has been updated.
      * @throws ObjectNotFoundException if the patient, nurse, or ward cannot be found.
      */
     @Override
     @Transactional
-    public String changeToStayingPatient(Long patientId, ChangeToStayingPatientDTO changeToStayingPatientDTO) {
+    public void changeToStayingPatient(Long patientId, ChangeToStayingPatientDTO changeToStayingPatientDTO) {
         Patient patient = patientRepo.findById(patientId)
                 .orElseThrow(() -> new ObjectNotFoundException("Patient not found."));
 
@@ -87,7 +86,6 @@ public class PatientServiceImpl
         patient.setStayingPatient(stayingPatient);
 
         stayingPatientRepo.save(stayingPatient);
-        return "Patient is now staying";
     }
 
     /**
@@ -95,12 +93,11 @@ public class PatientServiceImpl
      *
      * @param patientId              The ID of the patient to update.
      * @param changeToLeftPatientDTO DTO containing details for the transition to left patient.
-     * @return A confirmation message indicating the patient has left.
      * @throws ObjectNotFoundException if the patient cannot be found or if the conclusion is missing.
      */
     @Override
     @Transactional
-    public String changeToLeftPatient(Long patientId, ChangeToLeftPatientDTO changeToLeftPatientDTO) {
+    public void changeToLeftPatient(Long patientId, ChangeToLeftPatientDTO changeToLeftPatientDTO) {
         if (changeToLeftPatientDTO.getConclusion() == null || changeToLeftPatientDTO.getConclusion().isEmpty()) {
             throw new ObjectNotFoundException("Conclusion cannot be null or empty.");
         }
@@ -126,6 +123,5 @@ public class PatientServiceImpl
 
         leftPatientRepo.save(leftPatient);
 
-        return "Patient has left";
     }
 }

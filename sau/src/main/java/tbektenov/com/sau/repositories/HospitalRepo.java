@@ -50,6 +50,15 @@ public interface HospitalRepo
     @EntityGraph(value = "Hospital.details", type = EntityGraph.EntityGraphType.FETCH)
     Optional<Hospital> findByName(String name);
 
+    /**
+     * Retrieves a Hospital by its ID, using an entity graph to fetch related details.
+     *
+     * The entity graph "Hospital.details" is used to optimize the fetch of related
+     * entities, such as associated wards, doctors, laboratories, etc.
+     *
+     * @param hospitalId The ID of the hospital.
+     * @return An Optional containing the Hospital if found, otherwise empty.
+     */
     @Override
     @EntityGraph(value = "Hospital.details", type = EntityGraph.EntityGraphType.FETCH)
     Optional<Hospital> findById(Long hospitalId);

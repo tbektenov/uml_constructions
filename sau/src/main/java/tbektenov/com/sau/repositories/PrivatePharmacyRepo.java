@@ -27,6 +27,13 @@ public interface PrivatePharmacyRepo
      */
     Boolean existsByAddressAndPharmaCompany(String address, String pharmaCompany);
 
+    /**
+     * Finds a PrivatePharmacy by its address and pharmaceutical company.
+     *
+     * @param address The address of the pharmacy.
+     * @param company The name of the pharmaceutical company.
+     * @return An Optional containing the found PrivatePharmacy, or an empty Optional if none found.
+     */
     Optional<PrivatePharmacy> findByAddressAndPharmaCompany(String address, String company);
 }
 

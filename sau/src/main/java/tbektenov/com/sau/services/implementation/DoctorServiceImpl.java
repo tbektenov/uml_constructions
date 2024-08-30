@@ -32,6 +32,11 @@ public class DoctorServiceImpl
         this.userRepo = userRepo;
     }
 
+    /**
+     * Retrieves all doctors from the repository and maps them to DoctorDTO objects.
+     *
+     * @return A list of DoctorDTO representing all doctors.
+     */
     @Override
     @Transactional
     public List<DoctorDTO> getAllDoctors() {

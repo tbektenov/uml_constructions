@@ -4,19 +4,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import tbektenov.com.sau.exceptions.InvalidArgumentsException;
-import tbektenov.com.sau.models.Appointment;
-import tbektenov.com.sau.models.Hospitalization;
-import tbektenov.com.sau.models.OrderEntity;
-import tbektenov.com.sau.models.OrderStatus;
+import tbektenov.com.sau.models.*;
 import tbektenov.com.sau.models.hospital.Hospital;
 import tbektenov.com.sau.models.hospital.Laboratory;
 import tbektenov.com.sau.models.pharmacy.HospitalPharmacy;
 import tbektenov.com.sau.models.user.UserEntity;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a doctor entity associated with a user, hospital, and optionally a laboratory.
@@ -33,6 +28,7 @@ import java.util.Set;
         @NamedEntityGraph(
                 name = "Doctor.detailsHospitalAndLaboratory",
                 attributeNodes = {
+                        @NamedAttributeNode("appointments"),
                         @NamedAttributeNode("hospital"),
                         @NamedAttributeNode("laboratory"),
                         @NamedAttributeNode(value = "user", subgraph = "user.subgraph")
@@ -95,12 +91,31 @@ public class Doctor
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    Set<Appointment> appointments = new HashSet<>();
+    private List<Appointment> appointments = new ArrayList<>();
 
     @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<OrderEntity> orders = new HashSet<>();
+
+    @Override
+    public Appointment finishAppointment(Appointment appointment) {
+        if (appointment != null && this.appointments.contains(appointment)) {
+            appointment.setAppointmentStatus(AppointmentStatus.ARCHIVED);
+            return appointment;
+        } else {
+            throw new InvalidArgumentsException("appointment is not assigned to this doctor.");
+        }
+    }
+
+    @Override
+    public void cancelAppointmentForDoctor(Appointment appointment) {
+        if (appointment != null && this.appointments.contains(appointment)) {
+            appointments.remove(appointment);
+        } else {
+            throw new InvalidArgumentsException("appointment is not assigned to this doctor.");
+        }
+    }
 
     /**
      * Assigns a nurse to a specific hospitalization.
@@ -127,17 +142,6 @@ public class Doctor
             }
         }
     }
-
-    /**
-     * Adds an appointment to the doctor's list of appointments.
-     *
-     * @param appointment the appointment to add
-     */
-    @Override
-    public void addAppointmentToDoctor(Appointment appointment) {
-        this.appointments.add(appointment);
-    }
-
     /**
      * Sends an order from this doctor to the specified hospital pharmacy.
      *
